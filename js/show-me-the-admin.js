@@ -4,8 +4,11 @@
 	// When the document is ready...
 	$(document).ready(function() {
 
+		// Add our selector to the appropriate elements
+		$('#wpadminbar,#show-me-the-admin-login').addClass('show-me-the-admin-bar');
+
 		// Hide the admin bar
-		$('#wpadminbar').addClass('hidden').css({'top':(0-$('#wpadminbar').height())+'px'});
+		$('.show-me-the-admin-bar').addClass('hidden').css({'top':(0-$('.show-me-the-admin-bar').height())+'px'});
 
 		// We have to at least have a valid showkey...
 		if ( show_me_the_admin.showkey !== undefined && '' != show_me_the_admin.showkey ) {
@@ -34,13 +37,13 @@
 				$user_key_string += $event.which;
 
 				// If the admin bar is hidden and the user key string equals the showkey
-				if ($('#wpadminbar').hasClass('hidden') && $user_key_string == $smta_showkey) {
+				if ($('.show-me-the-admin-bar').hasClass('hidden') && $user_key_string == $smta_showkey) {
 					$user_key_string = '';
 					show_me_the_admin_show_bar();
 				}
 
 				// If the admin bar is not hidden and the user key string equals the showkey
-				else if ($smta_hidekey && ! $('#wpadminbar').hasClass('hidden') && $user_key_string == $smta_hidekey) {
+				else if ($smta_hidekey && ! $('.show-me-the-admin-bar').hasClass('hidden') && $user_key_string == $smta_hidekey) {
 					$user_key_string = '';
 					show_me_the_admin_hide_bar();
 				}
@@ -59,13 +62,13 @@
 
 	// Show the admin bar
 	function show_me_the_admin_show_bar() {
-		$('#wpadminbar').stop(true, true).removeClass('hidden').show().animate({'top':'0'},200);
-		$('body').animate({'marginTop': $('#wpadminbar').height()+'px'},200);
+		$('.show-me-the-admin-bar').stop(true, true).removeClass('hidden').show().animate({'top':'0'},200);
+		$('body').animate({'marginTop': $('.show-me-the-admin-bar').height()+'px'},200);
 	}
 
 	// Hide the admin bar
 	function show_me_the_admin_hide_bar() {
-		$('#wpadminbar').stop(true, true).animate({top:(0-$('#wpadminbar').height())+'px'},200, function(){$('#wpadminbar').hide().addClass('hidden');});
+		$('.show-me-the-admin-bar').stop(true, true).animate({top:(0-$('.show-me-the-admin-bar').height())+'px'},200, function(){$('.show-me-the-admin-bar').hide().addClass('hidden');});
 		$('body').animate({'marginTop':'0'},200);
 	}
 

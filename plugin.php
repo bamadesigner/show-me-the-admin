@@ -83,6 +83,9 @@ class Show_Me_The_Admin {
 		// Add needed styles to the <head>
 		add_action( 'wp_head', array( $this, 'add_styles_scripts_to_head' ) );
 
+		// Print dropdown login button
+		add_action( 'wp_footer', array( $this, 'print_login_button' ), 2000 );
+
 	}
 
 	/**
@@ -170,10 +173,46 @@ class Show_Me_The_Admin {
 		?><style type="text/css" media="screen">
 			#wpadminbar, #wpadminbar.hidden { display:none; }
 			html.hide-show-me-the-admin-bar, * html.hide-show-me-the-admin-bar body { margin-top: 0 !important; }
+			#show-me-the-admin-login{
+				background: #23282d;
+				width: 100%;
+				height: 32px;
+				color: #fff;
+				font-weight: 400;
+				font-size: 15px;
+				line-height: 32px;
+				position: fixed;
+				top: 0;
+				left: 0;
+				z-index: 99999;
+				text-align: center;
+				text-transform: uppercase;
+				text-decoration: none;
+			}
+			#show-me-the-admin-login:hover{background:#21759b;}
 		</style>
 		<script type="text/javascript">
 			document.documentElement.className = 'hide-show-me-the-admin-bar';
 		</script><?php
+
+	}
+
+	/**
+	 * Add styles and scripts to the <head>
+	 *
+	 * @access  public
+	 * @since   1.0.0
+	 */
+	public function print_login_button() {
+
+		// Don't print if the user is logged in or the admin bar is showing
+		if ( is_user_logged_in() || is_admin_bar_showing() ) {
+			return;
+		}
+
+		// Print the login button with redirect
+		$redirect = isset( $_SERVER[ 'REQUEST_URI'] ) ? $_SERVER[ 'REQUEST_URI'] : null;
+		?><a id="show-me-the-admin-login" href="<?php echo wp_login_url( site_url( $redirect ) ); ?>">Login to WordPress</a><?php
 
 	}
 
