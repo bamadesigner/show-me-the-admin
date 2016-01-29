@@ -176,16 +176,16 @@ class Show_Me_The_Admin {
 		// Enqueue the script
 		wp_enqueue_script( 'show-me-the-admin', trailingslashit( plugin_dir_url( __FILE__ ) . 'js' ) . 'show-me-the-admin.min.js', array( 'jquery' ), SHOW_ME_THE_ADMIN_VERSION, true );
 
-		// Build out our showkey - default is 'showme'
-		$showkey = '837279877769';
+		// Build out our show phrase - default is 'showme'
+		$show_phrase = '837279877769';
 
-		// Build out our hidekey - default is 'hideme'
-		$hidekey = '727368697769';
+		// Build out our hide phrase - default is 'hideme'
+		$hide_phrase = '727368697769';
 
 		// Pass some data
 		wp_localize_script( 'show-me-the-admin', 'show_me_the_admin', array(
-			'showkey' => $showkey,
-			'hidekey' => $hidekey,
+			'show_phrase' => $show_phrase,
+			'hide_phrase' => $hide_phrase,
 		));
 
 	}
