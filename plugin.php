@@ -4,7 +4,7 @@
  * Plugin Name:       Show Me The Admin
  * Plugin URI:        https://github.com/bamadesigner/show-me-the-admin
  * Description:       Allows you to quickly hide and show your admin bar by typing a specific phrase.
- * Version:           1.0
+ * Version:           1.0.0
  * Author:            Rachel Carden
  * Author URI:        https://bamadesigner.com
  * License:           GPL-2.0+
@@ -19,7 +19,7 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 // If you define them, will they be used?
-define( 'SHOW_ME_THE_ADMIN_VERSION', '1.0' );
+define( 'SHOW_ME_THE_ADMIN_VERSION', '1.0.0' );
 define( 'SHOW_ME_THE_ADMIN_PLUGIN_FILE', 'show-me-the-admin/plugin.php' );
 
 class Show_Me_The_Admin {
