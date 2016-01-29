@@ -1,6 +1,37 @@
 module.exports = function(grunt) {
 
     grunt.initConfig({
+        sass: {
+            options: {
+                sourcemap: 'none',
+                noCache: true,
+                update: false
+            },
+            showme: {
+                options: {
+                    style: 'expanded',
+                },
+                files: [{
+                    expand: true,
+                    src: '*.scss',
+                    cwd: 'css',
+                    dest: 'css',
+                    ext: '.css'
+                }]
+            },
+            showmemin: {
+                options: {
+                    style: 'compressed',
+                },
+                files: [{
+                    expand: true,
+                    src: '*.scss',
+                    cwd: 'css',
+                    dest: 'css',
+                    ext: '.min.css'
+                }]
+            }
+        },
         uglify: {
             options: {
                 mangle: false,
@@ -17,6 +48,10 @@ module.exports = function(grunt) {
             }
         },
         watch: {
+            showmesass: {
+                files: [ 'css/*.scss' ],
+                tasks: [ 'sass:showme', 'sass:showmemin' ]
+            },
             js: {
                 files: [ 'js/**/*.js', '!js/**/*.min.js' ],
                 tasks: [ 'uglify:minified' ]
@@ -25,12 +60,13 @@ module.exports = function(grunt) {
     });
 
     // Load our dependencies
+    grunt.loadNpmTasks( 'grunt-contrib-sass' );
     grunt.loadNpmTasks( 'grunt-contrib-uglify' );
     grunt.loadNpmTasks( 'grunt-contrib-watch' );
     grunt.loadNpmTasks( 'grunt-newer' );
 
     // Register our tasks
-    grunt.registerTask( 'default', [ 'newer:uglify', 'watch' ] );
+    grunt.registerTask( 'default', [ 'newer:sass', 'newer:uglify', 'watch' ] );
 
     // Register a watch function
     grunt.event.on( 'watch', function( action, filepath, target ) {

@@ -23,6 +23,11 @@ define( 'SHOW_ME_THE_ADMIN_VERSION', '1.0.0' );
 define( 'SHOW_ME_THE_ADMIN_PLUGIN_URL', 'https://wordpress.org/plugins/show-me-the-admin/' );
 define( 'SHOW_ME_THE_ADMIN_PLUGIN_FILE', 'show-me-the-admin/plugin.php' );
 
+// We only need you in the admin
+if ( is_admin() ) {
+	require_once plugin_dir_path( __FILE__ ) . 'includes/admin.php';
+}
+
 class Show_Me_The_Admin {
 
 	/**
@@ -181,6 +186,8 @@ class Show_Me_The_Admin {
 
 		// Build out our hide phrase - default is 'hideme'
 		$hide_phrase = '727368697769';
+
+		// @TODO pull from settings
 
 		// Pass some data
 		wp_localize_script( 'show-me-the-admin', 'show_me_the_admin', array(
