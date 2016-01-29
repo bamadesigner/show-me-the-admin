@@ -169,10 +169,10 @@ class Show_Me_The_Admin {
 		// Hide the bar out the gate
 		?><style type="text/css" media="screen">
 			#wpadminbar, #wpadminbar.hidden { display:none; }
-			html.hide-wp-admin-bar, * html.hide-wp-admin-bar body { margin-top: 0 !important; }
+			html.hide-show-me-the-admin-bar, * html.hide-show-me-the-admin-bar body { margin-top: 0 !important; }
 		</style>
 		<script type="text/javascript">
-			document.documentElement.className = 'hide-wp-admin-bar';
+			document.documentElement.className = 'hide-show-me-the-admin-bar';
 		</script><?php
 
 	}
