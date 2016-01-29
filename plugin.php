@@ -164,18 +164,6 @@ class Show_Me_The_Admin {
 	}
 
 	/**
-	 * Returns our settings.
-	 *
-	 * @access  public
-	 * @since   1.0.0
-	 * @param	boolean - $network - whether or not to retrieve network settings
-	 * @return  array|false - array of settings or false if none exist
-	 */
-	public function get_settings( $network = false ) {
-		return $network ? get_site_option( 'show_me_the_admin', array() ) : get_option( 'show_me_the_admin', array() );
-	}
-
-	/**
 	 * Add styles and scripts for our shortcodes.
 	 *
 	 * @access  public

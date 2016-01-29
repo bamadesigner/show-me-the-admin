@@ -203,7 +203,7 @@ class Show_Me_The_Admin_Admin {
 			case 'the-settings':
 
 				// Get our settings
-				$settings = show_me_the_admin()->get_settings( $this->is_network_admin );
+				$settings = $this->get_settings( $this->is_network_admin );
 
 				// Print the settings table
 				?><table id="show-me-the-admin-settings" class="form-table">
@@ -301,6 +301,18 @@ class Show_Me_The_Admin_Admin {
 	 */
 	public function register_settings() {
 		register_setting( 'show_me_the_admin', 'show_me_the_admin', array( $this, 'update_settings' ) );
+	}
+
+	/**
+	 * Returns our settings.
+	 *
+	 * @access  public
+	 * @since   1.0.0
+	 * @param	boolean - $network - whether or not to retrieve network settings
+	 * @return  array|false - array of settings or false if none exist
+	 */
+	private function get_settings( $network = false ) {
+		return $network ? get_site_option( 'show_me_the_admin', array() ) : get_option( 'show_me_the_admin', array() );
 	}
 
 	/**
