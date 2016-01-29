@@ -34,6 +34,15 @@ class Show_Me_The_Admin {
 	public $is_network_active;
 
 	/**
+	 * Will hold whether or not to add admin bar functionality.
+	 *
+	 * @since	1.0.0
+	 * @access	public
+	 * @var		boolean
+	 */
+	public $display_admin_bar;
+
+	/**
 	 * Holds the class instance.
 	 *
 	 * @since	1.0.0
@@ -76,6 +85,9 @@ class Show_Me_The_Admin {
 
 		// Runs when the plugin is upgraded
 		add_action( 'upgrader_process_complete', array( $this, 'upgrader_process_complete' ), 1, 2 );
+
+		// Detects the user's admin bar preference
+		add_action( 'plugins_loaded', array( $this, 'get_admin_bar_pref' ), 1 );
 
 		// Add needed styles and scripts
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles_scripts' ) );
@@ -123,6 +135,16 @@ class Show_Me_The_Admin {
 	public function upgrader_process_complete() {}
 
 	/**
+	 * Detects the user's admin bar preference.
+	 *
+	 * @access  public
+	 * @since   1.0.0
+	 */
+	public function get_admin_bar_pref() {
+		$this->display_admin_bar = _get_admin_bar_pref();
+	}
+
+	/**
 	 * Internationalization FTW.
 	 * Load our textdomain.
 	 *
@@ -141,8 +163,14 @@ class Show_Me_The_Admin {
 	 * @access  public
 	 * @since   1.0.0
 	 * @param	string - $hook_suffix - the ID of the current page
+	 * @return	bool - false if didn't enqueue anything
 	 */
 	public function enqueue_styles_scripts() {
+
+		// Print if no one is logged in OR if the user wants the admin bar
+		if ( is_user_logged_in() && ! $this->display_admin_bar ) {
+			return false;
+		}
 
 		// Enqueue the script
 		wp_enqueue_script( 'show-me-the-admin', trailingslashit( plugin_dir_url( __FILE__ ) . 'js' ) . 'show-me-the-admin.min.js', array( 'jquery' ), SHOW_ME_THE_ADMIN_VERSION, true );
@@ -168,6 +196,11 @@ class Show_Me_The_Admin {
 	 * @since   1.0.0
 	 */
 	public function add_styles_scripts_to_head() {
+
+		// Print if no one is logged in OR if the user wants the admin bar
+		if ( is_user_logged_in() && ! $this->display_admin_bar ) {
+			return false;
+		}
 
 		// Hide the bar out the gate
 		?><style type="text/css" media="screen">
