@@ -15,6 +15,9 @@
 
 // @TODO add filters
 // @TODO make sure all text is I18n
+// @TODO setup user profile settings so users can set their own phrases
+// @TODO add setting so you can say you don't want the functionality when not logged in
+// @TODO will need a way to let users know about functionality and allow them to enable/disable/setup their phrases
 
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
