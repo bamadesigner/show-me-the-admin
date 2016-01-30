@@ -13,7 +13,7 @@
  * Domain Path:       /languages
  */
 
-// @TODO add filters
+// @TODO add filters and filter descriptions to readme
 // @TODO make sure all text is I18n
 // @TODO setup user profile settings so users can set their own phrases
 // @TODO add setting so you can say you don't want the functionality when not logged in

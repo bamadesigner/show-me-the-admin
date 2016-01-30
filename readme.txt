@@ -30,7 +30,3 @@ Your "Show Toolbar when viewing site" profile setting must be enabled. If not lo
 
 = 1.0.0 =
 Plugin launch
-
-== Filters ==
-
-@TODO add filter descriptions
