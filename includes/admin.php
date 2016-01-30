@@ -312,7 +312,13 @@ class Show_Me_The_Admin_Admin {
 	 * @return  array|false - array of settings or false if none exist
 	 */
 	private function get_settings( $network = false ) {
-		return $network ? get_site_option( 'show_me_the_admin', array() ) : get_option( 'show_me_the_admin', array() );
+		return $network ? get_site_option( 'show_me_the_admin', array(
+			'show_phrase' => 'showme',
+			'hide_phrase' => 'hideme',
+		) ) : get_option( 'show_me_the_admin', array(
+			'show_phrase' => 'showme',
+			'hide_phrase' => 'hideme',
+		) );
 	}
 
 	/**
