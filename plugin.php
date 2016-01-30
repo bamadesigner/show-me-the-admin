@@ -141,16 +141,6 @@ class Show_Me_The_Admin {
 	public function upgrader_process_complete() {}
 
 	/**
-	 * Detects the user's admin bar preference.
-	 *
-	 * @access  public
-	 * @since   1.0.0
-	 */
-	public function get_admin_bar_pref() {
-		$this->display_admin_bar = _get_admin_bar_pref();
-	}
-
-	/**
 	 * Internationalization FTW.
 	 * Load our textdomain.
 	 *
@@ -215,6 +205,106 @@ class Show_Me_The_Admin {
 	}
 
 	/**
+	 * Return the keycode for a specific phrase.
+	 *
+	 * @access  public
+	 * @since   1.0.0
+	 * @param	string - the phrase
+	 * @return  string|false - the keycode or false if it doesn't exist
+	 */
+	public function get_phrase_keycode( $phrase ) {
+
+		// Make sure the phrase only has alphanumeric characters
+		$phrase = preg_replace( '/[^a-z0-9]/i', '', $phrase );
+
+		// Split phrase into array
+		$phrase = str_split( $phrase );
+
+		// Make sure we have a phrase
+		if ( empty( $phrase ) ) {
+			return false;
+		}
+
+		// Will hold the entire keycode
+		$keycode = '';
+
+		// Build the phrase
+		foreach( $phrase as $key ) {
+			if ( $code = $this->get_keycode( $key ) ) {
+				$keycode .= $code;
+			}
+		}
+
+		// Return keycode
+		return ! empty( $keycode ) ? $keycode : false;
+
+	}
+
+	/**
+	 * Return the code for a specific key.
+	 *
+	 * @access  public
+	 * @since   1.0.0
+	 * @param	string - the key
+	 * @return  string|false - the code or false if it doesn't exist
+	 */
+	public function get_keycode( $key ) {
+
+		// Index the keycodes by key
+		$keycodes = array(
+			'0' => '48',
+			'1' => '49',
+			'2' => '50',
+			'3' => '51',
+			'4' => '52',
+			'5' => '53',
+			'6' => '54',
+			'7' => '55',
+			'8' => '56',
+			'9' => '57',
+			'a' => '65',
+			'b' => '66',
+			'c' => '67',
+			'd' => '68',
+			'e' => '69',
+			'f' => '70',
+			'g' => '71',
+			'h' => '72',
+			'i' => '73',
+			'j' => '74',
+			'k' => '75',
+			'l' => '76',
+			'm' => '77',
+			'n' => '78',
+			'o' => '79',
+			'p' => '80',
+			'q' => '81',
+			'r' => '82',
+			's' => '83',
+			't' => '84',
+			'u' => '85',
+			'v' => '86',
+			'w' => '87',
+			'x' => '88',
+			'y' => '89',
+			'z' => '90',
+		);
+
+		// Return the code
+		return isset( $keycodes[$key] ) && ! empty( $keycodes[$key] ) ? $keycodes[$key] : false;
+	}
+
+	/**
+	 * Detects the user's admin bar preference.
+	 *
+	 * @access  public
+	 * @since   1.0.0
+	 */
+	public function get_admin_bar_pref() {
+		$this->display_admin_bar = _get_admin_bar_pref();
+	}
+
+	/**
 	 * Add styles and scripts for our shortcodes.
 	 *
 	 * @access  public
@@ -229,22 +319,27 @@ class Show_Me_The_Admin {
 			return false;
 		}
 
+		// Get the settings
+		$settings = $this->get_settings();
+
+		// Build our data array
+		$localize = array();
+
+		// Add 'show_phrase'
+		if ( isset( $settings['show_phrase'] ) && ( $show_phrase = $this->get_phrase_keycode( $settings[ 'show_phrase' ] ) ) ) {
+			$localize['show_phrase'] = $show_phrase;
+		}
+
+		// Add 'hide_phrase'
+		if ( isset( $settings['hide_phrase'] ) && ( $hide_phrase = $this->get_phrase_keycode( $settings[ 'hide_phrase' ] ) ) ) {
+			$localize['hide_phrase'] = $hide_phrase;
+		}
+
 		// Enqueue the script
 		wp_enqueue_script( 'show-me-the-admin', trailingslashit( plugin_dir_url( __FILE__ ) . 'js' ) . 'show-me-the-admin.min.js', array( 'jquery' ), SHOW_ME_THE_ADMIN_VERSION, true );
 
-		// Build out our show phrase - default is 'showme'
-		$show_phrase = '837279877769';
-
-		// Build out our hide phrase - default is 'hideme'
-		$hide_phrase = '727368697769';
-
-		// @TODO pull from settings
-
 		// Pass some data
-		wp_localize_script( 'show-me-the-admin', 'show_me_the_admin', array(
-			'show_phrase' => $show_phrase,
-			'hide_phrase' => $hide_phrase,
-		));
+		wp_localize_script( 'show-me-the-admin', 'show_me_the_admin', $localize );
 
 	}
 
