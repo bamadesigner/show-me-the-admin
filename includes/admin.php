@@ -304,7 +304,7 @@ class Show_Me_The_Admin_Admin {
 	}
 
 	/**
-	 * Returns our settings.
+	 * Returns our straight-forward, not adjusted settings.
 	 *
 	 * @access  public
 	 * @since   1.0.0

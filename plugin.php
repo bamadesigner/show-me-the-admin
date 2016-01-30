@@ -164,6 +164,57 @@ class Show_Me_The_Admin {
 	}
 
 	/**
+	 * A function to gather settings
+	 * for the front-end. Allows for adjusting
+	 * settings as needed.
+	 *
+	 * @access  public
+	 * @since   1.0.0
+	 * @return  array|false - array of settings or false if none exist
+	 */
+	public function get_settings() {
+
+		// What are the default settings?
+		$defaults = array(
+			'show_phrase' => 'showme',
+			'hide_phrase' => 'hideme',
+		);
+
+		// Get site settings
+		$site_settings = get_option( 'show_me_the_admin', array() );
+
+		// Make sure its an array
+		if ( empty( $site_settings ) ) {
+			$site_settings = array();
+		}
+
+		// If network active, merge with network settings
+		if ( $this->is_network_active ) {
+
+			// Get network settings
+			$network_settings = get_site_option( 'show_me_the_admin', array() );
+
+			// Make sure its an array
+			if ( empty( $network_settings ) ) {
+				$network_settings = array();
+			}
+
+			// Remove empty values for merging
+			$site_settings = array_filter( $site_settings );
+			$network_settings = array_filter( $network_settings );
+
+			// Merge site with network settings
+			$site_settings = wp_parse_args( $site_settings, $network_settings );
+
+		}
+
+		// Merge with the defaults
+		$site_settings = wp_parse_args( $site_settings, $defaults );
+
+		return $site_settings;
+	}
+
+	/**
 	 * Add styles and scripts for our shortcodes.
 	 *
 	 * @access  public
