@@ -8,11 +8,17 @@ Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Allows you to quickly hide and show your admin bar by typing a specific phrase.
+Allows you to easily hide and show your admin bar by typing a specific phrase.
 
 == Description ==
 
-**Show Me The Admin is multisite-friendly.**
+A WordPress plugin that allows you to easily hide and show your admin bar by typing a specific phrase.
+
+By default, type 'showme' to show the admin bar and 'hideme' to hide it. These phrases can be changed in your settings.
+
+**Show Me The Admin is also multisite-friendly.**
+
+Your "Show Toolbar when viewing site" profile setting must be enabled. If not logged in, a login button will drop down.
 
 == Installation ==
 
