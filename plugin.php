@@ -3,7 +3,7 @@
 /**
  * Plugin Name:       Show Me The Admin
  * Plugin URI:        https://github.com/bamadesigner/show-me-the-admin
- * Description:       Allows you to quickly hide and show your admin bar by typing a specific phrase.
+ * Description:       Hides your admin toolbar and enables you to make it appear, and disappear, by typing a specific phrase.
  * Version:           1.0.0
  * Author:            Rachel Carden
  * Author URI:        https://bamadesigner.com
