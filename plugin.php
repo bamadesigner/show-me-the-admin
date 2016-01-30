@@ -13,6 +13,9 @@
  * Domain Path:       /languages
  */
 
+// @TODO add filters
+// @TODO make sure all text is I18n
+
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
 	die;
