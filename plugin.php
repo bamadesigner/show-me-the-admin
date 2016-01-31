@@ -15,6 +15,7 @@
 
 // @TODO will need a way to let users know about functionality and allow them to enable/disable/setup their phrases
 // @TODO make sure we delete settings when plugin is deleted
+// @TODO add a link to or embed a demo video to help users understand functionality
 
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {

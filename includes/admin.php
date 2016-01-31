@@ -234,7 +234,7 @@ class Show_Me_The_Admin_Admin {
 				}
 
 				// Print the settings table
-				?><table id="show-me-the-admin-settings" class="form-table">
+				?><table id="show-me-the-admin-settings" class="form-table show-me-the-admin-settings">
 					<tbody>
 						<tr>
 							<td>
@@ -254,7 +254,7 @@ class Show_Me_The_Admin_Admin {
 							<td>
 								<fieldset>
 									<legend class="screen-reader-text"><span><?php _e( 'Enable the Login Button', 'show-me-the-admin' ); ?></span></legend>
-									<label for="smta-login-button"><input name="show_me_the_admin[enable_login_button]" type="checkbox" id="smta-login-button" value="1"<?php checked( isset( $site_settings[ 'enable_login_button' ] ) && $site_settings['enable_login_button'] == true ) ?>/> <?php _e( 'If not logged in, show a login button instead of the admin bar', 'show-me-the-admin' ); ?></label>
+									<label for="smta-login-button"><input name="show_me_the_admin[enable_login_button]" type="checkbox" id="smta-login-button" value="1"<?php checked( isset( $site_settings[ 'enable_login_button' ] ) && $site_settings['enable_login_button'] == true ) ?>/> <strong><?php _e( 'If not logged in, show a login button instead of the admin bar', 'show-me-the-admin' ); ?></strong></label>
 									<p class="description" id="tagline-description"><?php _e( 'If enabled, and not logged in, the "show" and "hide" phrase will reveal and hide a login button.', 'show-me-the-admin' ); ?></p>
 								</fieldset>
 							</td>
@@ -466,10 +466,10 @@ class Show_Me_The_Admin_Admin {
 		// Does this user wish to disable the functionality?
 		$user_disable = isset( $user_settings[ 'disable' ] ) && $user_settings['disable'] == true;
 
-		?><div id="show-me-the-admin-user">
+		?><div id="show-me-the-admin-user-profile-area">
 			<h2><?php _e( 'Show Me The Admin', 'show-me-the-admin' ); ?></h2>
-			<p><?php _e( 'This functionality hides your admin toolbar and enables you to make it appear, and disappear, by typing a specific phrase. You can use the phrases issued by your site administrator or you can use this setting to customize your own.', 'show-me-the-admin' ); ?></p>
-			<table id="show-me-the-admin-settings" class="form-table show-me-the-admin-user">
+			<p><?php _e( 'This functionality hides your admin toolbar and enables you to make it appear, and disappear, by typing a specific phrase. You can use the phrases issued by your site administrator or you can use this setting to customize your own. <strong><em>Your "Show Toolbar when viewing site" setting must be enabled.</em></strong>', 'show-me-the-admin' ); ?></p>
+			<table id="show-me-the-admin-user-profile" class="form-table show-me-the-admin-settings">
 				<tbody>
 					<tr>
 						<td>
