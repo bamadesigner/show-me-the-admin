@@ -207,7 +207,7 @@ class Show_Me_The_Admin {
 		// Merge with the defaults
 		$site_settings = wp_parse_args( $site_settings, $defaults );
 
-		return $site_settings;
+		return apply_filters( 'show_me_the_admin_settings', $site_settings );
 	}
 
 	/**
