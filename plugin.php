@@ -404,11 +404,11 @@ class Show_Me_The_Admin {
 		$localize = array();
 
 		// Add 'show_phrase'
-		$show_phrase = isset( $settings['show_phrase'] ) ? $this->get_phrase_keycode( $settings[ 'show_phrase' ] ) : SHOW_ME_THE_ADMIN_SHOW_PHRASE;
+		$show_phrase = isset( $settings['show_phrase'] ) ? $this->get_phrase_keycode( $settings[ 'show_phrase' ] ) : $this->get_phrase_keycode( SHOW_ME_THE_ADMIN_SHOW_PHRASE );
 		$localize['show_phrase'] = apply_filters( 'show_me_the_admin_show_phrase', $show_phrase );
 
 		// Add 'hide_phrase'
-		$hide_phrase = isset( $settings['hide_phrase'] ) ? $this->get_phrase_keycode( $settings[ 'hide_phrase' ] ) : SHOW_ME_THE_ADMIN_HIDE_PHRASE;
+		$hide_phrase = isset( $settings['hide_phrase'] ) ? $this->get_phrase_keycode( $settings[ 'hide_phrase' ] ) : $this->get_phrase_keycode( SHOW_ME_THE_ADMIN_HIDE_PHRASE );
 		$localize['hide_phrase'] = apply_filters( 'show_me_the_admin_hide_phrase', $hide_phrase );
 
 		// Enqueue the script
