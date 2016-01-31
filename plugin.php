@@ -179,7 +179,7 @@ class Show_Me_The_Admin {
 	 * @access  public
 	 * @since   1.0.0
 	 * @filter	show_me_the_admin_settings
-	 * @return  array|false - array of settings or false if none exist
+	 * @return  array - the settings
 	 */
 	public function get_settings() {
 
@@ -229,7 +229,7 @@ class Show_Me_The_Admin {
 	 * @access  public
 	 * @since   1.0.0
 	 * @param	string - the phrase
-	 * @return  string|false - the keycode or false if it doesn't exist
+	 * @return  string|null - the keycode or null if it doesn't exist
 	 */
 	public function get_phrase_keycode( $phrase ) {
 
@@ -241,7 +241,7 @@ class Show_Me_The_Admin {
 
 		// Make sure we have a phrase
 		if ( empty( $phrase ) ) {
-			return false;
+			return null;
 		}
 
 		// Will hold the entire keycode
@@ -255,7 +255,7 @@ class Show_Me_The_Admin {
 		}
 
 		// Return keycode
-		return ! empty( $keycode ) ? $keycode : false;
+		return ! empty( $keycode ) ? $keycode : null;
 
 	}
 
@@ -265,7 +265,7 @@ class Show_Me_The_Admin {
 	 * @access  public
 	 * @since   1.0.0
 	 * @param	string - the key
-	 * @return  string|false - the code or false if it doesn't exist
+	 * @return  string|null - the code or null if it doesn't exist
 	 */
 	public function get_keycode( $key ) {
 
@@ -310,7 +310,7 @@ class Show_Me_The_Admin {
 		);
 
 		// Return the code
-		return isset( $keycodes[$key] ) && ! empty( $keycodes[$key] ) ? $keycodes[$key] : false;
+		return isset( $keycodes[$key] ) && ! empty( $keycodes[$key] ) ? $keycodes[$key] : null;
 	}
 
 	/**
@@ -329,27 +329,26 @@ class Show_Me_The_Admin {
 	 * @access  public
 	 * @since   1.0.0
 	 * @param	string - $hook_suffix - the ID of the current page
-	 * @return	bool - false if didn't enqueue anything
+	 * @filter	show_me_the_admin_show_phrase
+	 * @filter	show_me_the_admin_hide_phrase
 	 */
 	public function enqueue_styles_scripts() {
 
 		// Print if no one is logged in OR if the user wants the admin bar
 		if ( is_user_logged_in() && ! $this->display_admin_bar ) {
-			return false;
+			return;
 		}
 
 		// Build our data array
 		$localize = array();
 
 		// Add 'show_phrase'
-		if ( isset( $this->settings['show_phrase'] ) && ( $show_phrase = $this->get_phrase_keycode( $this->settings[ 'show_phrase' ] ) ) ) {
-			$localize['show_phrase'] = $show_phrase;
-		}
+		$show_phrase = isset( $this->settings['show_phrase'] ) ? $this->get_phrase_keycode( $this->settings[ 'show_phrase' ] ) : null;
+		$localize['show_phrase'] = apply_filters( 'show_me_the_admin_show_phrase', $show_phrase );
 
 		// Add 'hide_phrase'
-		if ( isset( $this->settings['hide_phrase'] ) && ( $hide_phrase = $this->get_phrase_keycode( $this->settings[ 'hide_phrase' ] ) ) ) {
-			$localize['hide_phrase'] = $hide_phrase;
-		}
+		$hide_phrase = isset( $this->settings['hide_phrase'] ) ? $this->get_phrase_keycode( $this->settings[ 'hide_phrase' ] ) : null;
+		$localize['hide_phrase'] = apply_filters( 'show_me_the_admin_hide_phrase', $hide_phrase );
 
 		// Enqueue the script
 		wp_enqueue_script( 'show-me-the-admin', trailingslashit( plugin_dir_url( __FILE__ ) . 'js' ) . 'show-me-the-admin.min.js', array( 'jquery' ), SHOW_ME_THE_ADMIN_VERSION, true );
@@ -369,7 +368,7 @@ class Show_Me_The_Admin {
 
 		// Print if no one is logged in OR if the user wants the admin bar
 		if ( is_user_logged_in() && ! $this->display_admin_bar ) {
-			return false;
+			return;
 		}
 
 		// Hide the bar out the gate
@@ -405,6 +404,7 @@ class Show_Me_The_Admin {
 	 *
 	 * @access  public
 	 * @since   1.0.0
+	 * @filter	show_me_the_admin_login_text
 	 */
 	public function print_login_button() {
 

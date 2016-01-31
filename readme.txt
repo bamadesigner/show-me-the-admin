@@ -59,6 +59,40 @@ function filter_show_me_the_admin_settings( $settings ) {
     return $settings;
 }`
 
+= Filter the phrase to show the admin bar =
+`/**
+ * Filters the phrase to show the admin bar.
+ *
+ * @param   string - $show_phrase - the original phrase
+ * @return  string - the filtered phrase
+ */
+add_filter( 'show_me_the_admin_show_phrase', 'filter_show_me_the_admin_show_phrase' );
+function filter_show_me_the_admin_show_phrase( $show_phrase ) {
+
+    // Change the phrase, default is 'showme'
+    $show_phrase = 'hello';
+
+    // Return the phrase
+    return $show_phrase;
+}`
+
+= Filter the phrase to hide the admin bar =
+`/**
+ * Filters the phrase to hide the admin bar.
+ *
+ * @param   string - $hide_phrase - the original phrase
+ * @return  string - the filtered phrase
+ */
+add_filter( 'show_me_the_admin_hide_phrase', 'filter_show_me_the_admin_hide_phrase' );
+function filter_show_me_the_admin_hide_phrase( $hide_phrase ) {
+
+    // Change the phrase, default is 'hideme'
+    $hide_phrase = 'goodbye';
+
+    // Return the phrase
+    return $hide_phrase;
+}`
+
 = Filter the text for the dropdown login button =
 `/**
  * Filters the text for the "Show Me The Admin"

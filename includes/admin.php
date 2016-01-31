@@ -115,7 +115,7 @@ class Show_Me_The_Admin_Admin {
 
 		// Make sure plugin is network activated
 		if ( ! ( function_exists( 'is_plugin_active_for_network' ) && is_plugin_active_for_network( SHOW_ME_THE_ADMIN_PLUGIN_FILE ) ) ) {
-			return false;
+			return;
 		}
 
 		// Add the network settings page
@@ -310,7 +310,7 @@ class Show_Me_The_Admin_Admin {
 	 * @access  public
 	 * @since   1.0.0
 	 * @param	boolean - $network - whether or not to retrieve network settings
-	 * @return  array|false - array of settings or false if none exist
+	 * @return  array - the settings
 	 */
 	private function get_settings( $network = false ) {
 		return $network ? get_site_option( 'show_me_the_admin', array(
