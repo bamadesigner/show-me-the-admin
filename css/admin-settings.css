@@ -30,6 +30,18 @@
   padding: 10px 0;
 }
 
+#show-me-the-admin-user {
+  background: rgba(0, 0, 0, 0.04);
+  padding: 20px;
+  margin: 1em 0;
+}
+#show-me-the-admin-user *:first-child {
+  margin-top: 0;
+}
+#show-me-the-admin-user *:last-child {
+  margin-bottom: 0;
+}
+
 @media screen and (min-width: 600px) {
   #show-me-the-admin-settings.show-me-the-admin-user input.regular-text {
     width: 80%;

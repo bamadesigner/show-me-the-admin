@@ -14,8 +14,7 @@
  */
 
 // @TODO will need a way to let users know about functionality and allow them to enable/disable/setup their phrases
-// @TODO when network active, need single site setting to say "I want to override network functionality"
-//			... or at least when network active make sure default single site settings are empty?
+// @TODO make sure we delete settings when plugin is deleted
 
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
@@ -378,13 +377,18 @@ class Show_Me_The_Admin {
 				return;
 			}
 
+			// Don't add if the user doesn't want the functionality
+			if ( isset( $settings[ 'disable' ] ) && $settings[ 'disable' ] == true ) {
+				return;
+			}
+
 		}
 
 		// If not logged in...
 		else {
 
 			// Don't add if the login button is not enabled
-			if ( ! ( isset( $settings[ 'enable_login_button' ] ) && $settings['enable_login_button'] == true ) ) {
+			if ( ! ( isset( $settings[ 'enable_login_button' ] ) && $settings[ 'enable_login_button' ] == true ) ) {
 				return;
 			}
 
@@ -394,12 +398,12 @@ class Show_Me_The_Admin {
 		$localize = array();
 
 		// Add 'show_phrase'
-		$show_phrase = isset( $settings['show_phrase'] ) ? $this->get_phrase_keycode( $settings[ 'show_phrase' ] ) : $this->get_phrase_keycode( SHOW_ME_THE_ADMIN_SHOW_PHRASE );
-		$localize['show_phrase'] = apply_filters( 'show_me_the_admin_show_phrase', $show_phrase );
+		$show_phrase = isset( $settings[ 'show_phrase' ] ) ? $this->get_phrase_keycode( $settings[ 'show_phrase' ] ) : $this->get_phrase_keycode( SHOW_ME_THE_ADMIN_SHOW_PHRASE );
+		$localize[ 'show_phrase' ] = apply_filters( 'show_me_the_admin_show_phrase', $show_phrase );
 
 		// Add 'hide_phrase'
-		$hide_phrase = isset( $settings['hide_phrase'] ) ? $this->get_phrase_keycode( $settings[ 'hide_phrase' ] ) : $this->get_phrase_keycode( SHOW_ME_THE_ADMIN_HIDE_PHRASE );
-		$localize['hide_phrase'] = apply_filters( 'show_me_the_admin_hide_phrase', $hide_phrase );
+		$hide_phrase = isset( $settings[ 'hide_phrase' ] ) ? $this->get_phrase_keycode( $settings[ 'hide_phrase' ] ) : $this->get_phrase_keycode( SHOW_ME_THE_ADMIN_HIDE_PHRASE );
+		$localize[ 'hide_phrase' ] = apply_filters( 'show_me_the_admin_hide_phrase', $hide_phrase );
 
 		// Enqueue the script
 		wp_enqueue_script( 'show-me-the-admin', trailingslashit( plugin_dir_url( __FILE__ ) . 'js' ) . 'show-me-the-admin.min.js', array( 'jquery' ), SHOW_ME_THE_ADMIN_VERSION, true );
@@ -453,12 +457,12 @@ class Show_Me_The_Admin {
 		}
 
 		// Don't print if not logged in and the login button is not enabled
-		if ( ! ( isset( $settings[ 'enable_login_button' ] ) && $settings['enable_login_button'] == true ) ) {
+		if ( ! ( isset( $settings[ 'enable_login_button' ] ) && $settings[ 'enable_login_button' ] == true ) ) {
 			return;
 		}
 
 		// Print the login button with redirect
-		$login_redirect = isset( $_SERVER[ 'REQUEST_URI'] ) ? $_SERVER[ 'REQUEST_URI'] : null;
+		$login_redirect = isset( $_SERVER[ 'REQUEST_URI' ] ) ? $_SERVER[ 'REQUEST_URI' ] : null;
 
 		// Set the button label
 		$login_label = apply_filters( 'show_me_the_admin_login_text', __( 'Login to WordPress', 'show-me-the-admin' ) );

@@ -463,26 +463,40 @@ class Show_Me_The_Admin_Admin {
 		$default_show_phrase = ! empty( $site_settings[ 'show_phrase' ] ) ? $site_settings[ 'show_phrase' ] : SHOW_ME_THE_ADMIN_SHOW_PHRASE;
 		$default_hide_phrase = ! empty( $site_settings[ 'hide_phrase' ] ) ? $site_settings[ 'hide_phrase' ] : SHOW_ME_THE_ADMIN_HIDE_PHRASE;
 
-		?><h2><?php _e( 'Show Me The Admin', 'show-me-the-admin' ); ?></h2>
-		<p><?php _e( 'This functionality hides your admin toolbar and enables you to make it appear, and disappear, by typing a specific phrase. You can use the phrases issued by your site administrator or you can use this setting to customize your own.', 'show-me-the-admin' ); ?></p>
-		<table id="show-me-the-admin-settings" class="form-table show-me-the-admin-user">
-			<tbody>
-				<tr>
-					<td>
-						<label for="smta-show-phrase"><strong><?php _e( 'Phrase to "show" the admin bar', 'show-me-the-admin' ); ?></strong></label>
-						<input name="show_me_the_admin[show_phrase]" type="text" id="smta-show-phrase" value="<?php esc_attr_e( isset( $user_settings[ 'show_phrase' ] ) ? $user_settings[ 'show_phrase' ] : null ); ?>" placeholder="<?php esc_attr_e( $default_show_phrase ); ?>" class="regular-text" />
-						<p class="description" id="tagline-description"><?php printf( __( 'If left blank, will use your site\'s default phrase "%s".', 'show-me-the-admin' ), $default_show_phrase ); ?></p>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<label for="smta-hide-phrase"><strong><?php _e( 'Phrase to "hide" the admin bar', 'show-me-the-admin' ); ?></strong></label>
-						<input name="show_me_the_admin[hide_phrase]" type="text" id="smta-hide-phrase" value="<?php esc_attr_e( isset( $user_settings[ 'hide_phrase' ] ) ? $user_settings[ 'hide_phrase' ] : null ); ?>" placeholder="<?php esc_attr_e( $default_hide_phrase ); ?>" class="regular-text" />
-						<p class="description" id="tagline-description"><?php printf( __( 'If left blank, will use your site\'s default phrase "%s".', 'show-me-the-admin' ), $default_hide_phrase ); ?></p>
-					</td>
-				</tr>
-			</tbody>
-		</table><?php
+		// Does this user wish to disable the functionality?
+		$user_disable = isset( $user_settings[ 'disable' ] ) && $user_settings['disable'] == true;
+
+		?><div id="show-me-the-admin-user">
+			<h2><?php _e( 'Show Me The Admin', 'show-me-the-admin' ); ?></h2>
+			<p><?php _e( 'This functionality hides your admin toolbar and enables you to make it appear, and disappear, by typing a specific phrase. You can use the phrases issued by your site administrator or you can use this setting to customize your own.', 'show-me-the-admin' ); ?></p>
+			<table id="show-me-the-admin-settings" class="form-table show-me-the-admin-user">
+				<tbody>
+					<tr>
+						<td>
+							<fieldset>
+								<legend class="screen-reader-text"><span><?php _e( 'Disable Show Me The Admin', 'show-me-the-admin' ); ?></span></legend>
+								<label for="smta-disable"><input name="show_me_the_admin[disable]" type="checkbox" id="smta-disable" value="1"<?php checked( $user_disable ) ?>/> <strong><?php _e( 'I wish to disable this functionality.', 'show-me-the-admin' ); ?></strong></label>
+								<p class="description" id="tagline-description"><?php _e( "It's not for everyone.", 'show-me-the-admin' ); ?></p>
+							</fieldset>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label for="smta-show-phrase"><strong><?php _e( 'Phrase to "show" the admin bar', 'show-me-the-admin' ); ?></strong></label>
+							<input name="show_me_the_admin[show_phrase]" type="text" id="smta-show-phrase" value="<?php esc_attr_e( isset( $user_settings[ 'show_phrase' ] ) ? $user_settings[ 'show_phrase' ] : null ); ?>" placeholder="<?php esc_attr_e( $default_show_phrase ); ?>" class="regular-text" />
+							<p class="description" id="tagline-description"><?php printf( __( 'If left blank, will use your site\'s default phrase "%s".', 'show-me-the-admin' ), $default_show_phrase ); ?></p>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label for="smta-hide-phrase"><strong><?php _e( 'Phrase to "hide" the admin bar', 'show-me-the-admin' ); ?></strong></label>
+							<input name="show_me_the_admin[hide_phrase]" type="text" id="smta-hide-phrase" value="<?php esc_attr_e( isset( $user_settings[ 'hide_phrase' ] ) ? $user_settings[ 'hide_phrase' ] : null ); ?>" placeholder="<?php esc_attr_e( $default_hide_phrase ); ?>" class="regular-text" />
+							<p class="description" id="tagline-description"><?php printf( __( 'If left blank, will use your site\'s default phrase "%s".', 'show-me-the-admin' ), $default_hide_phrase ); ?></p>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div><?php
 
 	}
 
