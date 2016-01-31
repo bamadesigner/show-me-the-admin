@@ -55,6 +55,15 @@ class Show_Me_The_Admin {
 	public $display_admin_bar;
 
 	/**
+	 * Will hold the user's settings.
+	 *
+	 * @since	1.0.0
+	 * @access	public
+	 * @var		array
+	 */
+	public $settings;
+
+	/**
 	 * Holds the class instance.
 	 *
 	 * @since	1.0.0
@@ -88,6 +97,9 @@ class Show_Me_The_Admin {
 
 		// Is this plugin network active?
 		$this->is_network_active = is_multisite() && ( $plugins = get_site_option( 'active_sitewide_plugins' ) ) && isset( $plugins[ SHOW_ME_THE_ADMIN_PLUGIN_FILE ] );
+
+		// Retrieve and store the settings
+		$this->settings = $this->get_settings();
 
 		// Load our textdomain
 		add_action( 'init', array( $this, 'textdomain' ) );
@@ -326,19 +338,16 @@ class Show_Me_The_Admin {
 			return false;
 		}
 
-		// Get the settings
-		$settings = $this->get_settings();
-
 		// Build our data array
 		$localize = array();
 
 		// Add 'show_phrase'
-		if ( isset( $settings['show_phrase'] ) && ( $show_phrase = $this->get_phrase_keycode( $settings[ 'show_phrase' ] ) ) ) {
+		if ( isset( $this->settings['show_phrase'] ) && ( $show_phrase = $this->get_phrase_keycode( $this->settings[ 'show_phrase' ] ) ) ) {
 			$localize['show_phrase'] = $show_phrase;
 		}
 
 		// Add 'hide_phrase'
-		if ( isset( $settings['hide_phrase'] ) && ( $hide_phrase = $this->get_phrase_keycode( $settings[ 'hide_phrase' ] ) ) ) {
+		if ( isset( $this->settings['hide_phrase'] ) && ( $hide_phrase = $this->get_phrase_keycode( $this->settings[ 'hide_phrase' ] ) ) ) {
 			$localize['hide_phrase'] = $hide_phrase;
 		}
 
