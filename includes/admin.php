@@ -227,7 +227,8 @@ class Show_Me_The_Admin_Admin {
 							<td>
 								<fieldset>
 									<legend class="screen-reader-text"><span><?php _e( 'Enable the Login Button', 'show-me-the-admin' ); ?></span></legend>
-									<label for="smta-login-button"><input name="show_me_the_admin[enable_login_button]" type="checkbox" id="smta-login-button" value="1"<?php checked( isset( $settings[ 'enable_login_button' ] ) && $settings['enable_login_button'] == true ) ?>/> If not logged in, show a login button</label>
+									<label for="smta-login-button"><input name="show_me_the_admin[enable_login_button]" type="checkbox" id="smta-login-button" value="1"<?php checked( isset( $settings[ 'enable_login_button' ] ) && $settings['enable_login_button'] == true ) ?>/> <?php _e( 'If not logged in, show a login button', 'show-me-the-admin' ); ?></label>
+									<p class="description" id="tagline-description"><?php _e( 'If enabled, and not logged in, the "show" and "hide" phrase will reveal and hide a login button.', 'show-me-the-admin' ); ?></p>
 								</fieldset>
 							</td>
 						</tr>
@@ -256,7 +257,7 @@ class Show_Me_The_Admin_Admin {
 				settings_errors( 'show_me_the_admin' );
 			}
 
-			// Do we need the form?
+			// Print the settings form
 			?><form method="post" action="<?php echo ( $this->is_network_admin ) ? 'settings.php' : 'options.php'; ?>" novalidate="novalidate"><?php
 
 				// Handle network settings
