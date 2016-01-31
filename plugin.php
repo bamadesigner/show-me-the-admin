@@ -13,10 +13,7 @@
  * Domain Path:       /languages
  */
 
-// @TODO add filters and filter descriptions to readme
-// @TODO make sure all text is I18n
 // @TODO setup user profile settings so users can set their own phrases
-// @TODO add setting so you can say you don't want the functionality when not logged in
 // @TODO will need a way to let users know about functionality and allow them to enable/disable/setup their phrases
 // @TODO when network active, need single site setting to say "I want to override network functionality"
 //			... or at least when network active make sure default single site settings are empty?

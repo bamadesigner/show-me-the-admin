@@ -207,39 +207,51 @@ class Show_Me_The_Admin_Admin {
 				$settings = $this->get_settings( $this->is_network_admin );
 
 				// Print the settings table
-				?><table id="show-me-the-admin-settings" class="form-table">
-					<tbody>
-						<tr>
-							<td>
-								<label for="smta-show-phrase"><strong><?php _e( 'Phrase to "show" the admin bar', 'show-me-the-admin' ); ?></strong></label>
-								<input name="show_me_the_admin[show_phrase]" type="text" id="smta-show-phrase" value="<?php esc_attr_e( isset( $settings[ 'show_phrase' ] ) ? $settings[ 'show_phrase' ] : null ); ?>" class="regular-text" />
-								<p class="description" id="tagline-description"><?php _e( 'The default phrase is "showme".', 'show-me-the-admin' ); ?></p>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<label for="smta-hide-phrase"><strong><?php _e( 'Phrase to "hide" the admin bar', 'show-me-the-admin' ); ?></strong></label>
-								<input name="show_me_the_admin[hide_phrase]" type="text" id="smta-hide-phrase" value="<?php esc_attr_e( isset( $settings[ 'hide_phrase' ] ) ? $settings[ 'hide_phrase' ] : null ); ?>" class="regular-text" />
-								<p class="description" id="tagline-description"><?php _e( 'The default phrase is "hideme".', 'show-me-the-admin' ); ?></p>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<fieldset>
-									<legend class="screen-reader-text"><span><?php _e( 'Enable the Login Button', 'show-me-the-admin' ); ?></span></legend>
-									<label for="smta-login-button"><input name="show_me_the_admin[enable_login_button]" type="checkbox" id="smta-login-button" value="1"<?php checked( isset( $settings[ 'enable_login_button' ] ) && $settings['enable_login_button'] == true ) ?>/> <?php _e( 'If not logged in, show a login button', 'show-me-the-admin' ); ?></label>
-									<p class="description" id="tagline-description"><?php _e( 'If enabled, and not logged in, the "show" and "hide" phrase will reveal and hide a login button.', 'show-me-the-admin' ); ?></p>
-								</fieldset>
-							</td>
-						</tr>
-					</tbody>
-				</table><?php
+				$this->print_settings_table( $settings );
 				break;
 
 		}
 
 	}
 
+	/**
+	 * Prints the settings table. Allows us
+	 * to pass settings for duplicate instances
+	 * (settings page and user profile).
+	 *
+	 * @access  public
+	 * @since   1.0.0
+	 * @param 	array - $settings - settings used to populate the form
+	 */
+	public function print_settings_table( $settings ) {
+		?><table id="show-me-the-admin-settings" class="form-table">
+			<tbody>
+				<tr>
+					<td>
+						<label for="smta-show-phrase"><strong><?php _e( 'Phrase to "show" the admin bar', 'show-me-the-admin' ); ?></strong></label>
+						<input name="show_me_the_admin[show_phrase]" type="text" id="smta-show-phrase" value="<?php esc_attr_e( isset( $settings[ 'show_phrase' ] ) ? $settings[ 'show_phrase' ] : null ); ?>" class="regular-text" />
+						<p class="description" id="tagline-description"><?php _e( 'The default phrase is "showme".', 'show-me-the-admin' ); ?></p>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label for="smta-hide-phrase"><strong><?php _e( 'Phrase to "hide" the admin bar', 'show-me-the-admin' ); ?></strong></label>
+						<input name="show_me_the_admin[hide_phrase]" type="text" id="smta-hide-phrase" value="<?php esc_attr_e( isset( $settings[ 'hide_phrase' ] ) ? $settings[ 'hide_phrase' ] : null ); ?>" class="regular-text" />
+						<p class="description" id="tagline-description"><?php _e( 'The default phrase is "hideme".', 'show-me-the-admin' ); ?></p>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<fieldset>
+							<legend class="screen-reader-text"><span><?php _e( 'Enable the Login Button', 'show-me-the-admin' ); ?></span></legend>
+							<label for="smta-login-button"><input name="show_me_the_admin[enable_login_button]" type="checkbox" id="smta-login-button" value="1"<?php checked( isset( $settings[ 'enable_login_button' ] ) && $settings['enable_login_button'] == true ) ?>/> <?php _e( 'If not logged in, show a login button', 'show-me-the-admin' ); ?></label>
+							<p class="description" id="tagline-description"><?php _e( 'If enabled, and not logged in, the "show" and "hide" phrase will reveal and hide a login button.', 'show-me-the-admin' ); ?></p>
+						</fieldset>
+					</td>
+				</tr>
+			</tbody>
+		</table><?php
+	}
 
 	/**
 	 * Prints our settings page.
