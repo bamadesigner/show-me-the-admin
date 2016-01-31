@@ -313,13 +313,11 @@ class Show_Me_The_Admin_Admin {
 	 * @return  array - the settings
 	 */
 	private function get_settings( $network = false ) {
-		return $network ? get_site_option( 'show_me_the_admin', array(
-			'show_phrase' => 'showme',
-			'hide_phrase' => 'hideme',
-		) ) : get_option( 'show_me_the_admin', array(
-			'show_phrase' => 'showme',
-			'hide_phrase' => 'hideme',
-		) );
+
+		// What are the default settings?
+		$defaults = show_me_the_admin()->get_default_settings();
+
+		return $network ? get_site_option( 'show_me_the_admin', $defaults ) : get_option( 'show_me_the_admin', $defaults );
 	}
 
 	/**
