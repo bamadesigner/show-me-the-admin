@@ -48,13 +48,14 @@ class Show_Me_The_Admin {
 	public $is_network_active;
 
 	/**
-	 * Will hold whether or not to add admin bar functionality.
+	 * Will hold whether or not the
+	 * user wants the admin bar.
 	 *
 	 * @since	1.0.0
 	 * @access	public
 	 * @var		boolean
 	 */
-	public $display_admin_bar;
+	public $user_wants_admin_bar;
 
 	/**
 	 * Will hold the user's settings.
@@ -327,7 +328,7 @@ class Show_Me_The_Admin {
 	 * @since   1.0.0
 	 */
 	public function get_admin_bar_pref() {
-		$this->display_admin_bar = _get_admin_bar_pref();
+		$this->user_wants_admin_bar = _get_admin_bar_pref();
 	}
 
 	/**
@@ -350,11 +351,11 @@ class Show_Me_The_Admin {
 		$localize = array();
 
 		// Add 'show_phrase'
-		$show_phrase = isset( $this->settings['show_phrase'] ) ? $this->get_phrase_keycode( $this->settings[ 'show_phrase' ] ) : null;
+		$show_phrase = isset( $this->settings['show_phrase'] ) ? $this->get_phrase_keycode( $this->settings[ 'show_phrase' ] ) : 'showme';
 		$localize['show_phrase'] = apply_filters( 'show_me_the_admin_show_phrase', $show_phrase );
 
 		// Add 'hide_phrase'
-		$hide_phrase = isset( $this->settings['hide_phrase'] ) ? $this->get_phrase_keycode( $this->settings[ 'hide_phrase' ] ) : null;
+		$hide_phrase = isset( $this->settings['hide_phrase'] ) ? $this->get_phrase_keycode( $this->settings[ 'hide_phrase' ] ) : 'hideme';
 		$localize['hide_phrase'] = apply_filters( 'show_me_the_admin_hide_phrase', $hide_phrase );
 
 		// Enqueue the script
@@ -373,9 +374,24 @@ class Show_Me_The_Admin {
 	 */
 	public function add_styles_scripts_to_head() {
 
-		// Print if no one is logged in OR if the user wants the admin bar
-		if ( is_user_logged_in() && ! $this->display_admin_bar ) {
-			return;
+		// If logged in...
+		if ( is_user_logged_in() ) {
+
+			// Don't add if the user doesn't want the admin bar
+			if ( ! $this->user_wants_admin_bar ) {
+				return;
+			}
+
+		}
+
+		// If not logged in...
+		else {
+
+			// Don't add if the login button is not enabled
+			if ( ! ( isset( $this->settings[ 'enable_login_button' ] ) && $this->settings['enable_login_button'] == true ) ) {
+				return;
+			}
+
 		}
 
 		// Hide the bar out the gate
@@ -417,6 +433,11 @@ class Show_Me_The_Admin {
 
 		// Don't print if the user is logged in or the admin bar is showing
 		if ( is_user_logged_in() || is_admin_bar_showing() ) {
+			return;
+		}
+
+		// Don't print if not logged in and the login button is not enabled
+		if ( ! ( isset( $this->settings[ 'enable_login_button' ] ) && $this->settings['enable_login_button'] == true ) ) {
 			return;
 		}
 
