@@ -119,9 +119,6 @@ class Show_Me_The_Admin {
 		// Add needed styles and scripts
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles_scripts' ) );
 
-		// Add needed styles to the <head>
-		add_action( 'wp_head', array( $this, 'add_styles_scripts_to_head' ) );
-
 		// Print dropdown login button
 		add_action( 'wp_footer', array( $this, 'print_login_button' ), 2000 );
 
@@ -342,38 +339,6 @@ class Show_Me_The_Admin {
 	 */
 	public function enqueue_styles_scripts() {
 
-		// Print if no one is logged in OR if the user wants the admin bar
-		if ( is_user_logged_in() && ! $this->display_admin_bar ) {
-			return;
-		}
-
-		// Build our data array
-		$localize = array();
-
-		// Add 'show_phrase'
-		$show_phrase = isset( $this->settings['show_phrase'] ) ? $this->get_phrase_keycode( $this->settings[ 'show_phrase' ] ) : 'showme';
-		$localize['show_phrase'] = apply_filters( 'show_me_the_admin_show_phrase', $show_phrase );
-
-		// Add 'hide_phrase'
-		$hide_phrase = isset( $this->settings['hide_phrase'] ) ? $this->get_phrase_keycode( $this->settings[ 'hide_phrase' ] ) : 'hideme';
-		$localize['hide_phrase'] = apply_filters( 'show_me_the_admin_hide_phrase', $hide_phrase );
-
-		// Enqueue the script
-		wp_enqueue_script( 'show-me-the-admin', trailingslashit( plugin_dir_url( __FILE__ ) . 'js' ) . 'show-me-the-admin.min.js', array( 'jquery' ), SHOW_ME_THE_ADMIN_VERSION, true );
-
-		// Pass some data
-		wp_localize_script( 'show-me-the-admin', 'show_me_the_admin', $localize );
-
-	}
-
-	/**
-	 * Add styles and scripts to the <head>
-	 *
-	 * @access  public
-	 * @since   1.0.0
-	 */
-	public function add_styles_scripts_to_head() {
-
 		// If logged in...
 		if ( is_user_logged_in() ) {
 
@@ -393,6 +358,23 @@ class Show_Me_The_Admin {
 			}
 
 		}
+
+		// Build our data array
+		$localize = array();
+
+		// Add 'show_phrase'
+		$show_phrase = isset( $this->settings['show_phrase'] ) ? $this->get_phrase_keycode( $this->settings[ 'show_phrase' ] ) : 'showme';
+		$localize['show_phrase'] = apply_filters( 'show_me_the_admin_show_phrase', $show_phrase );
+
+		// Add 'hide_phrase'
+		$hide_phrase = isset( $this->settings['hide_phrase'] ) ? $this->get_phrase_keycode( $this->settings[ 'hide_phrase' ] ) : 'hideme';
+		$localize['hide_phrase'] = apply_filters( 'show_me_the_admin_hide_phrase', $hide_phrase );
+
+		// Enqueue the script
+		wp_enqueue_script( 'show-me-the-admin', trailingslashit( plugin_dir_url( __FILE__ ) . 'js' ) . 'show-me-the-admin.min.js', array( 'jquery' ), SHOW_ME_THE_ADMIN_VERSION, true );
+
+		// Pass some data
+		wp_localize_script( 'show-me-the-admin', 'show_me_the_admin', $localize );
 
 		// Hide the bar out the gate
 		?><style type="text/css" media="screen">
@@ -423,7 +405,7 @@ class Show_Me_The_Admin {
 	}
 
 	/**
-	 * Add styles and scripts to the <head>.
+	 * Print the dropdown login button.
 	 *
 	 * @access  public
 	 * @since   1.0.0
