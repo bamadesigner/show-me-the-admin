@@ -13,7 +13,6 @@
  * Domain Path:       /languages
  */
 
-// @TODO setup user profile settings so users can set their own phrases
 // @TODO will need a way to let users know about functionality and allow them to enable/disable/setup their phrases
 // @TODO when network active, need single site setting to say "I want to override network functionality"
 //			... or at least when network active make sure default single site settings are empty?
@@ -165,21 +164,6 @@ class Show_Me_The_Admin {
 	 */
 	public function textdomain() {
 		load_plugin_textdomain( 'show-me-the-admin', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
-	}
-
-	/**
-	 * Returns the default settings.
-	 *
-	 * @access  public
-	 * @since   1.0.0
-	 * @return  array - the settings
-	 */
-	public function get_default_settings() {
-		return array(
-			'show_phrase' => SHOW_ME_THE_ADMIN_SHOW_PHRASE,
-			'hide_phrase' => SHOW_ME_THE_ADMIN_HIDE_PHRASE,
-			'enable_login_button' => true,
-		);
 	}
 
 	/**

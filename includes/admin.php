@@ -240,14 +240,14 @@ class Show_Me_The_Admin_Admin {
 							<td>
 								<label for="smta-show-phrase"><strong><?php _e( 'Phrase to "show" the admin bar', 'show-me-the-admin' ); ?></strong></label>
 								<input name="show_me_the_admin[show_phrase]" type="text" id="smta-show-phrase" value="<?php esc_attr_e( isset( $site_settings[ 'show_phrase' ] ) ? $site_settings[ 'show_phrase' ] : null ); ?>" placeholder="<?php esc_attr_e( $default_show_phrase ); ?>" class="regular-text" />
-								<p class="description" id="tagline-description"><?php printf( __( 'The default phrase is "%s".', 'show-me-the-admin' ), SHOW_ME_THE_ADMIN_SHOW_PHRASE ); ?></p>
+								<p class="description" id="tagline-description"><?php printf( __( 'If left blank, will use the default phrase "%s".', 'show-me-the-admin' ), $default_show_phrase ); ?></p>
 							</td>
 						</tr>
 						<tr>
 							<td>
 								<label for="smta-hide-phrase"><strong><?php _e( 'Phrase to "hide" the admin bar', 'show-me-the-admin' ); ?></strong></label>
 								<input name="show_me_the_admin[hide_phrase]" type="text" id="smta-hide-phrase" value="<?php esc_attr_e( isset( $site_settings[ 'hide_phrase' ] ) ? $site_settings[ 'hide_phrase' ] : null ); ?>" placeholder="<?php esc_attr_e( $default_hide_phrase ); ?>"class="regular-text" />
-								<p class="description" id="tagline-description"><?php printf( __( 'The default phrase is "%s".', 'show-me-the-admin' ), SHOW_ME_THE_ADMIN_HIDE_PHRASE ); ?></p>
+								<p class="description" id="tagline-description"><?php printf( __( 'If left blank, will use the default phrase "%s".', 'show-me-the-admin' ), $default_hide_phrase ); ?></p>
 							</td>
 						</tr>
 						<tr>
@@ -349,11 +349,8 @@ class Show_Me_The_Admin_Admin {
 	 */
 	private function get_settings( $network = false ) {
 
-		// What are the default settings?
-		$defaults = show_me_the_admin()->get_default_settings();
-
 		// Get settings
-		$settings = $network ? get_site_option( 'show_me_the_admin', $defaults ) : get_option( 'show_me_the_admin', $defaults );
+		$settings = $network ? get_site_option( 'show_me_the_admin', array( 'enable_login_button' => true ) ) : get_option( 'show_me_the_admin', array( 'enable_login_button' => true ) );
 
 		// Make sure its an array
 		if ( empty( $settings ) ) {
@@ -474,14 +471,14 @@ class Show_Me_The_Admin_Admin {
 					<td>
 						<label for="smta-show-phrase"><strong><?php _e( 'Phrase to "show" the admin bar', 'show-me-the-admin' ); ?></strong></label>
 						<input name="show_me_the_admin[show_phrase]" type="text" id="smta-show-phrase" value="<?php esc_attr_e( isset( $user_settings[ 'show_phrase' ] ) ? $user_settings[ 'show_phrase' ] : null ); ?>" placeholder="<?php esc_attr_e( $default_show_phrase ); ?>" class="regular-text" />
-						<p class="description" id="tagline-description"><?php printf( __( 'Your site\'s default phrase is "%s".', 'show-me-the-admin' ), $default_show_phrase ); ?></p>
+						<p class="description" id="tagline-description"><?php printf( __( 'If left blank, will use your site\'s default phrase "%s".', 'show-me-the-admin' ), $default_show_phrase ); ?></p>
 					</td>
 				</tr>
 				<tr>
 					<td>
 						<label for="smta-hide-phrase"><strong><?php _e( 'Phrase to "hide" the admin bar', 'show-me-the-admin' ); ?></strong></label>
 						<input name="show_me_the_admin[hide_phrase]" type="text" id="smta-hide-phrase" value="<?php esc_attr_e( isset( $user_settings[ 'hide_phrase' ] ) ? $user_settings[ 'hide_phrase' ] : null ); ?>" placeholder="<?php esc_attr_e( $default_hide_phrase ); ?>" class="regular-text" />
-						<p class="description" id="tagline-description"><?php printf( __( 'Your site\'s default phrase is "%s".', 'show-me-the-admin' ), $default_hide_phrase ); ?></p>
+						<p class="description" id="tagline-description"><?php printf( __( 'If left blank, will use your site\'s default phrase "%s".', 'show-me-the-admin' ), $default_hide_phrase ); ?></p>
 					</td>
 				</tr>
 			</tbody>
