@@ -199,9 +199,6 @@ class Show_Me_The_Admin {
 	 */
 	public function get_settings() {
 
-		// What are the default settings?
-		$defaults = $this->get_default_settings();
-
 		// Get site settings
 		$site_settings = get_option( 'show_me_the_admin', array() );
 
@@ -229,9 +226,6 @@ class Show_Me_The_Admin {
 			$site_settings = wp_parse_args( $site_settings, $network_settings );
 
 		}
-
-		// Merge with the defaults
-		$site_settings = wp_parse_args( $site_settings, $defaults );
 
 		return apply_filters( 'show_me_the_admin_settings', $site_settings );
 	}
