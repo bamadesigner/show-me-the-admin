@@ -192,10 +192,21 @@ class Show_Me_The_Admin {
 	 * @return  array - the settings
 	 */
 	public function get_user_settings( $user_id = 0 ) {
+
+		// Make sure we have a valid user iD
 		if ( ! $user_id ) {
 			$user_id = get_current_user_id();
 		}
-		return $user_id > 0 ? get_user_meta( $user_id, 'show_me_the_admin', true ) : null;
+
+		// Get the user settings
+		$user_settings = $user_id > 0 ? get_user_meta( $user_id, 'show_me_the_admin', true ) : array();
+
+		// Make sure its an array
+		if ( empty( $user_settings ) ) {
+			$user_settings = array();
+		}
+
+		return $user_settings;
 	}
 
 	/**
@@ -247,11 +258,6 @@ class Show_Me_The_Admin {
 
 			// Get user settings
 			$user_settings = $this->get_user_settings();
-
-			// Make sure its an array
-			if ( empty( $user_settings ) ) {
-				$user_settings = array();
-			}
 
 			// Remove empty values for merging
 			$site_settings = array_filter( $site_settings );

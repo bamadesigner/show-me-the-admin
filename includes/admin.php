@@ -336,7 +336,15 @@ class Show_Me_The_Admin_Admin {
 		// What are the default settings?
 		$defaults = show_me_the_admin()->get_default_settings();
 
-		return $network ? get_site_option( 'show_me_the_admin', $defaults ) : get_option( 'show_me_the_admin', $defaults );
+		// Get settings
+		$settings = $network ? get_site_option( 'show_me_the_admin', $defaults ) : get_option( 'show_me_the_admin', $defaults );
+
+		// Make sure its an array
+		if ( empty( $settings ) ) {
+			$settings = array();
+		}
+
+		return $settings;
 	}
 
 	/**
@@ -418,13 +426,29 @@ class Show_Me_The_Admin_Admin {
 	public function add_user_profile_settings( $profile_user ) {
 
 		// Get the user settings
-		$user_settings = array_filter( show_me_the_admin()->get_user_settings( $profile_user->ID ) );
+		$user_settings = show_me_the_admin()->get_user_settings( $profile_user->ID );
 
-		// Get the plugin settings
-		$plugin_settings = array_filter( show_me_the_admin()->get_settings() );
+		// Get site settings in order to tell user the default phrases
+		$site_settings = $this->get_settings();
 
-		// Merge with plugin settings
-		$user_settings = wp_parse_args( $user_settings, $plugin_settings );
+		// If network active, merge site settings with network settings
+		if ( show_me_the_admin()->is_network_active ) {
+
+			// Get network settings
+			$network_settings = $this->get_settings( true );
+
+			// Remove empty values for merging
+			$site_settings = array_filter( $site_settings );
+			$network_settings = array_filter( $network_settings );
+
+			// Merge site with network settings
+			$site_settings = wp_parse_args( $site_settings, $network_settings );
+
+		}
+
+		// Set the default phrases
+		$default_show_phrase = ! empty( $site_settings[ 'show_phrase' ] ) ? $site_settings[ 'show_phrase' ] : SHOW_ME_THE_ADMIN_SHOW_PHRASE;
+		$default_hide_phrase = ! empty( $site_settings[ 'hide_phrase' ] ) ? $site_settings[ 'hide_phrase' ] : SHOW_ME_THE_ADMIN_HIDE_PHRASE;
 
 		?><h2><?php _e( 'Show Me The Admin', 'show-me-the-admin' ); ?></h2>
 		<p><?php _e( 'This functionality hides your admin toolbar and enables you to make it appear, and disappear, by typing a specific phrase. You can use the phrases issued by your site administrator or you can use this setting to customize your own.', 'show-me-the-admin' ); ?></p>
@@ -433,15 +457,15 @@ class Show_Me_The_Admin_Admin {
 				<tr>
 					<td>
 						<label for="smta-show-phrase"><strong><?php _e( 'Phrase to "show" the admin bar', 'show-me-the-admin' ); ?></strong></label>
-						<input name="show_me_the_admin[show_phrase]" type="text" id="smta-show-phrase" value="<?php esc_attr_e( isset( $user_settings[ 'show_phrase' ] ) ? $user_settings[ 'show_phrase' ] : null ); ?>" class="regular-text" />
-						<p class="description" id="tagline-description"><?php printf( __( 'Your site\'s default phrase is "%s".', 'show-me-the-admin' ), $plugin_settings[ 'show_phrase' ] ); ?></p>
+						<input name="show_me_the_admin[show_phrase]" type="text" id="smta-show-phrase" value="<?php esc_attr_e( isset( $user_settings[ 'show_phrase' ] ) ? $user_settings[ 'show_phrase' ] : null ); ?>" placeholder="<?php esc_attr_e( $default_show_phrase ); ?>" class="regular-text" />
+						<p class="description" id="tagline-description"><?php printf( __( 'Your site\'s default phrase is "%s".', 'show-me-the-admin' ), $default_show_phrase ); ?></p>
 					</td>
 				</tr>
 				<tr>
 					<td>
 						<label for="smta-hide-phrase"><strong><?php _e( 'Phrase to "hide" the admin bar', 'show-me-the-admin' ); ?></strong></label>
-						<input name="show_me_the_admin[hide_phrase]" type="text" id="smta-hide-phrase" value="<?php esc_attr_e( isset( $user_settings[ 'hide_phrase' ] ) ? $user_settings[ 'hide_phrase' ] : null ); ?>" class="regular-text" />
-						<p class="description" id="tagline-description"><?php printf( __( 'Your site\'s default phrase is "%s".', 'show-me-the-admin' ), $plugin_settings[ 'hide_phrase' ] ); ?></p>
+						<input name="show_me_the_admin[hide_phrase]" type="text" id="smta-hide-phrase" value="<?php esc_attr_e( isset( $user_settings[ 'hide_phrase' ] ) ? $user_settings[ 'hide_phrase' ] : null ); ?>" placeholder="<?php esc_attr_e( $default_hide_phrase ); ?>" class="regular-text" />
+						<p class="description" id="tagline-description"><?php printf( __( 'Your site\'s default phrase is "%s".', 'show-me-the-admin' ), $default_hide_phrase ); ?></p>
 					</td>
 				</tr>
 			</tbody>
