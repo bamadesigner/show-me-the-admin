@@ -391,7 +391,7 @@ class Show_Me_The_Admin {
 	}
 
 	/**
-	 * Add styles and scripts to the <head>
+	 * Add styles and scripts to the <head>.
 	 *
 	 * @access  public
 	 * @since   1.0.0
@@ -405,7 +405,7 @@ class Show_Me_The_Admin {
 
 		// Print the login button with redirect
 		$redirect = isset( $_SERVER[ 'REQUEST_URI'] ) ? $_SERVER[ 'REQUEST_URI'] : null;
-		?><a id="show-me-the-admin-login" href="<?php echo wp_login_url( site_url( $redirect ) ); ?>">Login to WordPress</a><?php
+		?><a id="show-me-the-admin-login" href="<?php echo wp_login_url( site_url( $redirect ) ); ?>"><?php _e( 'Login to WordPress', 'show-me-the-admin' ); ?></a><?php
 
 	}
 
