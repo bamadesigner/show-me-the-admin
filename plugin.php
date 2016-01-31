@@ -60,10 +60,10 @@ class Show_Me_The_Admin {
 	 * Will hold the user's settings.
 	 *
 	 * @since	1.0.0
-	 * @access	public
+	 * @access	private
 	 * @var		array
 	 */
-	public $settings;
+	private static $settings;
 
 	/**
 	 * Holds the class instance.
@@ -99,9 +99,6 @@ class Show_Me_The_Admin {
 
 		// Is this plugin network active?
 		$this->is_network_active = is_multisite() && ( $plugins = get_site_option( 'active_sitewide_plugins' ) ) && isset( $plugins[ SHOW_ME_THE_ADMIN_PLUGIN_FILE ] );
-
-		// Retrieve and store the settings
-		$this->settings = $this->get_settings();
 
 		// Load our textdomain
 		add_action( 'init', array( $this, 'textdomain' ) );
@@ -186,6 +183,22 @@ class Show_Me_The_Admin {
 	}
 
 	/**
+	 * Returns a user's settings. If no user ID
+	 * is passed, gets settings for current user.
+	 *
+	 * @access  public
+	 * @since   1.0.0
+	 * @param	int - $user_id - the user ID
+	 * @return  array - the settings
+	 */
+	public function get_user_settings( $user_id = 0 ) {
+		if ( ! $user_id ) {
+			$user_id = get_current_user_id();
+		}
+		return $user_id > 0 ? get_user_meta( $user_id, 'show_me_the_admin', true ) : null;
+	}
+
+	/**
 	 * Returns settings for the front-end.
 	 * Allows for adjusting settings as needed.
 	 *
@@ -195,6 +208,11 @@ class Show_Me_The_Admin {
 	 * @return  array - the settings
 	 */
 	public function get_settings() {
+
+		// If already set, return the settings
+		if ( isset( static::$settings ) ) {
+			return static::$settings;
+		}
 
 		// Get site settings
 		$site_settings = get_option( 'show_me_the_admin', array() );
@@ -224,7 +242,28 @@ class Show_Me_The_Admin {
 
 		}
 
-		return apply_filters( 'show_me_the_admin_settings', $site_settings );
+		// If logged in, merge with user settings
+		if ( function_exists( 'is_user_logged_in' ) && is_user_logged_in() ) {
+
+			// Get user settings
+			$user_settings = $this->get_user_settings();
+
+			// Make sure its an array
+			if ( empty( $user_settings ) ) {
+				$user_settings = array();
+			}
+
+			// Remove empty values for merging
+			$site_settings = array_filter( $site_settings );
+			$user_settings = array_filter( $user_settings );
+
+			// Merge site with user settings
+			$site_settings = wp_parse_args( $user_settings, $site_settings );
+
+		}
+
+		// Store the settings
+		return static::$settings = apply_filters( 'show_me_the_admin_settings', $site_settings );
 	}
 
 	/**
@@ -338,6 +377,9 @@ class Show_Me_The_Admin {
 	 */
 	public function enqueue_styles_scripts() {
 
+		// Get the settings
+		$settings = $this->get_settings();
+
 		// If logged in...
 		if ( is_user_logged_in() ) {
 
@@ -352,7 +394,7 @@ class Show_Me_The_Admin {
 		else {
 
 			// Don't add if the login button is not enabled
-			if ( ! ( isset( $this->settings[ 'enable_login_button' ] ) && $this->settings['enable_login_button'] == true ) ) {
+			if ( ! ( isset( $settings[ 'enable_login_button' ] ) && $settings['enable_login_button'] == true ) ) {
 				return;
 			}
 
@@ -362,11 +404,11 @@ class Show_Me_The_Admin {
 		$localize = array();
 
 		// Add 'show_phrase'
-		$show_phrase = isset( $this->settings['show_phrase'] ) ? $this->get_phrase_keycode( $this->settings[ 'show_phrase' ] ) : SHOW_ME_THE_ADMIN_SHOW_PHRASE;
+		$show_phrase = isset( $settings['show_phrase'] ) ? $this->get_phrase_keycode( $settings[ 'show_phrase' ] ) : SHOW_ME_THE_ADMIN_SHOW_PHRASE;
 		$localize['show_phrase'] = apply_filters( 'show_me_the_admin_show_phrase', $show_phrase );
 
 		// Add 'hide_phrase'
-		$hide_phrase = isset( $this->settings['hide_phrase'] ) ? $this->get_phrase_keycode( $this->settings[ 'hide_phrase' ] ) : SHOW_ME_THE_ADMIN_HIDE_PHRASE;
+		$hide_phrase = isset( $settings['hide_phrase'] ) ? $this->get_phrase_keycode( $settings[ 'hide_phrase' ] ) : SHOW_ME_THE_ADMIN_HIDE_PHRASE;
 		$localize['hide_phrase'] = apply_filters( 'show_me_the_admin_hide_phrase', $hide_phrase );
 
 		// Enqueue the script
@@ -412,13 +454,16 @@ class Show_Me_The_Admin {
 	 */
 	public function print_login_button() {
 
+		// Get the settings
+		$settings = $this->get_settings();
+
 		// Don't print if the user is logged in or the admin bar is showing
 		if ( is_user_logged_in() || is_admin_bar_showing() ) {
 			return;
 		}
 
 		// Don't print if not logged in and the login button is not enabled
-		if ( ! ( isset( $this->settings[ 'enable_login_button' ] ) && $this->settings['enable_login_button'] == true ) ) {
+		if ( ! ( isset( $settings[ 'enable_login_button' ] ) && $settings['enable_login_button'] == true ) ) {
 			return;
 		}
 

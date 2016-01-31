@@ -45,6 +45,34 @@
         width: 100%;
     }
 
+    // For the user profile
+    &.show-me-the-admin-user {
+
+        td {
+            padding: 10px 0;
+        }
+
+    }
+
+}
+
+// Adust for screens larger than 600px
+@media screen and (min-width:600px) {
+
+    // Our settings table
+    #show-me-the-admin-settings {
+
+        // For the user profile
+        &.show-me-the-admin-user {
+
+            input.regular-text {
+                width: 80%;
+            }
+
+        }
+
+    }
+
 }
 
 // The main save button

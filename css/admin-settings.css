@@ -26,7 +26,15 @@
 #show-me-the-admin-settings input.regular-text {
   width: 100%;
 }
+#show-me-the-admin-settings.show-me-the-admin-user td {
+  padding: 10px 0;
+}
 
+@media screen and (min-width: 600px) {
+  #show-me-the-admin-settings.show-me-the-admin-user input.regular-text {
+    width: 80%;
+  }
+}
 #show_me_the_admin_save_changes {
   width: 100%;
 }

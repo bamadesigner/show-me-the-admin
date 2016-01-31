@@ -83,6 +83,14 @@ class Show_Me_The_Admin_Admin {
 		// Register our settings
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
 
+		// Add user profile settings
+		add_action( 'show_user_profile', array( $this, 'add_user_profile_settings' ), 0 );
+		add_action( 'edit_user_profile', array( $this, 'add_user_profile_settings' ), 0 );
+
+		// Save user profile settings
+		add_action( 'personal_options_update', array( $this, 'save_user_profile_settings' ), 0 );
+		add_action( 'edit_user_profile_update', array( $this, 'save_user_profile_settings' ), 0 );
+
 	}
 
 	/**
@@ -142,17 +150,19 @@ class Show_Me_The_Admin_Admin {
 	 */
 	public function enqueue_styles_scripts( $hook_suffix ) {
 
-		// Only for our settings pages
-		if ( $hook_suffix != $this->settings_page_id ) {
-			return;
+		// We only need our styles for our settings pages and the user profile pages
+		if ( in_array( $hook_suffix, array( $this->settings_page_id, 'profile.php' ) ) ) {
+
+			// Enqueue our main styles
+			wp_enqueue_style( 'show-me-the-admin-settings', trailingslashit( plugin_dir_url( dirname( __FILE__ ) ) . 'css' ) . 'admin-settings.min.css', array(), SHOW_ME_THE_ADMIN_VERSION );
+
+			// Need this script for the meta boxes to work correctly on our settings page
+			if ( $hook_suffix == $this->settings_page_id ) {
+				wp_enqueue_script( 'post' );
+				wp_enqueue_script( 'postbox' );
+			}
+
 		}
-
-		// Enqueue our main styles
-		wp_enqueue_style( 'show-me-the-admin-settings', trailingslashit( plugin_dir_url( dirname( __FILE__ ) ) . 'css' ) . 'admin-settings.min.css', array(), SHOW_ME_THE_ADMIN_VERSION );
-
-		// Need this script for the meta boxes to work correctly
-		wp_enqueue_script( 'post' );
-		wp_enqueue_script( 'postbox' );
 
 	}
 
@@ -396,6 +406,68 @@ class Show_Me_The_Admin_Admin {
 	 */
 	public function validate_settings( $settings ) {
 		return $settings;
+	}
+
+	/**
+	 * Adds custom user profile settings.
+	 *
+	 * @access  public
+	 * @since   1.0.0
+	 * @param	WP_User - $profile_user - the current WP_User object
+	 */
+	public function add_user_profile_settings( $profile_user ) {
+
+		// Get the user settings
+		$user_settings = array_filter( show_me_the_admin()->get_user_settings( $profile_user->ID ) );
+
+		// Get the plugin settings
+		$plugin_settings = array_filter( show_me_the_admin()->get_settings() );
+
+		// Merge with plugin settings
+		$user_settings = wp_parse_args( $user_settings, $plugin_settings );
+
+		?><h2><?php _e( 'Show Me The Admin', 'show-me-the-admin' ); ?></h2>
+		<p><?php _e( 'This functionality hides your admin toolbar and enables you to make it appear, and disappear, by typing a specific phrase. You can use the phrases issued by your site administrator or you can use this setting to customize your own.', 'show-me-the-admin' ); ?></p>
+		<table id="show-me-the-admin-settings" class="form-table show-me-the-admin-user">
+			<tbody>
+				<tr>
+					<td>
+						<label for="smta-show-phrase"><strong><?php _e( 'Phrase to "show" the admin bar', 'show-me-the-admin' ); ?></strong></label>
+						<input name="show_me_the_admin[show_phrase]" type="text" id="smta-show-phrase" value="<?php esc_attr_e( isset( $user_settings[ 'show_phrase' ] ) ? $user_settings[ 'show_phrase' ] : null ); ?>" class="regular-text" />
+						<p class="description" id="tagline-description"><?php printf( __( 'Your site\'s default phrase is "%s".', 'show-me-the-admin' ), $plugin_settings[ 'show_phrase' ] ); ?></p>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label for="smta-hide-phrase"><strong><?php _e( 'Phrase to "hide" the admin bar', 'show-me-the-admin' ); ?></strong></label>
+						<input name="show_me_the_admin[hide_phrase]" type="text" id="smta-hide-phrase" value="<?php esc_attr_e( isset( $user_settings[ 'hide_phrase' ] ) ? $user_settings[ 'hide_phrase' ] : null ); ?>" class="regular-text" />
+						<p class="description" id="tagline-description"><?php printf( __( 'Your site\'s default phrase is "%s".', 'show-me-the-admin' ), $plugin_settings[ 'hide_phrase' ] ); ?></p>
+					</td>
+				</tr>
+			</tbody>
+		</table><?php
+
+	}
+
+	/**
+	 * Saves custom user profile settings.
+	 *
+	 * check_admin_referer() is run before this action so we're good to go.
+	 *
+	 * @access  public
+	 * @since   1.0.0
+	 * @param	int - $user_id - the user ID
+	 */
+	public function save_user_profile_settings( $user_id ) {
+
+		// Make sure our array is set
+		if ( ! ( $show_me_the_admin = isset( $_POST[ 'show_me_the_admin' ] ) && ! empty( $_POST[ 'show_me_the_admin' ] ) ? $_POST[ 'show_me_the_admin' ] : NULL ) ) {
+			return;
+		}
+
+		// Update the user meta
+		update_user_meta( $user_id, 'show_me_the_admin', $show_me_the_admin );
+
 	}
 
 }
