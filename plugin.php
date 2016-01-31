@@ -166,6 +166,7 @@ class Show_Me_The_Admin {
 	 *
 	 * @access  public
 	 * @since   1.0.0
+	 * @filter	show_me_the_admin_settings
 	 * @return  array|false - array of settings or false if none exist
 	 */
 	public function get_settings() {
@@ -404,8 +405,13 @@ class Show_Me_The_Admin {
 		}
 
 		// Print the login button with redirect
-		$redirect = isset( $_SERVER[ 'REQUEST_URI'] ) ? $_SERVER[ 'REQUEST_URI'] : null;
-		?><a id="show-me-the-admin-login" href="<?php echo wp_login_url( site_url( $redirect ) ); ?>"><?php _e( 'Login to WordPress', 'show-me-the-admin' ); ?></a><?php
+		$login_redirect = isset( $_SERVER[ 'REQUEST_URI'] ) ? $_SERVER[ 'REQUEST_URI'] : null;
+
+		// Set the button label
+		$login_label = apply_filters( 'show_me_the_admin_login_text', __( 'Login to WordPress', 'show-me-the-admin' ) );
+
+		// Print the button
+		?><a id="show-me-the-admin-login" href="<?php echo wp_login_url( site_url( $login_redirect ) ); ?>"><?php echo $login_label; ?></a><?php
 
 	}
 

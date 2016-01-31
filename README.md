@@ -18,7 +18,7 @@ Show Me The Admin has filters setup to allow you to tweak the plugin.
     /**
      * Filters the "Show Me The Admin" settings.
      *
-     * @param   array - the original settings
+     * @param   array - $settings - the original settings
      * @return  array - the filtered settings
      */
     add_filter( 'show_me_the_admin_settings', 'filter_show_me_the_admin_settings' );
@@ -26,6 +26,30 @@ Show Me The Admin has filters setup to allow you to tweak the plugin.
 
         // Change the settings
 
+        // For example, change the phrase to show the admin bar, default is 'showme'
+        $settings[ 'show_phrase' ] = 'hello';
+
+        // Or change the phrase to hide the admin bar, default is 'hideme'
+        $settings[ 'hide_phrase' ] = 'goodbye';
+
         // Return the settings
         return $settings;
+    }
+
+### Filter the text for the dropdown login button
+    /**
+     * Filters the text for the "Show Me The Admin"
+     * dropdown login button.
+     *
+     * @param   string - $text - the original text
+     * @return  string - the filtered text
+     */
+    add_filter( 'show_me_the_admin_login_text', 'filter_show_me_the_admin_login_text' );
+    function filter_show_me_the_admin_login_text( $text ) {
+
+        // Change the text, default is 'Login to WordPress'
+        $text = 'Login to the admin';
+
+        // Return the text
+        return $text;
     }
