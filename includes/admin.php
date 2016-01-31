@@ -201,6 +201,7 @@ class Show_Me_The_Admin_Admin {
 				<p class="donate"><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=ZCAN2UX7QHZPL&lc=US&item_name=Rachel%20Carden%20%28Show%20Me%20The%20Admin%29&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted" title="<?php esc_attr_e( 'Donate a few bucks to the plugin', 'show-me-the-admin' ); ?>" target="_blank"><img src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" alt="<?php esc_attr_e( 'Donate', 'show-me-the-admin' ); ?>" /> <span class="promote-text"><?php _e( 'and buy me a coffee', 'show-me-the-admin' ); ?></span></a></p><?php
 				break;
 
+			// Settings meta box
 			case 'the-settings':
 
 				// Get our settings
@@ -213,21 +214,21 @@ class Show_Me_The_Admin_Admin {
 							<td>
 								<label for="smta-show-phrase"><strong><?php _e( 'Phrase to "show" the admin bar', 'show-me-the-admin' ); ?></strong></label>
 								<input name="show_me_the_admin[show_phrase]" type="text" id="smta-show-phrase" value="<?php esc_attr_e( isset( $settings[ 'show_phrase' ] ) ? $settings[ 'show_phrase' ] : null ); ?>" class="regular-text" />
-								<p class="description" id="tagline-description"><?php _e( 'The default phrase is "showme".', 'show-me-the-admin' ); ?></p>
+								<p class="description" id="tagline-description"><?php printf( __( 'The default phrase is "%s".', 'show-me-the-admin' ), SHOW_ME_THE_ADMIN_SHOW_PHRASE ); ?></p>
 							</td>
 						</tr>
 						<tr>
 							<td>
 								<label for="smta-hide-phrase"><strong><?php _e( 'Phrase to "hide" the admin bar', 'show-me-the-admin' ); ?></strong></label>
 								<input name="show_me_the_admin[hide_phrase]" type="text" id="smta-hide-phrase" value="<?php esc_attr_e( isset( $settings[ 'hide_phrase' ] ) ? $settings[ 'hide_phrase' ] : null ); ?>" class="regular-text" />
-								<p class="description" id="tagline-description"><?php _e( 'The default phrase is "hideme".', 'show-me-the-admin' ); ?></p>
+								<p class="description" id="tagline-description"><?php printf( __( 'The default phrase is "%s".', 'show-me-the-admin' ), SHOW_ME_THE_ADMIN_HIDE_PHRASE ); ?></p>
 							</td>
 						</tr>
 						<tr>
 							<td>
 								<fieldset>
 									<legend class="screen-reader-text"><span><?php _e( 'Enable the Login Button', 'show-me-the-admin' ); ?></span></legend>
-									<label for="smta-login-button"><input name="show_me_the_admin[enable_login_button]" type="checkbox" id="smta-login-button" value="1"<?php checked( isset( $settings[ 'enable_login_button' ] ) && $settings['enable_login_button'] == true ) ?>/> <?php _e( 'If not logged in, show a login button', 'show-me-the-admin' ); ?></label>
+									<label for="smta-login-button"><input name="show_me_the_admin[enable_login_button]" type="checkbox" id="smta-login-button" value="1"<?php checked( isset( $settings[ 'enable_login_button' ] ) && $settings['enable_login_button'] == true ) ?>/> <?php _e( 'If not logged in, show a login button instead of the admin bar', 'show-me-the-admin' ); ?></label>
 									<p class="description" id="tagline-description"><?php _e( 'If enabled, and not logged in, the "show" and "hide" phrase will reveal and hide a login button.', 'show-me-the-admin' ); ?></p>
 								</fieldset>
 							</td>
@@ -315,7 +316,7 @@ class Show_Me_The_Admin_Admin {
 	/**
 	 * Returns our straight-forward, not adjusted settings.
 	 *
-	 * @access  public
+	 * @access  private
 	 * @since   1.0.0
 	 * @param	boolean - $network - whether or not to retrieve network settings
 	 * @return  array - the settings

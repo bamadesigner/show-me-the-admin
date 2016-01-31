@@ -27,6 +27,8 @@ if ( ! defined( 'WPINC' ) ) {
 define( 'SHOW_ME_THE_ADMIN_VERSION', '1.0.0' );
 define( 'SHOW_ME_THE_ADMIN_PLUGIN_URL', 'https://wordpress.org/plugins/show-me-the-admin/' );
 define( 'SHOW_ME_THE_ADMIN_PLUGIN_FILE', 'show-me-the-admin/plugin.php' );
+define( 'SHOW_ME_THE_ADMIN_SHOW_PHRASE', 'showme' );
+define( 'SHOW_ME_THE_ADMIN_HIDE_PHRASE', 'hideme' );
 
 // We only need you in the admin
 if ( is_admin() ) {
@@ -177,8 +179,8 @@ class Show_Me_The_Admin {
 	 */
 	public function get_default_settings() {
 		return array(
-			'show_phrase' => 'showme',
-			'hide_phrase' => 'hideme',
+			'show_phrase' => SHOW_ME_THE_ADMIN_SHOW_PHRASE,
+			'hide_phrase' => SHOW_ME_THE_ADMIN_HIDE_PHRASE,
 			'enable_login_button' => true,
 		);
 	}
@@ -360,11 +362,11 @@ class Show_Me_The_Admin {
 		$localize = array();
 
 		// Add 'show_phrase'
-		$show_phrase = isset( $this->settings['show_phrase'] ) ? $this->get_phrase_keycode( $this->settings[ 'show_phrase' ] ) : 'showme';
+		$show_phrase = isset( $this->settings['show_phrase'] ) ? $this->get_phrase_keycode( $this->settings[ 'show_phrase' ] ) : SHOW_ME_THE_ADMIN_SHOW_PHRASE;
 		$localize['show_phrase'] = apply_filters( 'show_me_the_admin_show_phrase', $show_phrase );
 
 		// Add 'hide_phrase'
-		$hide_phrase = isset( $this->settings['hide_phrase'] ) ? $this->get_phrase_keycode( $this->settings[ 'hide_phrase' ] ) : 'hideme';
+		$hide_phrase = isset( $this->settings['hide_phrase'] ) ? $this->get_phrase_keycode( $this->settings[ 'hide_phrase' ] ) : SHOW_ME_THE_ADMIN_HIDE_PHRASE;
 		$localize['hide_phrase'] = apply_filters( 'show_me_the_admin_hide_phrase', $hide_phrase );
 
 		// Enqueue the script
