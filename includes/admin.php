@@ -165,8 +165,17 @@ class Show_Me_The_Admin_Admin {
 			// Enqueue our main styles
 			wp_enqueue_style( 'show-me-the-admin-settings', trailingslashit( plugin_dir_url( dirname( __FILE__ ) ) . 'css' ) . 'admin-settings.min.css', array(), SHOW_ME_THE_ADMIN_VERSION );
 
-			// Need this script for the meta boxes to work correctly on our settings page
+			// We only need this stuff on our settings page
 			if ( $hook_suffix == $this->settings_page_id ) {
+
+				// Enqueue select2
+				wp_enqueue_style( 'show-me-the-admin-select2', '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/css/select2.min.css' );
+				wp_enqueue_script( 'show-me-the-admin-select2', '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/js/select2.min.js', array( 'jquery' ) );
+
+				// Enqueue our settings script
+				wp_enqueue_script( 'show-me-the-admin-settings', trailingslashit( plugin_dir_url( dirname( __FILE__ ) ) . 'js' ) . 'show-me-the-admin-settings.min.js', array( 'jquery', 'show-me-the-admin-select2' ), SHOW_ME_THE_ADMIN_VERSION );
+
+				// Need these scripts for the meta boxes to work correctly on our settings page
 				wp_enqueue_script( 'post' );
 				wp_enqueue_script( 'postbox' );
 			}
@@ -308,16 +317,31 @@ class Show_Me_The_Admin_Admin {
 			// Users meta box
 			case 'the-users':
 
+				// Get the user roles
+				$user_roles = get_editable_roles();
+
 				// Print the users settings table
 				?><p style="margin-bottom:0;"><?php _e( 'Your users have the ability to customize, or even disable, this functionality by <a href="' . admin_url( 'profile.php#smta-user-profile-settings' ) . '">editing their user profile</a>.', 'show-me-the-admin' ); ?></p>
 				<table id="show-me-the-admin-user-settings" class="form-table show-me-the-admin-settings">
 					<tbody>
 						<tr>
 							<td>
+								<label for="smta-user-roles"><strong><?php _e( 'Enable for specific user roles', 'show-me-the-admin' ); ?></strong></label>
+								<select id="smta-user-roles" name="show_me_the_admin[user_roles][]" multiple="multiple">
+									<option value=""></option><?php
+									foreach( $user_roles as $user_role_key => $user_role ) {
+										?><option value="<?php echo $user_role_key; ?>"<?php selected( is_array( $metabox[ 'args' ][ 'site_settings' ][ 'user_roles' ] ) && in_array( $user_role_key, $metabox[ 'args' ][ 'site_settings' ][ 'user_roles' ] ) ); ?>><?php echo $user_role[ 'name' ]; ?></option><?php
+									}
+								?></select>
+								<p class="description"><?php _e( 'If left blank, will be enabled for all users.', 'show-me-the-admin' ); ?></p>
+							</td>
+						</tr>
+						<tr>
+							<td>
 								<fieldset>
 									<legend class="screen-reader-text"><span><?php _e( 'Provide A User Notice', 'show-me-the-admin' ); ?></span></legend>
 									<label for="smta-user-notice"><input name="show_me_the_admin[enable_user_notice]" type="checkbox" id="smta-user-notice" value="1"<?php checked( isset( $metabox[ 'args' ][ 'site_settings' ][ 'enable_user_notice' ] ) && $metabox[ 'args' ][ 'site_settings' ][ 'enable_user_notice' ] == true ) ?>/> <strong><?php _e( 'Provide an admin notice that will alert your users to this plugin\'s functionality', 'show-me-the-admin' ); ?></strong></label>
-									<p class="description" id="tagline-description"><?php _e( 'Otherwise, I imagine the hidden admin bar might cause confusion.', 'show-me-the-admin' ); ?></p>
+									<p class="description"><?php _e( 'Otherwise, I imagine the hidden admin bar might cause confusion.', 'show-me-the-admin' ); ?></p>
 								</fieldset>
 							</td>
 						</tr>
@@ -335,14 +359,14 @@ class Show_Me_The_Admin_Admin {
 							<td>
 								<label for="smta-show-phrase"><strong><?php _e( 'Phrase to "show" the admin bar', 'show-me-the-admin' ); ?></strong></label>
 								<input name="show_me_the_admin[show_phrase]" type="text" id="smta-show-phrase" value="<?php esc_attr_e( isset( $metabox[ 'args' ][ 'site_settings' ][ 'show_phrase' ] ) ? $metabox[ 'args' ][ 'site_settings' ][ 'show_phrase' ] : null ); ?>" placeholder="<?php esc_attr_e( $metabox[ 'args' ][ 'default_show_phrase' ] ); ?>" class="regular-text" />
-								<p class="description" id="tagline-description"><?php printf( __( 'If left blank, will use the default phrase "%s".', 'show-me-the-admin' ), $metabox[ 'args' ][ 'default_show_phrase' ] ); ?></p>
+								<p class="description"><?php printf( __( 'If left blank, will use the default phrase "%s".', 'show-me-the-admin' ), $metabox[ 'args' ][ 'default_show_phrase' ] ); ?></p>
 							</td>
 						</tr>
 						<tr>
 							<td>
 								<label for="smta-hide-phrase"><strong><?php _e( 'Phrase to "hide" the admin bar', 'show-me-the-admin' ); ?></strong></label>
 								<input name="show_me_the_admin[hide_phrase]" type="text" id="smta-hide-phrase" value="<?php esc_attr_e( isset( $metabox[ 'args' ][ 'site_settings' ][ 'hide_phrase' ] ) ? $metabox[ 'args' ][ 'site_settings' ][ 'hide_phrase' ] : null ); ?>" placeholder="<?php esc_attr_e( $metabox[ 'args' ][ 'default_hide_phrase' ] ); ?>"class="regular-text" />
-								<p class="description" id="tagline-description"><?php printf( __( 'If left blank, will use the default phrase "%s".', 'show-me-the-admin' ), $metabox[ 'args' ][ 'default_hide_phrase' ] ); ?></p>
+								<p class="description"><?php printf( __( 'If left blank, will use the default phrase "%s".', 'show-me-the-admin' ), $metabox[ 'args' ][ 'default_hide_phrase' ] ); ?></p>
 							</td>
 						</tr>
 						<tr>
@@ -350,7 +374,7 @@ class Show_Me_The_Admin_Admin {
 								<fieldset>
 									<legend class="screen-reader-text"><span><?php _e( 'Enable the Login Button', 'show-me-the-admin' ); ?></span></legend>
 									<label for="smta-login-button"><input name="show_me_the_admin[enable_login_button]" type="checkbox" id="smta-login-button" value="1"<?php checked( isset( $metabox[ 'args' ][ 'site_settings' ][ 'enable_login_button' ] ) && $metabox[ 'args' ][ 'site_settings' ][ 'enable_login_button' ] == true ) ?>/> <strong><?php _e( 'If not logged in, show a login button instead of the admin bar', 'show-me-the-admin' ); ?></strong></label>
-									<p class="description" id="tagline-description"><?php _e( 'If enabled, and not logged in, the "show" and "hide" phrase will reveal and hide a login button.', 'show-me-the-admin' ); ?></p>
+									<p class="description"><?php _e( 'If enabled, and not logged in, the "show" and "hide" phrase will reveal and hide a login button.', 'show-me-the-admin' ); ?></p>
 								</fieldset>
 							</td>
 						</tr>
@@ -445,7 +469,7 @@ class Show_Me_The_Admin_Admin {
 	private function get_settings( $network = false ) {
 
 		// Get settings
-		$settings = $network ? get_site_option( 'show_me_the_admin', array( 'enable_user_notice' => true, 'enable_login_button' => true ) ) : get_option( 'show_me_the_admin', array( 'enable_user_notice' => true, 'enable_login_button' => true ) );
+		$settings = $network ? get_site_option( 'show_me_the_admin', array( 'user_roles' => array( 'administrator' ), 'enable_user_notice' => true, 'enable_login_button' => true ) ) : get_option( 'show_me_the_admin', array( 'user_roles' => array( 'administrator' ), 'enable_user_notice' => true, 'enable_login_button' => true ) );
 
 		// Make sure its an array
 		if ( empty( $settings ) ) {
@@ -577,7 +601,7 @@ class Show_Me_The_Admin_Admin {
 							<fieldset>
 								<legend class="screen-reader-text"><span><?php _e( 'Disable Show Me The Admin', 'show-me-the-admin' ); ?></span></legend>
 								<label for="smta-disable"><input name="show_me_the_admin[disable]" type="checkbox" id="smta-disable" value="1"<?php checked( $user_disable ) ?>/> <strong><?php _e( 'I wish to disable this functionality', 'show-me-the-admin' ); ?></strong></label>
-								<p class="description" id="tagline-description"><?php _e( "It's ok. It's not for everyone.", 'show-me-the-admin' ); ?></p>
+								<p class="description"><?php _e( "It's ok. It's not for everyone.", 'show-me-the-admin' ); ?></p>
 							</fieldset>
 						</td>
 					</tr>
@@ -585,14 +609,14 @@ class Show_Me_The_Admin_Admin {
 						<td>
 							<label for="smta-show-phrase"><strong><?php _e( 'Phrase to "show" the admin bar', 'show-me-the-admin' ); ?></strong></label>
 							<input name="show_me_the_admin[show_phrase]" type="text" id="smta-show-phrase" value="<?php esc_attr_e( isset( $user_settings[ 'show_phrase' ] ) ? $user_settings[ 'show_phrase' ] : null ); ?>" placeholder="<?php esc_attr_e( $default_show_phrase ); ?>" class="regular-text" />
-							<p class="description" id="tagline-description"><?php printf( __( 'If left blank, will use your site\'s default phrase "%s".', 'show-me-the-admin' ), $default_show_phrase ); ?></p>
+							<p class="description"><?php printf( __( 'If left blank, will use your site\'s default phrase "%s".', 'show-me-the-admin' ), $default_show_phrase ); ?></p>
 						</td>
 					</tr>
 					<tr>
 						<td>
 							<label for="smta-hide-phrase"><strong><?php _e( 'Phrase to "hide" the admin bar', 'show-me-the-admin' ); ?></strong></label>
 							<input name="show_me_the_admin[hide_phrase]" type="text" id="smta-hide-phrase" value="<?php esc_attr_e( isset( $user_settings[ 'hide_phrase' ] ) ? $user_settings[ 'hide_phrase' ] : null ); ?>" placeholder="<?php esc_attr_e( $default_hide_phrase ); ?>" class="regular-text" />
-							<p class="description" id="tagline-description"><?php printf( __( 'If left blank, will use your site\'s default phrase "%s".', 'show-me-the-admin' ), $default_hide_phrase ); ?></p>
+							<p class="description"><?php printf( __( 'If left blank, will use your site\'s default phrase "%s".', 'show-me-the-admin' ), $default_hide_phrase ); ?></p>
 						</td>
 					</tr>
 				</tbody>
@@ -639,7 +663,7 @@ class Show_Me_The_Admin_Admin {
 		// Show the users settings notice
 		if ( $smta_users_setting_notice ) {
 			?><div id="smta-users-setting-notice" class="updated notice is-dismissible">
-				<p><?php _e( 'Thanks for installing "Show Me The Admin". Be sure to <a href="' . $this->settings_page_url . '">explore the settings</a> to customize your phrases and functionality for your users.', 'show-me-the-admin' ); ?></p>
+				<p><?php _e( 'Thank you for installing "Show Me The Admin". Be sure to <a href="' . $this->settings_page_url . '">explore the settings</a> to customize your phrases and functionality for your users.', 'show-me-the-admin' ); ?></p>
 			</div><?php
 		}
 

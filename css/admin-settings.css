@@ -43,6 +43,10 @@
   padding: 10px 0;
 }
 
+#smta-user-roles {
+  width: 100%;
+}
+
 @media screen and (min-width: 600px) {
   #show-me-the-admin-user-profile input.regular-text {
     width: 80%;
