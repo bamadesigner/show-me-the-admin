@@ -2,7 +2,7 @@
 
 /**
  * Plugin Name:       Show Me The Admin
- * Plugin URI:        https://github.com/bamadesigner/show-me-the-admin
+ * Plugin URI:        https://wordpress.org/plugins/show-me-the-admin/
  * Description:       Hides your admin toolbar and enables you to make it appear, and disappear, by typing a specific phrase.
  * Version:           1.0.0
  * Author:            Rachel Carden
@@ -13,8 +13,6 @@
  * Domain Path:       /languages
  */
 
-// @TODO will need a way to let users know about functionality and allow them to enable/disable/setup their phrases
-// @TODO make sure we delete settings when plugin is deleted
 // @TODO add a link to or embed a demo video to help users understand functionality
 
 // If this file is called directly, abort.
@@ -105,6 +103,9 @@ class Show_Me_The_Admin {
 		// Runs on install
 		register_activation_hook( __FILE__, array( $this, 'install' ) );
 
+		// Runs on uninstall
+		register_uninstall_hook( __FILE__, array( $this, 'uninstall' ) );
+
 		// Runs when the plugin is upgraded
 		add_action( 'upgrader_process_complete', array( $this, 'upgrader_process_complete' ), 1, 2 );
 
@@ -147,6 +148,29 @@ class Show_Me_The_Admin {
 
 		// Add this option so we know who enabled the plugin and should get the
 		add_user_meta( get_current_user_id(), 'show_me_the_admin_activated_user', time(), true );
+
+	}
+
+	/**
+	 * Runs when the plugin is uninstalled.
+	 *
+	 * @access  public
+	 * @since   1.0.0
+	 */
+	public function uninstall() {
+		global $wpdb;
+
+		// Delete the options
+		delete_option( 'show_me_the_admin' );
+		delete_site_option( 'show_me_the_admin' );
+
+		// Delete all user meta
+		$wpdb->delete( $wpdb->usermeta, array(
+			'meta_key' => 'show_me_the_admin',
+			'meta_key' => 'show_me_the_admin_activated_user',
+			'meta_key' => 'show_me_the_admin_users_setting_notice',
+			'meta_key' => 'show_me_the_admin_user_notice',
+		));
 
 	}
 
