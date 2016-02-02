@@ -84,8 +84,7 @@ class Show_Me_The_Admin_Admin {
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
 
 		// Add user profile settings
-		add_action( 'show_user_profile', array( $this, 'add_user_profile_settings' ), 0 );
-		add_action( 'edit_user_profile', array( $this, 'add_user_profile_settings' ), 0 );
+		add_action( 'profile_personal_options', array( $this, 'add_user_profile_settings' ), 0 );
 
 		// Save user profile settings
 		add_action( 'personal_options_update', array( $this, 'save_user_profile_settings' ), 0 );
@@ -467,7 +466,7 @@ class Show_Me_The_Admin_Admin {
 		$user_disable = isset( $user_settings[ 'disable' ] ) && $user_settings['disable'] == true;
 
 		?><div id="show-me-the-admin-user-profile-area">
-			<h2><?php _e( 'Show Me The Admin', 'show-me-the-admin' ); ?></h2>
+			<h2><?php _e( 'Show Me The Admin Toolbar', 'show-me-the-admin' ); ?></h2>
 			<p><?php _e( 'This functionality hides your admin toolbar and enables you to make it appear, and disappear, by typing a specific phrase. You can use the phrases issued by your site administrator or you can use this setting to customize your own. <strong><em>Your "Show Toolbar when viewing site" setting must be enabled.</em></strong>', 'show-me-the-admin' ); ?></p>
 			<table id="show-me-the-admin-user-profile" class="form-table show-me-the-admin-settings">
 				<tbody>
@@ -476,7 +475,7 @@ class Show_Me_The_Admin_Admin {
 							<fieldset>
 								<legend class="screen-reader-text"><span><?php _e( 'Disable Show Me The Admin', 'show-me-the-admin' ); ?></span></legend>
 								<label for="smta-disable"><input name="show_me_the_admin[disable]" type="checkbox" id="smta-disable" value="1"<?php checked( $user_disable ) ?>/> <strong><?php _e( 'I wish to disable this functionality.', 'show-me-the-admin' ); ?></strong></label>
-								<p class="description" id="tagline-description"><?php _e( "It's not for everyone.", 'show-me-the-admin' ); ?></p>
+								<p class="description" id="tagline-description"><?php _e( "It's ok. It's not for everyone.", 'show-me-the-admin' ); ?></p>
 							</fieldset>
 						</td>
 					</tr>
