@@ -475,6 +475,9 @@ class Show_Me_The_Admin_Admin {
 				// Validate the settings
 				$settings = $this->validate_settings( $settings );
 
+				// Make sure we don't show these notices since they've saved settings
+				$this->add_users_setting_notice();
+
 				// Update settings
 				update_site_option( 'show_me_the_admin', $settings );
 
@@ -506,6 +509,9 @@ class Show_Me_The_Admin_Admin {
 
 		// Validate the settings
 		$settings = $this->validate_settings( $settings );
+
+		// Make sure we don't show these notices since they've saved settings
+		$this->add_users_setting_notice();
 
 		// Return the validated settings
 		return $settings;
@@ -613,6 +619,9 @@ class Show_Me_The_Admin_Admin {
 
 		// Update the user meta
 		update_user_meta( $user_id, 'show_me_the_admin', $show_me_the_admin );
+
+		// Make sure we don't show these notices since they've saved settings
+		$this->add_user_notice();
 
 	}
 
