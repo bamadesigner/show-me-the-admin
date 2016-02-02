@@ -27,15 +27,15 @@
   width: 100%;
 }
 
-#show-me-the-admin-user-profile-area {
+#smta-user-profile-settings {
   background: rgba(0, 0, 0, 0.04);
   padding: 20px;
   margin: 1em 0;
 }
-#show-me-the-admin-user-profile-area *:first-child {
+#smta-user-profile-settings *:first-child {
   margin-top: 0;
 }
-#show-me-the-admin-user-profile-area *:last-child {
+#smta-user-profile-settings *:last-child {
   margin-bottom: 0;
 }
 
