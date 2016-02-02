@@ -639,7 +639,7 @@ class Show_Me_The_Admin_Admin {
 		// Show the users settings notice
 		if ( $smta_users_setting_notice ) {
 			?><div id="smta-users-setting-notice" class="updated notice is-dismissible">
-				<p><?php _e( 'Thanks for installing "Show Me The Admin". Be sure to <a href="' . $this->settings_page_url . '">explore the settings</a> to customize your phrases and set things up for your users.', 'show-me-the-admin' ); ?></p>
+				<p><?php _e( 'Thanks for installing "Show Me The Admin". Be sure to <a href="' . $this->settings_page_url . '">explore the settings</a> to customize your phrases and functionality for your users.', 'show-me-the-admin' ); ?></p>
 			</div><?php
 		}
 

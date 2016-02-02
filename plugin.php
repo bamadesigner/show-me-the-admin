@@ -79,11 +79,11 @@ class Show_Me_The_Admin {
 	 * @return	Show_Me_The_Admin
 	 */
 	public static function instance() {
-		if ( ! isset( static::$instance ) ) {
+		if ( ! isset( self::$instance ) ) {
 			$className = __CLASS__;
-			static::$instance = new $className;
+			self::$instance = new $className;
 		}
-		return static::$instance;
+		return self::$instance;
 	}
 
 	/**
@@ -208,8 +208,8 @@ class Show_Me_The_Admin {
 	public function get_settings() {
 
 		// If already set, return the settings
-		if ( isset( static::$settings ) ) {
-			return static::$settings;
+		if ( isset( self::$settings ) ) {
+			return self::$settings;
 		}
 
 		// Get site settings
@@ -256,7 +256,7 @@ class Show_Me_The_Admin {
 		}
 
 		// Store the settings
-		return static::$settings = apply_filters( 'show_me_the_admin_settings', $site_settings );
+		return self::$settings = apply_filters( 'show_me_the_admin_settings', $site_settings );
 	}
 
 	/**
