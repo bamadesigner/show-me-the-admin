@@ -3,7 +3,7 @@
 /**
  * Plugin Name:       Show Me The Admin
  * Plugin URI:        https://wordpress.org/plugins/show-me-the-admin/
- * Description:       Hides your admin toolbar and enables you to make it appear, and disappear, by typing a specific phrase.
+ * Description:       Hides your admin toolbar and enables you to make it appear, and disappear, using a variety of methods.
  * Version:           1.0.0
  * Author:            Rachel Carden
  * Author URI:        https://bamadesigner.com
@@ -54,7 +54,25 @@ class Show_Me_The_Admin {
 	public $user_wants_admin_bar;
 
 	/**
+	 * Will hold the plugin's unmodified settings.
+	 *
+	 * @since	1.0.0
+	 * @access	private
+	 * @var		array
+	 */
+	private static $unmodified_settings;
+
+	/**
 	 * Will hold the user's settings.
+	 *
+	 * @since	1.0.0
+	 * @access	private
+	 * @var		array
+	 */
+	private static $user_settings;
+
+	/**
+	 * Will hold the plugin's settings.
 	 *
 	 * @since	1.0.0
 	 * @access	private
@@ -89,7 +107,7 @@ class Show_Me_The_Admin {
 	/**
 	 * Warming things up.
 	 *
-	 * @access  public
+	 * @access  protected
 	 * @since   1.0.0
 	 */
 	protected function __construct() {
@@ -170,6 +188,49 @@ class Show_Me_The_Admin {
 	}
 
 	/**
+	 * Returns the plugin's default settings.
+	 *
+	 * @access  public
+	 * @since   1.0.0
+	 * @return  array - the settings
+	 */
+	public function get_default_settings() {
+		return array( 'features' => array( 'keyphrase', 'button' ), 'user_roles' => array( 'administrator' ), 'enable_user_notice' => true, 'enable_login_button' => true );
+	}
+
+	/**
+	 * Returns our straight-forward, unmodified settings.
+	 *
+	 * @access  public
+	 * @since   1.0.0
+	 * @param	boolean - $network - whether or not to retrieve network settings
+	 * @return  array - the settings
+	 */
+	public function get_unmodified_settings( $network = false ) {
+
+		// If already set, return the settings
+		if ( $network && isset( self::$unmodified_settings[ 'network' ] ) ) {
+			return self::$unmodified_settings[ 'network' ];
+		} else if ( isset( self::$unmodified_settings[ 'site' ] ) ) {
+			return self::$unmodified_settings[ 'site' ];
+		}
+
+		// Get default settings
+		$default_settings = $this->get_default_settings();
+
+		// Get settings
+		$unmodified_settings = $network ? get_site_option( 'show_me_the_admin', $default_settings ) : get_option( 'show_me_the_admin', $default_settings );
+
+		// Make sure its an array
+		if ( empty( $unmodified_settings ) ) {
+			$unmodified_settings = array();
+		}
+
+		// Store the settings
+		return self::$unmodified_settings[ $network ? 'network' : 'site' ] = $unmodified_settings;
+	}
+
+	/**
 	 * Returns a user's settings. If no user ID
 	 * is passed, gets settings for current user.
 	 *
@@ -180,20 +241,41 @@ class Show_Me_The_Admin {
 	 */
 	public function get_user_settings( $user_id = 0 ) {
 
+		// If already set, return the settings
+		if ( isset( self::$user_settings ) ) {
+			return self::$user_settings;
+		}
+
 		// Make sure we have a valid user iD
 		if ( ! $user_id ) {
 			$user_id = get_current_user_id();
 		}
 
-		// Get the user settings
-		$user_settings = $user_id > 0 ? get_user_meta( $user_id, 'show_me_the_admin', true ) : array();
+		// Get the user meta
+		$user_meta = $user_id > 0 ? get_user_meta( $user_id, 'show_me_the_admin', true ) : false;
 
-		// Make sure its an array
-		if ( empty( $user_settings ) ) {
-			$user_settings = array();
+		// If array, we're good to go
+		if ( is_array( $user_meta ) ) {
+
+			// Store the settings
+			return self::$user_settings = $user_meta;
+
 		}
 
-		return $user_settings;
+		// Get site settings
+		$site_settings = $this->get_unmodified_settings();
+
+		// If network active, merge with network settings
+		if ( $this->is_network_active ) {
+
+			// Merge site with network settings
+			$site_settings = wp_parse_args( $site_settings, $this->get_unmodified_settings( true ) );
+
+		}
+
+		// If not array, it means they haven't been saved before so provide defaults
+		// Store the settings
+		return self::$user_settings = array( 'features' => isset( $site_settings[ 'features' ] ) ? $site_settings[ 'features' ] : '' );
 	}
 
 	/**
@@ -213,7 +295,7 @@ class Show_Me_The_Admin {
 		}
 
 		// Get site settings
-		$site_settings = get_option( 'show_me_the_admin', array() );
+		$site_settings = $this->get_unmodified_settings();
 
 		// Make sure its an array
 		if ( empty( $site_settings ) ) {
@@ -224,7 +306,7 @@ class Show_Me_The_Admin {
 		if ( $this->is_network_active ) {
 
 			// Get network settings
-			$network_settings = get_site_option( 'show_me_the_admin', array() );
+			$network_settings = $this->get_unmodified_settings( true );
 
 			// Make sure its an array
 			if ( empty( $network_settings ) ) {
@@ -250,6 +332,11 @@ class Show_Me_The_Admin {
 			// Remove empty values for merging
 			$site_settings = array_filter( $site_settings );
 			$user_settings = array_filter( $user_settings );
+
+			// If features isnt set, its because they don't want any so set them blank
+			if ( ! isset( $user_settings[ 'features' ] ) ) {
+				$user_settings[ 'features' ] = array();
+			}
 
 			// Merge site with user settings
 			$site_settings = wp_parse_args( $user_settings, $site_settings );
@@ -380,6 +467,11 @@ class Show_Me_The_Admin {
 		// Get the settings
 		$settings = $this->get_settings();
 
+		// Make sure we have at least one feature enabled
+		if ( ! ( isset( $settings[ 'features' ] ) && ! empty( $settings[ 'features' ] ) ) ) {
+			return;
+		}
+
 		// If logged in...
 		if ( is_user_logged_in() ) {
 
@@ -388,7 +480,7 @@ class Show_Me_The_Admin {
 				return;
 			}
 
-			// Don't add if the user doesn't want the functionality
+			// Don't add if the user is disabled
 			if ( isset( $settings[ 'disable' ] ) && $settings[ 'disable' ] == true ) {
 				return;
 			}
@@ -406,15 +498,23 @@ class Show_Me_The_Admin {
 		}
 
 		// Build our data array
-		$localize = array();
+		$localize = array( 'features' => $settings[ 'features' ] );
 
-		// Add 'show_phrase'
-		$show_phrase = isset( $settings[ 'show_phrase' ] ) ? $this->get_phrase_keycode( $settings[ 'show_phrase' ] ) : $this->get_phrase_keycode( SHOW_ME_THE_ADMIN_SHOW_PHRASE );
-		$localize[ 'show_phrase' ] = apply_filters( 'show_me_the_admin_show_phrase', $show_phrase );
+		// If keyphrase is enabled, add settings
+		if ( in_array( 'keyphrase', $settings[ 'features' ] ) ) {
 
-		// Add 'hide_phrase'
-		$hide_phrase = isset( $settings[ 'hide_phrase' ] ) ? $this->get_phrase_keycode( $settings[ 'hide_phrase' ] ) : $this->get_phrase_keycode( SHOW_ME_THE_ADMIN_HIDE_PHRASE );
-		$localize[ 'hide_phrase' ] = apply_filters( 'show_me_the_admin_hide_phrase', $hide_phrase );
+			// Add 'show_phrase'
+			$show_phrase = isset( $settings[ 'show_phrase' ] ) && ! empty( $settings[ 'show_phrase' ] ) ? $this->get_phrase_keycode( $settings[ 'show_phrase' ] ) : $this->get_phrase_keycode( SHOW_ME_THE_ADMIN_SHOW_PHRASE );
+			$localize[ 'show_phrase' ] = apply_filters( 'show_me_the_admin_show_phrase', $show_phrase );
+
+			// Add 'hide_phrase'
+			$hide_phrase = isset( $settings[ 'hide_phrase' ] ) && ! empty( $settings[ 'hide_phrase' ] ) ? $this->get_phrase_keycode( $settings[ 'hide_phrase' ] ) : $this->get_phrase_keycode( SHOW_ME_THE_ADMIN_HIDE_PHRASE );
+			$localize[ 'hide_phrase' ] = apply_filters( 'show_me_the_admin_hide_phrase', $hide_phrase );
+
+		}
+
+		// Enqueue the style
+		wp_enqueue_style( 'show-me-the-admin', trailingslashit( plugin_dir_url( __FILE__ ) . 'css' ) . 'show-me-the-admin.min.css', array(), SHOW_ME_THE_ADMIN_VERSION );
 
 		// Enqueue the script
 		wp_enqueue_script( 'show-me-the-admin', trailingslashit( plugin_dir_url( __FILE__ ) . 'js' ) . 'show-me-the-admin.min.js', array( 'jquery' ), SHOW_ME_THE_ADMIN_VERSION, true );
@@ -426,23 +526,6 @@ class Show_Me_The_Admin {
 		?><style type="text/css" media="screen">
 			#wpadminbar, #wpadminbar.hidden { display:none; }
 			html.hide-show-me-the-admin-bar, * html.hide-show-me-the-admin-bar body { margin-top: 0 !important; }
-			#show-me-the-admin-login{
-				background: #23282d;
-				width: 100%;
-				height: 32px;
-				color: #fff;
-				font-weight: 400;
-				font-size: 15px;
-				line-height: 32px;
-				position: fixed;
-				top: 0;
-				left: 0;
-				z-index: 99999;
-				text-align: center;
-				text-transform: uppercase;
-				text-decoration: none;
-			}
-			#show-me-the-admin-login:hover{background:#21759b;}
 		</style>
 		<script type="text/javascript">
 			document.documentElement.className = 'hide-show-me-the-admin-bar';
@@ -462,24 +545,58 @@ class Show_Me_The_Admin {
 		// Get the settings
 		$settings = $this->get_settings();
 
-		// Don't print if the user is logged in or the admin bar is showing
-		if ( is_user_logged_in() || is_admin_bar_showing() ) {
+		// Make sure we have at least one feature enabled
+		if ( ! ( isset( $settings[ 'features' ] ) && ! empty( $settings[ 'features' ] ) ) ) {
 			return;
 		}
 
-		// Don't print if not logged in and the login button is not enabled
-		if ( ! ( isset( $settings[ 'enable_login_button' ] ) && $settings[ 'enable_login_button' ] == true ) ) {
-			return;
+		// If logged in...
+		if ( is_user_logged_in() ) {
+
+			// Don't add if the user doesn't want the admin bar
+			if ( ! $this->user_wants_admin_bar ) {
+				return;
+			}
+
+			// Don't add if the user is disabled
+			if ( isset( $settings[ 'disable' ] ) && $settings[ 'disable' ] == true ) {
+				return;
+			}
+
+			// If the button feature is enabled, we need to add the button
+			if ( in_array( 'button', $settings[ 'features' ] ) ) {
+				?><div id="show-me-the-admin-button"></div><?php
+			}
+
+			// If the hover feature is enabled, we need an element to tie it to
+			if ( in_array( 'hover', $settings[ 'features' ] ) ) {
+				?><div id="show-me-the-admin-hover"></div><?php
+			}
+
 		}
 
-		// Print the login button with redirect
-		$login_redirect = isset( $_SERVER[ 'REQUEST_URI' ] ) ? $_SERVER[ 'REQUEST_URI' ] : null;
+		// If not logged in...
+		else {
 
-		// Set the button label
-		$login_label = apply_filters( 'show_me_the_admin_login_text', __( 'Login to WordPress', 'show-me-the-admin' ) );
+			// Do we want to show the login button?
+			// Don't show the login button if for some reason the admin bar is showing
+			$show_login_button = ! is_admin_bar_showing() && isset( $settings[ 'enable_login_button' ] ) && $settings[ 'enable_login_button' ] == true;
 
-		// Print the button
-		?><a id="show-me-the-admin-login" href="<?php echo wp_login_url( site_url( $login_redirect ) ); ?>"><?php echo $login_label; ?></a><?php
+			// Show the login button
+			if ( $show_login_button ) {
+
+				// Print the login button with redirect
+				$login_redirect = isset( $_SERVER[ 'REQUEST_URI' ] ) ? $_SERVER[ 'REQUEST_URI' ] : null;
+
+				// Set the button label
+				$login_label = apply_filters( 'show_me_the_admin_login_text', __( 'Login to WordPress', 'show-me-the-admin' ) );
+
+				// Print the button
+				?><a id="show-me-the-admin-login" href="<?php echo wp_login_url( site_url( $login_redirect ) ); ?>"><?php echo $login_label; ?></a><?php
+
+			}
+
+		}
 
 	}
 

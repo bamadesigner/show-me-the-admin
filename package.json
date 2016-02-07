@@ -1,7 +1,7 @@
 {
   "name": "show-me-the-admin",
   "version": "1.0.0",
-  "description": "Hides your admin toolbar and enables you to make it appear, and disappear, by typing a specific phrase.",
+  "description": "Hides your admin toolbar and enables you to make it appear, and disappear, using a variety of methods.",
   "author": "Rachel Carden",
   "license": "GPL-2.0+",
   "devDependencies": {

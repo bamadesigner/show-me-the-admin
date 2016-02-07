@@ -2,9 +2,13 @@
 
 The WordPress admin bar makes it really easy to move back and forth between viewing your site and editing your site but sometimes the toolbar itself can be intrusive. When you need it, you need it, but sometimes you wish it would go away, especially when testing out different designs.
 
-"Show Me The Admin" is a WordPress plugin that hides your toolbar and enables you to make it appear, and disappear, at will by typing a specific phrase.
+"Show Me The Admin" is a WordPress plugin that hides your toolbar and enables you to make it appear, and disappear, using a variety of methods.
 
-By default, type 'showme' to show the admin bar and 'hideme' to hide it. These phrases can be changed in your settings.
+**Features include:**
+
+* Hide your toolbar and make it appear by typing a phrase
+* Hide your toolbar and place WordPress button in top left corner to click to appear
+* Hide your toolbar and make it appear when mouse hovers near top of window
 
 **Show Me The Admin is also multisite-friendly.**
 
@@ -26,10 +30,10 @@ Show Me The Admin has filters setup to allow you to tweak the plugin.
 
         // Change the settings
 
-        // For example, change the phrase to show the admin bar, default is 'showme'
+        // For example, change the phrase you type to show the admin bar, default is 'showme'
         $settings[ 'show_phrase' ] = 'hello';
 
-        // Or change the phrase to hide the admin bar, default is 'hideme'
+        // Or change the phrase you type to hide the admin bar, default is 'hideme'
         $settings[ 'hide_phrase' ] = 'goodbye';
 
         // Return the settings

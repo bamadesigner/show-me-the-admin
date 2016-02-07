@@ -32,12 +32,36 @@ class Show_Me_The_Admin_Admin {
 	public $settings_page_id;
 
 	/**
-	 * Takes care of admin shenanigans.
+	 * Holds the class instance.
+	 *
+	 * @since	1.0.0
+	 * @access	private
+	 * @var		Show_Me_The_Admin_Admin
+	 */
+	private static $instance;
+
+	/**
+	 * Returns the instance of this class.
 	 *
 	 * @access  public
 	 * @since   1.0.0
+	 * @return	Show_Me_The_Admin_Admin
 	 */
-	public function __construct() {
+	public static function instance() {
+		if ( ! isset( self::$instance ) ) {
+			$className = __CLASS__;
+			self::$instance = new $className;
+		}
+		return self::$instance;
+	}
+
+	/**
+	 * Takes care of admin shenanigans.
+	 *
+	 * @access  protected
+	 * @since   1.0.0
+	 */
+	protected function __construct() {
 
 		// Lets us know if we're dealing with a multisite and in the network admin
 		if ( is_multisite() && is_network_admin() ) {
@@ -98,6 +122,24 @@ class Show_Me_The_Admin_Admin {
 		add_action( 'wp_ajax_smta_add_user_notice', array( $this, 'smta_add_user_notice' ) );
 
 	}
+
+	/**
+	 * Method to keep our instance from being cloned.
+	 *
+	 * @since	1.0.0
+	 * @access	private
+	 * @return	void
+	 */
+	private function __clone() {}
+
+	/**
+	 * Method to keep our instance from being unserialized.
+	 *
+	 * @since	1.0.0
+	 * @access	private
+	 * @return	void
+	 */
+	private function __wakeup() {}
 
 	/**
 	 * Add our own plugin action links.
@@ -218,7 +260,7 @@ class Show_Me_The_Admin_Admin {
 			else {
 
 				// Get the settings
-				$site_settings = $this->get_settings();
+				$site_settings = show_me_the_admin()->get_unmodified_settings();
 
 				// Disable if the user role isn't allowed
 				$user = get_userdata( $current_user_id );
@@ -270,7 +312,7 @@ class Show_Me_The_Admin_Admin {
 	public function add_settings_meta_boxes() {
 
 		// Get our settings
-		$site_settings = $this->get_settings( $this->is_network_admin );
+		$site_settings = show_me_the_admin()->get_unmodified_settings( $this->is_network_admin );
 
 		// Set the default phrases
 		$default_show_phrase = SHOW_ME_THE_ADMIN_SHOW_PHRASE;
@@ -280,7 +322,7 @@ class Show_Me_The_Admin_Admin {
 		if ( show_me_the_admin()->is_network_active ) {
 
 			// Get network settings
-			$network_settings = $this->get_settings( true );
+			$network_settings = show_me_the_admin()->get_unmodified_settings( true );
 
 			// Set the default phrases
 			$default_show_phrase = ! empty( $network_settings[ 'show_phrase' ] ) ? $network_settings[ 'show_phrase' ] : $default_show_phrase;
@@ -301,7 +343,7 @@ class Show_Me_The_Admin_Admin {
 		add_meta_box( 'show-me-the-admin-users-mb', __( 'The Users', 'show-me-the-admin' ), array( $this, 'print_settings_meta_boxes' ), $this->settings_page_id, 'normal', 'core', array( 'id' => 'users', 'site_settings' => $site_settings ) );
 
 		// The Settings
-		add_meta_box( 'show-me-the-admin-settings-mb', __( 'The Settings', 'show-me-the-admin' ), array( $this, 'print_settings_meta_boxes' ), $this->settings_page_id, 'normal', 'core', array( 'id' => 'settings', 'site_settings' => $site_settings, 'default_show_phrase' => $default_show_phrase, 'default_hide_phrase' => $default_hide_phrase ) );
+		add_meta_box( 'show-me-the-admin-settings-mb', __( 'Settings For Feature #1 - Hide toolbar and make it appear by typing a phrase', 'show-me-the-admin' ), array( $this, 'print_settings_meta_boxes' ), $this->settings_page_id, 'normal', 'core', array( 'id' => 'settings-feature-1', 'site_settings' => $site_settings, 'default_show_phrase' => $default_show_phrase, 'default_hide_phrase' => $default_hide_phrase ) );
 
 	}
 
@@ -319,7 +361,7 @@ class Show_Me_The_Admin_Admin {
 
 			// About meta box
 			case 'about-plugin':
-				?><p><?php _e( 'Hides your admin toolbar and enables you to make it appear, and disappear, by typing a specific phrase.', 'show-me-the-admin' ); ?></p>
+				?><p><?php _e( 'Hides your admin toolbar and enables you to make it appear, and disappear, using a variety of methods.', 'show-me-the-admin' ); ?></p>
 				<p><strong><a href="<?php echo SHOW_ME_THE_ADMIN_PLUGIN_URL; ?>" target="_blank"><?php _e( 'Show Me The Admin', 'show-me-the-admin' ); ?></a></strong><br />
 				<strong><?php _e( 'Version', 'show-me-the-admin' ); ?>:</strong> <?php echo SHOW_ME_THE_ADMIN_VERSION; ?><br /><strong><?php _e( 'Author', 'show-me-the-admin' ); ?>:</strong> <a href="http://bamadesigner.com/" target="_blank">Rachel Carden</a></p><?php
 				break;
@@ -334,7 +376,7 @@ class Show_Me_The_Admin_Admin {
 			// Features meta box
 			case 'features':
 
-				// Set the feature settings
+				// Get the features settings
 				$features = isset( $metabox[ 'args' ][ 'site_settings' ][ 'features' ] ) ? $metabox[ 'args' ][ 'site_settings' ][ 'features' ] : array();
 
 				// Print the features table
@@ -345,10 +387,19 @@ class Show_Me_The_Admin_Admin {
 								<fieldset>
 									<legend><strong><?php _e( 'What features would you like to enable?', 'show-me-the-admin' ); ?></strong></legend>
 									<div class="smta-choices vertical">
-										<label><input type="checkbox" name="show_me_the_admin[features][]" value="keyphrase"<?php checked( isset( $features ) && is_array( $features ) && in_array( 'keyphrase', $features ) ); ?> /> <?php _e( 'Hide toolbar and make it appear by typing a phrase', 'show-me-the-admin' ); ?></label>
-										<label><input type="checkbox" name="show_me_the_admin[features][]" value="button"<?php checked( isset( $features ) && is_array( $features ) && in_array( 'button', $features ) ); ?> /> <?php _e( 'Hide toolbar and place WordPress button in top left corner to click to appear', 'show-me-the-admin' ); ?></label>
-										<label><input type="checkbox" name="show_me_the_admin[features][]" value="hover"<?php checked( isset( $features ) && is_array( $features ) && in_array( 'hover', $features ) ); ?> /> <?php _e( 'Hide toolbar and make it appear when mouse hovers near top of window', 'show-me-the-admin' ); ?></label>
+										<label><?php _e( '#1', 'show-me-the-admin' ); ?> - <input type="checkbox" name="show_me_the_admin[features][]" value="keyphrase"<?php checked( isset( $features ) && is_array( $features ) && in_array( 'keyphrase', $features ) ); ?> /> <?php _e( 'Hide toolbar and make it appear by typing a phrase (<em>customize the phrases under Settings</em>)', 'show-me-the-admin' ); ?></label>
+										<label><?php _e( '#2', 'show-me-the-admin' ); ?> - <input type="checkbox" name="show_me_the_admin[features][]" value="button"<?php checked( isset( $features ) && is_array( $features ) && in_array( 'button', $features ) ); ?> /> <?php _e( 'Hide toolbar and place WordPress button in top left corner to click to appear', 'show-me-the-admin' ); ?></label>
+										<label><?php _e( '#3', 'show-me-the-admin' ); ?> - <input type="checkbox" name="show_me_the_admin[features][]" value="hover"<?php checked( isset( $features ) && is_array( $features ) && in_array( 'hover', $features ) ); ?> /> <?php _e( 'Hide toolbar and make it appear when mouse hovers near top of window', 'show-me-the-admin' ); ?></label>
 									</div>
+								</fieldset>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<fieldset>
+									<legend class="screen-reader-text"><span><?php _e( 'Enable the Login Button', 'show-me-the-admin' ); ?></span></legend>
+									<label for="smta-login-button"><input name="show_me_the_admin[enable_login_button]" type="checkbox" id="smta-login-button" value="1"<?php checked( isset( $metabox[ 'args' ][ 'site_settings' ][ 'enable_login_button' ] ) && $metabox[ 'args' ][ 'site_settings' ][ 'enable_login_button' ] == true ) ?>/> <strong><?php _e( 'If not logged in, show a login button instead of the admin bar', 'show-me-the-admin' ); ?></strong></label>
+									<p class="description"><?php _e( 'If enabled, and not logged in, these features will reveal a login button.', 'show-me-the-admin' ); ?></p>
 								</fieldset>
 							</td>
 						</tr>
@@ -363,7 +414,7 @@ class Show_Me_The_Admin_Admin {
 				$user_roles = get_editable_roles();
 
 				// Print the users settings table
-				?><p style="margin-bottom:0;"><?php _e( 'Your users have the ability to customize, or even disable, this functionality by <a href="' . admin_url( 'profile.php#smta-user-profile-settings' ) . '">editing their user profile</a>.', 'show-me-the-admin' ); ?></p>
+				?><p style="margin-bottom:0;"><?php _e( 'Your users have the ability to customize this functionality by <a href="' . admin_url( 'profile.php#smta-user-profile-settings' ) . '">editing their user profile</a>.', 'show-me-the-admin' ); ?></p>
 				<table id="show-me-the-admin-user-settings" class="form-table show-me-the-admin-settings">
 					<tbody>
 						<tr>
@@ -391,33 +442,24 @@ class Show_Me_The_Admin_Admin {
 				</table><?php
 				break;
 
-			// Settings meta box
-			case 'settings':
+			// Settings for feature 1 meta box
+			case 'settings-feature-1':
 
 				// Print the settings table
 				?><table id="show-me-the-admin-settings" class="form-table show-me-the-admin-settings">
 					<tbody>
 						<tr>
 							<td>
-								<label for="smta-show-phrase"><strong><?php _e( 'Phrase to "show" the admin bar', 'show-me-the-admin' ); ?></strong></label>
+								<label for="smta-show-phrase"><strong><?php _e( 'Phrase to type to show the admin bar', 'show-me-the-admin' ); ?></strong></label>
 								<input name="show_me_the_admin[show_phrase]" type="text" id="smta-show-phrase" value="<?php esc_attr_e( isset( $metabox[ 'args' ][ 'site_settings' ][ 'show_phrase' ] ) ? $metabox[ 'args' ][ 'site_settings' ][ 'show_phrase' ] : null ); ?>" placeholder="<?php esc_attr_e( $metabox[ 'args' ][ 'default_show_phrase' ] ); ?>" class="regular-text" />
 								<p class="description"><?php printf( __( 'If left blank, will use the default phrase "%s".', 'show-me-the-admin' ), $metabox[ 'args' ][ 'default_show_phrase' ] ); ?></p>
 							</td>
 						</tr>
 						<tr>
 							<td>
-								<label for="smta-hide-phrase"><strong><?php _e( 'Phrase to "hide" the admin bar', 'show-me-the-admin' ); ?></strong></label>
+								<label for="smta-hide-phrase"><strong><?php _e( 'Phrase to type to hide the admin bar', 'show-me-the-admin' ); ?></strong></label>
 								<input name="show_me_the_admin[hide_phrase]" type="text" id="smta-hide-phrase" value="<?php esc_attr_e( isset( $metabox[ 'args' ][ 'site_settings' ][ 'hide_phrase' ] ) ? $metabox[ 'args' ][ 'site_settings' ][ 'hide_phrase' ] : null ); ?>" placeholder="<?php esc_attr_e( $metabox[ 'args' ][ 'default_hide_phrase' ] ); ?>"class="regular-text" />
 								<p class="description"><?php printf( __( 'If left blank, will use the default phrase "%s".', 'show-me-the-admin' ), $metabox[ 'args' ][ 'default_hide_phrase' ] ); ?></p>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<fieldset>
-									<legend class="screen-reader-text"><span><?php _e( 'Enable the Login Button', 'show-me-the-admin' ); ?></span></legend>
-									<label for="smta-login-button"><input name="show_me_the_admin[enable_login_button]" type="checkbox" id="smta-login-button" value="1"<?php checked( isset( $metabox[ 'args' ][ 'site_settings' ][ 'enable_login_button' ] ) && $metabox[ 'args' ][ 'site_settings' ][ 'enable_login_button' ] == true ) ?>/> <strong><?php _e( 'If not logged in, show a login button instead of the admin bar', 'show-me-the-admin' ); ?></strong></label>
-									<p class="description"><?php _e( 'If enabled, and not logged in, the "show" and "hide" phrase will reveal and hide a login button.', 'show-me-the-admin' ); ?></p>
-								</fieldset>
 							</td>
 						</tr>
 					</tbody>
@@ -498,27 +540,6 @@ class Show_Me_The_Admin_Admin {
 	 */
 	public function register_settings() {
 		register_setting( 'show_me_the_admin', 'show_me_the_admin', array( $this, 'update_settings' ) );
-	}
-
-	/**
-	 * Returns our straight-forward, not adjusted settings.
-	 *
-	 * @access  private
-	 * @since   1.0.0
-	 * @param	boolean - $network - whether or not to retrieve network settings
-	 * @return  array - the settings
-	 */
-	private function get_settings( $network = false ) {
-
-		// Get settings
-		$settings = $network ? get_site_option( 'show_me_the_admin', array( 'features' => array( 'keyphrase', 'button' ), 'user_roles' => array( 'administrator' ), 'enable_user_notice' => true, 'enable_login_button' => true ) ) : get_option( 'show_me_the_admin', array( 'features' => array( 'keyphrase', 'button' ), 'user_roles' => array( 'administrator' ), 'enable_user_notice' => true, 'enable_login_button' => true ) );
-
-		// Make sure its an array
-		if ( empty( $settings ) ) {
-			$settings = array();
-		}
-
-		return $settings;
 	}
 
 	/**
@@ -605,17 +626,14 @@ class Show_Me_The_Admin_Admin {
 	 */
 	public function add_user_profile_settings( $profile_user ) {
 
-		// Get the user settings
-		$user_settings = show_me_the_admin()->get_user_settings( $profile_user->ID );
-
 		// Get site settings in order to tell user the default phrases
-		$site_settings = $this->get_settings();
+		$site_settings = show_me_the_admin()->get_unmodified_settings();
 
 		// If network active, merge site settings with network settings
 		if ( show_me_the_admin()->is_network_active ) {
 
 			// Get network settings
-			$network_settings = $this->get_settings( true );
+			$network_settings = show_me_the_admin()->get_unmodified_settings( true );
 
 			// Remove empty values for merging
 			$site_settings = array_filter( $site_settings );
@@ -637,37 +655,49 @@ class Show_Me_The_Admin_Admin {
 			return;
 		}
 
+		// Get the user settings
+		$user_settings = show_me_the_admin()->get_user_settings( $profile_user->ID );
+
+		// Set the selected features
+		$user_features = isset( $user_settings[ 'features' ] ) ? $user_settings[ 'features' ] : array();
+
 		// Set the default phrases
 		$default_show_phrase = ! empty( $site_settings[ 'show_phrase' ] ) ? $site_settings[ 'show_phrase' ] : SHOW_ME_THE_ADMIN_SHOW_PHRASE;
 		$default_hide_phrase = ! empty( $site_settings[ 'hide_phrase' ] ) ? $site_settings[ 'hide_phrase' ] : SHOW_ME_THE_ADMIN_HIDE_PHRASE;
 
-		// Does this user wish to disable the functionality?
-		$user_disable = isset( $user_settings[ 'disable' ] ) && $user_settings[ 'disable' ] == true;
-
 		?><div id="smta-user-profile-settings">
 			<h2><?php _e( 'Show Me The Admin Toolbar', 'show-me-the-admin' ); ?></h2>
-			<p><?php _e( 'This functionality hides your admin toolbar and enables you to make it appear, and disappear, by typing a specific phrase. You can use the phrases issued by your site administrator or you can use this setting to customize your own. <strong><em>Your "Show Toolbar when viewing site" setting must be enabled.</em></strong>', 'show-me-the-admin' ); ?></p>
-			<table id="show-me-the-admin-user-profile" class="form-table show-me-the-admin-settings">
+			<p><?php _e( 'The admin bar makes it really easy to move back and forth between viewing your site and editing your site but sometimes the toolbar itself can be intrusive. This functionality hides your toolbar and enables you to make it appear, and disappear, using a variety of methods. <strong><em>Your "Show Toolbar when viewing site" setting must be enabled.</em></strong>', 'show-me-the-admin' ); ?></p>
+			<table id="show-me-the-admin-user-profile" class="form-table show-me-the-admin-settings smta-user-profile-settings">
 				<tbody>
 					<tr>
 						<td>
 							<fieldset>
-								<legend class="screen-reader-text"><span><?php _e( 'Disable Show Me The Admin', 'show-me-the-admin' ); ?></span></legend>
-								<label for="smta-disable"><input name="show_me_the_admin[disable]" type="checkbox" id="smta-disable" value="1"<?php checked( $user_disable ) ?>/> <strong><?php _e( 'I wish to disable this functionality', 'show-me-the-admin' ); ?></strong></label>
-								<p class="description"><?php _e( "It's ok. It's not for everyone.", 'show-me-the-admin' ); ?></p>
+								<legend><strong><?php _e( 'What features would you like to enable?', 'show-me-the-admin' ); ?></strong></legend>
+								<div class="smta-choices vertical">
+									<label><?php _e( '#1', 'show-me-the-admin' ); ?> - <input type="checkbox" name="show_me_the_admin[features][]" value="keyphrase"<?php checked( isset( $user_features ) && is_array( $user_features ) && in_array( 'keyphrase', $user_features ) ); ?> /> <?php _e( 'Hide toolbar and make it appear by typing a phrase (<em>customize the phrases below</em>)', 'show-me-the-admin' ); ?></label>
+									<label><?php _e( '#2', 'show-me-the-admin' ); ?> - <input type="checkbox" name="show_me_the_admin[features][]" value="button"<?php checked( isset( $user_features ) && is_array( $user_features ) && in_array( 'button', $user_features ) ); ?> /> <?php _e( 'Hide toolbar and place WordPress button in top left corner to click to appear', 'show-me-the-admin' ); ?></label>
+									<label><?php _e( '#3', 'show-me-the-admin' ); ?> - <input type="checkbox" name="show_me_the_admin[features][]" value="hover"<?php checked( isset( $user_features ) && is_array( $user_features ) && in_array( 'hover', $user_features ) ); ?> /> <?php _e( 'Hide toolbar and make it appear when mouse hovers near top of window', 'show-me-the-admin' ); ?></label>
+								</div>
 							</fieldset>
 						</td>
 					</tr>
+				</tbody>
+			</table>
+
+			<h3><?php _e( 'Settings For Feature #1 - Hide toolbar and make it appear by typing a phrase', 'show-me-the-admin' ); ?></h3>
+			<table id="show-me-the-admin-user-profile-keyphrase" class="form-table show-me-the-admin-settings smta-user-profile-settings">
+				<tbody>
 					<tr>
 						<td>
-							<label for="smta-show-phrase"><strong><?php _e( 'Phrase to "show" the admin bar', 'show-me-the-admin' ); ?></strong></label>
+							<label for="smta-show-phrase"><strong><?php _e( 'Phrase to type to show the admin bar', 'show-me-the-admin' ); ?></strong></label>
 							<input name="show_me_the_admin[show_phrase]" type="text" id="smta-show-phrase" value="<?php esc_attr_e( isset( $user_settings[ 'show_phrase' ] ) ? $user_settings[ 'show_phrase' ] : null ); ?>" placeholder="<?php esc_attr_e( $default_show_phrase ); ?>" class="regular-text" />
 							<p class="description"><?php printf( __( 'If left blank, will use your site\'s default phrase "%s".', 'show-me-the-admin' ), $default_show_phrase ); ?></p>
 						</td>
 					</tr>
 					<tr>
 						<td>
-							<label for="smta-hide-phrase"><strong><?php _e( 'Phrase to "hide" the admin bar', 'show-me-the-admin' ); ?></strong></label>
+							<label for="smta-hide-phrase"><strong><?php _e( 'Phrase to type to hide the admin bar', 'show-me-the-admin' ); ?></strong></label>
 							<input name="show_me_the_admin[hide_phrase]" type="text" id="smta-hide-phrase" value="<?php esc_attr_e( isset( $user_settings[ 'hide_phrase' ] ) ? $user_settings[ 'hide_phrase' ] : null ); ?>" placeholder="<?php esc_attr_e( $default_hide_phrase ); ?>" class="regular-text" />
 							<p class="description"><?php printf( __( 'If left blank, will use your site\'s default phrase "%s".', 'show-me-the-admin' ), $default_hide_phrase ); ?></p>
 						</td>
@@ -716,7 +746,7 @@ class Show_Me_The_Admin_Admin {
 		// Show the users settings notice
 		if ( $smta_users_setting_notice ) {
 			?><div id="smta-users-setting-notice" class="updated notice is-dismissible">
-				<p><?php _e( 'Thank you for installing "Show Me The Admin". Be sure to <a href="' . $this->settings_page_url . '">explore the settings</a> to customize your phrases and functionality for your users.', 'show-me-the-admin' ); ?></p>
+				<p><?php _e( 'Thank you for installing "Show Me The Admin". Be sure to <a href="' . $this->settings_page_url . '">explore the settings</a> to customize its functionality for you and your users.', 'show-me-the-admin' ); ?></p>
 			</div><?php
 		}
 
@@ -756,4 +786,20 @@ class Show_Me_The_Admin_Admin {
 	}
 
 }
-new Show_Me_The_Admin_Admin;
+
+/**
+ * Returns the instance of our main Show_Me_The_Admin_Admin class.
+ *
+ * Will come in handy when we need to access the
+ * class to retrieve data throughout the plugin.
+ *
+ * @since	1.0.0
+ * @access	public
+ * @return	Show_Me_The_Admin_Admin
+ */
+function show_me_the_admin_admin() {
+	return Show_Me_The_Admin_Admin::instance();
+}
+
+// Let's get this show on the road
+show_me_the_admin_admin();
