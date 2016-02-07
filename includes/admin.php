@@ -218,10 +218,21 @@ class Show_Me_The_Admin_Admin {
 			else {
 
 				// Get the settings
-				$settings = $this->get_settings();
+				$site_settings = $this->get_settings();
+
+				// Disable if the user role isn't allowed
+				$user = get_userdata( $current_user_id );
+				if ( isset( $site_settings[ 'user_roles' ] ) && ! ( $user->roles && is_array( $site_settings[ 'user_roles' ] ) && array_intersect( $user->roles, $site_settings[ 'user_roles' ] ) ) ) {
+					$site_settings[ 'disable' ] = true;
+				}
+
+				// If this user can't have the functionality, then no point in showing the notice
+				if ( isset( $site_settings[ 'disable' ] ) && $site_settings[ 'disable' ] == true ) {
+					return;
+				}
 
 				// Only print if the notice is enabled
-				if ( isset( $settings[ 'enable_user_notice' ] ) && $settings[ 'enable_user_notice' ] == true ) {
+				if ( isset( $site_settings[ 'enable_user_notice' ] ) && $site_settings[ 'enable_user_notice' ] == true ) {
 
 					// Do we need to include the actual user notice?
 					$user_notice = get_user_meta( get_current_user_id(), 'show_me_the_admin_user_notice', true );
