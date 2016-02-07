@@ -185,6 +185,9 @@ class Show_Me_The_Admin_Admin {
 		// Determine whether to include our user notice scripts when needed (but not on the settings and profile page)
 		else {
 
+			// Get current user ID
+			$current_user_id = get_current_user_id();
+
 			// Don't show notices by default
 			$smta_users_setting_notice = false;
 			$smta_user_notice = false;
@@ -193,7 +196,7 @@ class Show_Me_The_Admin_Admin {
 			$enqueue_user_notice_script = false;
 
 			// Only show user settings notice for the user who activated the plugin
-			$activated_user = get_user_meta( get_current_user_id(), 'show_me_the_admin_activated_user', true );
+			$activated_user = get_user_meta( $current_user_id, 'show_me_the_admin_activated_user', true );
 			if ( $activated_user !== false && $activated_user > 0 ) {
 
 				// Do we need to show the user settings notice?
@@ -330,7 +333,7 @@ class Show_Me_The_Admin_Admin {
 								<select id="smta-user-roles" name="show_me_the_admin[user_roles][]" multiple="multiple">
 									<option value=""></option><?php
 									foreach( $user_roles as $user_role_key => $user_role ) {
-										?><option value="<?php echo $user_role_key; ?>"<?php selected( is_array( $metabox[ 'args' ][ 'site_settings' ][ 'user_roles' ] ) && in_array( $user_role_key, $metabox[ 'args' ][ 'site_settings' ][ 'user_roles' ] ) ); ?>><?php echo $user_role[ 'name' ]; ?></option><?php
+										?><option value="<?php echo $user_role_key; ?>"<?php selected( isset( $metabox[ 'args' ][ 'site_settings' ][ 'user_roles' ] ) && is_array( $metabox[ 'args' ][ 'site_settings' ][ 'user_roles' ] ) && in_array( $user_role_key, $metabox[ 'args' ][ 'site_settings' ][ 'user_roles' ] ) ); ?>><?php echo $user_role[ 'name' ]; ?></option><?php
 									}
 								?></select>
 								<p class="description"><?php _e( 'If left blank, will be enabled for all users.', 'show-me-the-admin' ); ?></p>

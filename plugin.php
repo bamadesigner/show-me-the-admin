@@ -244,7 +244,8 @@ class Show_Me_The_Admin {
 		if ( function_exists( 'is_user_logged_in' ) && is_user_logged_in() ) {
 
 			// Get user settings
-			$user_settings = $this->get_user_settings();
+			$current_user_id = get_current_user_id();
+			$user_settings = $this->get_user_settings( $current_user_id );
 
 			// Remove empty values for merging
 			$site_settings = array_filter( $site_settings );
@@ -252,6 +253,12 @@ class Show_Me_The_Admin {
 
 			// Merge site with user settings
 			$site_settings = wp_parse_args( $user_settings, $site_settings );
+
+			// Disable if the user role isn't allowed
+			$user = get_userdata( $current_user_id );
+			if ( isset( $site_settings[ 'user_roles' ] ) && ! ( $user->roles && is_array( $site_settings[ 'user_roles' ] ) && array_intersect( $user->roles, $site_settings[ 'user_roles' ] ) ) ) {
+				$site_settings[ 'disable' ] = true;
+			}
 
 		}
 
