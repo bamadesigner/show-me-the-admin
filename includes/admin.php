@@ -294,11 +294,14 @@ class Show_Me_The_Admin_Admin {
 		// Spread the Love
 		add_meta_box( 'show-me-the-admin-promote-mb', __( 'Spread the Love', 'show-me-the-admin' ), array( $this, 'print_settings_meta_boxes' ), $this->settings_page_id, 'side', 'core', array( 'id' => 'promote' ) );
 
+		// The Features
+		add_meta_box( 'show-me-the-admin-features-mb', __( 'The Features', 'show-me-the-admin' ), array( $this, 'print_settings_meta_boxes' ), $this->settings_page_id, 'normal', 'core', array( 'id' => 'features', 'site_settings' => $site_settings ) );
+
 		// The Users
-		add_meta_box( 'show-me-the-admin-users-mb', __( 'The Users', 'show-me-the-admin' ), array( $this, 'print_settings_meta_boxes' ), $this->settings_page_id, 'normal', 'core', array( 'id' => 'the-users', 'site_settings' => $site_settings ) );
+		add_meta_box( 'show-me-the-admin-users-mb', __( 'The Users', 'show-me-the-admin' ), array( $this, 'print_settings_meta_boxes' ), $this->settings_page_id, 'normal', 'core', array( 'id' => 'users', 'site_settings' => $site_settings ) );
 
 		// The Settings
-		add_meta_box( 'show-me-the-admin-settings-mb', __( 'The Settings', 'show-me-the-admin' ), array( $this, 'print_settings_meta_boxes' ), $this->settings_page_id, 'normal', 'core', array( 'id' => 'the-settings', 'site_settings' => $site_settings, 'default_show_phrase' => $default_show_phrase, 'default_hide_phrase' => $default_hide_phrase ) );
+		add_meta_box( 'show-me-the-admin-settings-mb', __( 'The Settings', 'show-me-the-admin' ), array( $this, 'print_settings_meta_boxes' ), $this->settings_page_id, 'normal', 'core', array( 'id' => 'settings', 'site_settings' => $site_settings, 'default_show_phrase' => $default_show_phrase, 'default_hide_phrase' => $default_hide_phrase ) );
 
 	}
 
@@ -328,8 +331,33 @@ class Show_Me_The_Admin_Admin {
 				<p class="donate"><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=ZCAN2UX7QHZPL&lc=US&item_name=Rachel%20Carden%20%28Show%20Me%20The%20Admin%29&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted" title="<?php esc_attr_e( 'Donate a few bucks to the plugin', 'show-me-the-admin' ); ?>" target="_blank"><img src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" alt="<?php esc_attr_e( 'Donate', 'show-me-the-admin' ); ?>" /> <span class="promote-text"><?php _e( 'and buy me a coffee', 'show-me-the-admin' ); ?></span></a></p><?php
 				break;
 
+			// Features meta box
+			case 'features':
+
+				// Set the feature settings
+				$features = isset( $metabox[ 'args' ][ 'site_settings' ][ 'features' ] ) ? $metabox[ 'args' ][ 'site_settings' ][ 'features' ] : array();
+
+				// Print the features table
+				?><table id="show-me-the-admin-features" class="form-table show-me-the-admin-settings">
+					<tbody>
+						<tr>
+							<td>
+								<fieldset>
+									<legend><strong><?php _e( 'What features would you like to enable?', 'show-me-the-admin' ); ?></strong></legend>
+									<div class="smta-choices vertical">
+										<label><input type="checkbox" name="show_me_the_admin[features][]" value="keyphrase"<?php checked( isset( $features ) && is_array( $features ) && in_array( 'keyphrase', $features ) ); ?> /> <?php _e( 'Hide toolbar and make it appear by typing a phrase', 'show-me-the-admin' ); ?></label>
+										<label><input type="checkbox" name="show_me_the_admin[features][]" value="button"<?php checked( isset( $features ) && is_array( $features ) && in_array( 'button', $features ) ); ?> /> <?php _e( 'Hide toolbar and place WordPress button in top left corner to click to appear', 'show-me-the-admin' ); ?></label>
+										<label><input type="checkbox" name="show_me_the_admin[features][]" value="hover"<?php checked( isset( $features ) && is_array( $features ) && in_array( 'hover', $features ) ); ?> /> <?php _e( 'Hide toolbar and make it appear when mouse hovers near top of window', 'show-me-the-admin' ); ?></label>
+									</div>
+								</fieldset>
+							</td>
+						</tr>
+					</tbody>
+				</table><?php
+				break;
+
 			// Users meta box
-			case 'the-users':
+			case 'users':
 
 				// Get the user roles
 				$user_roles = get_editable_roles();
@@ -364,7 +392,7 @@ class Show_Me_The_Admin_Admin {
 				break;
 
 			// Settings meta box
-			case 'the-settings':
+			case 'settings':
 
 				// Print the settings table
 				?><table id="show-me-the-admin-settings" class="form-table show-me-the-admin-settings">
@@ -483,7 +511,7 @@ class Show_Me_The_Admin_Admin {
 	private function get_settings( $network = false ) {
 
 		// Get settings
-		$settings = $network ? get_site_option( 'show_me_the_admin', array( 'user_roles' => array( 'administrator' ), 'enable_user_notice' => true, 'enable_login_button' => true ) ) : get_option( 'show_me_the_admin', array( 'user_roles' => array( 'administrator' ), 'enable_user_notice' => true, 'enable_login_button' => true ) );
+		$settings = $network ? get_site_option( 'show_me_the_admin', array( 'features' => array( 'keyphrase', 'button' ), 'user_roles' => array( 'administrator' ), 'enable_user_notice' => true, 'enable_login_button' => true ) ) : get_option( 'show_me_the_admin', array( 'features' => array( 'keyphrase', 'button' ), 'user_roles' => array( 'administrator' ), 'enable_user_notice' => true, 'enable_login_button' => true ) );
 
 		// Make sure its an array
 		if ( empty( $settings ) ) {

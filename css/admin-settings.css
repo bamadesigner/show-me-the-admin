@@ -19,12 +19,19 @@
   vertical-align: middle;
 }
 
-.show-me-the-admin-settings label {
+.show-me-the-admin-settings label,
+.show-me-the-admin-settings legend {
   display: block;
   margin: 0 0 5px 0;
 }
 .show-me-the-admin-settings input.regular-text {
   width: 100%;
+}
+.show-me-the-admin-settings .smta-choices {
+  padding: 0 0 0 15px;
+}
+.show-me-the-admin-settings .smta-choices.vertical label {
+  display: block;
 }
 
 #smta-user-profile-settings {
