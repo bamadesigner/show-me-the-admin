@@ -587,6 +587,17 @@ class Show_Me_The_Admin_Admin {
 
 		}
 
+		// Disable if the user role isn't allowed
+		$user = get_userdata( $profile_user->ID );
+		if ( isset( $site_settings[ 'user_roles' ] ) && ! ( $user->roles && is_array( $site_settings[ 'user_roles' ] ) && array_intersect( $user->roles, $site_settings[ 'user_roles' ] ) ) ) {
+			$site_settings[ 'disable' ] = true;
+		}
+
+		// If this user can't have the functionality, then no point in showing the settings
+		if ( isset( $site_settings[ 'disable' ] ) && $site_settings[ 'disable' ] == true ) {
+			return;
+		}
+
 		// Set the default phrases
 		$default_show_phrase = ! empty( $site_settings[ 'show_phrase' ] ) ? $site_settings[ 'show_phrase' ] : SHOW_ME_THE_ADMIN_SHOW_PHRASE;
 		$default_hide_phrase = ! empty( $site_settings[ 'hide_phrase' ] ) ? $site_settings[ 'hide_phrase' ] : SHOW_ME_THE_ADMIN_HIDE_PHRASE;
