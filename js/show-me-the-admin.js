@@ -88,7 +88,7 @@
 		if ( $admin_bar_mouseleave ) {
 
 			// When the mouse leaves the admin bar, the admin bar will disappear after 2 seconds
-			$('#wpadminbar').mouseleave(function() {
+			$('#wpadminbar,#show-me-the-admin-login').mouseleave(function() {
 				setTimeout( show_me_the_admin_hide_bar, 2000 );
 			});
 

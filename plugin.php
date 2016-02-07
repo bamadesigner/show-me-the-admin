@@ -568,11 +568,6 @@ class Show_Me_The_Admin {
 				?><div id="show-me-the-admin-button"></div><?php
 			}
 
-			// If the hover feature is enabled, we need an element to tie it to
-			if ( in_array( 'hover', $settings[ 'features' ] ) ) {
-				?><div id="show-me-the-admin-hover"></div><?php
-			}
-
 		}
 
 		// If not logged in...
@@ -596,6 +591,11 @@ class Show_Me_The_Admin {
 
 			}
 
+		}
+
+		// If the hover feature is enabled, we need an element to tie it to
+		if ( in_array( 'hover', $settings[ 'features' ] ) ) {
+			?><div id="show-me-the-admin-hover"></div><?php
 		}
 
 	}
