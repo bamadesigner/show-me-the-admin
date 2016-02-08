@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Plugin Name:       Show Me The Admin
  * Plugin URI:        https://wordpress.org/plugins/show-me-the-admin/
