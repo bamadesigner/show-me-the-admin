@@ -56,19 +56,24 @@
 			});
 		}
 
-		// Will be true if we should enable the mouseleave functionality
-		var $admin_bar_mouseleave = false;
+		// Will be true if we should initiate the mouseleave functionality
+		var $init_admin_bar_mouseleave = false;
+
+		// Will be true when we want mouseleave functionality to work
+		// Need this in case 1 feature w/mouseleave is enabled along with a feature without mouseleave
+		var $enable_admin_bar_mouseleave = false;
 
 		// If hover feature is enabled
 		if ( jQuery.inArray( 'hover', show_me_the_admin.features ) > -1 ) {
 
 			// When the mouse hovers over this area, the admin bar will appear
 			$('#show-me-the-admin-hover').mouseenter(function() {
+				$enable_admin_bar_mouseleave = true;
 				show_me_the_admin_show_bar();
 			});
 
-			// Enable admin bar mouseleave functionality
-			$admin_bar_mouseleave = true;
+			// Initiate admin bar mouseleave functionality
+			$init_admin_bar_mouseleave = true;
 
 		}
 
@@ -76,20 +81,29 @@
 		if ( jQuery.inArray( 'button', show_me_the_admin.features ) > -1 ) {
 
 			$('#show-me-the-admin-button').click(function () {
+				$enable_admin_bar_mouseleave = true;
 				show_me_the_admin_show_bar();
 			});
 
-			// Enable admin bar mouseleave functionality
-			$admin_bar_mouseleave = true;
+			// Initiate admin bar mouseleave functionality
+			$init_admin_bar_mouseleave = true;
 
 		}
 
 		// Setup admin bar mouseleave functionality
-		if ( $admin_bar_mouseleave ) {
+		if ( $init_admin_bar_mouseleave ) {
 
 			// When the mouse leaves the admin bar, the admin bar will disappear after 2 seconds
 			$('#wpadminbar,#show-me-the-admin-login').mouseleave(function() {
-				setTimeout( show_me_the_admin_hide_bar, 2000 );
+
+				// Only initiate if enabled
+				if ( $enable_admin_bar_mouseleave ) {
+					setTimeout(show_me_the_admin_hide_bar, 2000);
+				}
+
+				// Reset the setting
+				$enable_admin_bar_mouseleave = false;
+
 			});
 
 		}
