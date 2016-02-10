@@ -115,13 +115,11 @@
 	// Show the admin bar
 	function show_me_the_admin_show_bar() {
 		$('.show-me-the-admin-bar').stop(true, true).removeClass('hidden').show().animate({'top':'0'},200);
-		$('body').animate({'marginTop': $('.show-me-the-admin-bar').height()+'px'},200);
 	}
 
 	// Hide the admin bar
 	function show_me_the_admin_hide_bar() {
 		$('.show-me-the-admin-bar').stop(true, true).animate({top:(0-$('.show-me-the-admin-bar').height())+'px'},200, function(){$('.show-me-the-admin-bar').hide().addClass('hidden');});
-		$('body').animate({'marginTop':'0'},200);
 	}
 
 })( jQuery );

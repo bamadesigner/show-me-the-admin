@@ -33,8 +33,16 @@ Your "Show Toolbar when viewing site" profile setting must be enabled. If not lo
 
 == Changelog ==
 
+= 1.0.1 =
+* Removing margin top change when admin bar slides down to decrease conflicts with themes
+
 = 1.0.0 =
 Plugin launch
+
+== Upgrade Notice ==
+
+= 1.0.1 =
+* Removing margin top change when admin bar slides down to decrease conflicts with themes
 
 == Filters ==
 
