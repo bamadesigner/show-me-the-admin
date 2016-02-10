@@ -3,7 +3,7 @@
  * Plugin Name:       Show Me The Admin
  * Plugin URI:        https://wordpress.org/plugins/show-me-the-admin/
  * Description:       Hides your admin toolbar and enables you to make it appear, and disappear, using a variety of methods.
- * Version:           1.0.0
+ * Version:           1.0.1
  * Author:            Rachel Carden
  * Author URI:        https://bamadesigner.com
  * License:           GPL-2.0+
@@ -20,7 +20,7 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 // If you define them, will they be used?
-define( 'SHOW_ME_THE_ADMIN_VERSION', '1.0.0' );
+define( 'SHOW_ME_THE_ADMIN_VERSION', '1.0.1' );
 define( 'SHOW_ME_THE_ADMIN_PLUGIN_URL', 'https://wordpress.org/plugins/show-me-the-admin/' );
 define( 'SHOW_ME_THE_ADMIN_PLUGIN_FILE', 'show-me-the-admin/plugin.php' );
 define( 'SHOW_ME_THE_ADMIN_SHOW_PHRASE', 'showme' );
@@ -51,6 +51,17 @@ class Show_Me_The_Admin {
 	 * @var		boolean
 	 */
 	public $user_wants_admin_bar;
+
+	/**
+	 * Will be true if we should
+	 * hide the admin bar for our
+	 * functionality.
+	 *
+	 * @since	1.0.1
+	 * @access	private
+	 * @var		boolean
+	 */
+	private static $should_hide_the_admin_bar;
 
 	/**
 	 * Will hold the plugin's unmodified settings.
@@ -128,6 +139,9 @@ class Show_Me_The_Admin {
 
 		// Add needed styles and scripts
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles_scripts' ) );
+
+		// Filters the body class
+		add_filter( 'body_class', array( $this, 'filter_body_class' ), 100000, 2 );
 
 		// Print dropdown login button
 		add_action( 'wp_footer', array( $this, 'print_login_button' ), 2000 );
@@ -453,6 +467,61 @@ class Show_Me_The_Admin {
 	}
 
 	/**
+	 * Returns true if we should hide the admin bar
+	 * for our functionality.
+	 *
+	 * @access  public
+	 * @since   1.0.1
+	 * @return	bool - true if we should hide the admin bar
+	 */
+	public function should_hide_the_admin_bar() {
+
+		// If already set, return the setting
+		if ( isset( self::$should_hide_the_admin_bar ) ) {
+			return self::$should_hide_the_admin_bar;
+		}
+
+		// Get the settings
+		$settings = $this->get_settings();
+
+		// Should we hide the admin bar?
+		$should_hide_the_admin_bar = true;
+
+		// Make sure we have at least one feature enabled
+		if ( ! ( isset( $settings[ 'features' ] ) && ! empty( $settings[ 'features' ] ) ) ) {
+			$should_hide_the_admin_bar = false;
+		}
+
+		// If logged in...
+		if ( is_user_logged_in() ) {
+
+			// Don't add if the user doesn't want the admin bar
+			if ( ! $this->user_wants_admin_bar ) {
+				$should_hide_the_admin_bar = false;
+			}
+
+			// Don't add if the user is disabled
+			if ( isset( $settings[ 'disable' ] ) && $settings[ 'disable' ] == true ) {
+				$should_hide_the_admin_bar = false;
+			}
+
+		}
+
+		// If not logged in...
+		else {
+
+			// Don't add if the login button is not enabled
+			if ( ! ( isset( $settings[ 'enable_login_button' ] ) && $settings[ 'enable_login_button' ] == true ) ) {
+				$should_hide_the_admin_bar = false;
+			}
+
+		}
+
+		// Store the setting
+		return self::$should_hide_the_admin_bar = $should_hide_the_admin_bar;
+	}
+
+	/**
 	 * Add styles and scripts for our shortcodes.
 	 *
 	 * @access  public
@@ -463,38 +532,13 @@ class Show_Me_The_Admin {
 	 */
 	public function enqueue_styles_scripts() {
 
-		// Get the settings
-		$settings = $this->get_settings();
-
-		// Make sure we have at least one feature enabled
-		if ( ! ( isset( $settings[ 'features' ] ) && ! empty( $settings[ 'features' ] ) ) ) {
+		// If we shouldn't hide the admin bar, then get out of here
+		if ( ! $this->should_hide_the_admin_bar() ) {
 			return;
 		}
 
-		// If logged in...
-		if ( is_user_logged_in() ) {
-
-			// Don't add if the user doesn't want the admin bar
-			if ( ! $this->user_wants_admin_bar ) {
-				return;
-			}
-
-			// Don't add if the user is disabled
-			if ( isset( $settings[ 'disable' ] ) && $settings[ 'disable' ] == true ) {
-				return;
-			}
-
-		}
-
-		// If not logged in...
-		else {
-
-			// Don't add if the login button is not enabled
-			if ( ! ( isset( $settings[ 'enable_login_button' ] ) && $settings[ 'enable_login_button' ] == true ) ) {
-				return;
-			}
-
-		}
+		// Get the settings
+		$settings = $this->get_settings();
 
 		// Build our data array
 		$localize = array( 'features' => $settings[ 'features' ] );
@@ -533,6 +577,25 @@ class Show_Me_The_Admin {
 	}
 
 	/**
+	 * Filters the body class for classes we don't need
+	 *
+	 * @access  public
+	 * @since   1.0.1
+	 */
+	public function filter_body_class( $classes, $class ) {
+
+		// If we shouldn't hide the admin bar, then get out of here
+		if ( ! $this->should_hide_the_admin_bar() ) {
+			return $classes;
+		}
+
+		// Remove any theme's admin-bar CSS so it gets rid of their styles
+		unset( $classes[ array_search( 'admin-bar', $classes ) ] );
+
+		return $classes;
+	}
+
+	/**
 	 * Print the dropdown login button.
 	 *
 	 * @access  public
@@ -541,26 +604,16 @@ class Show_Me_The_Admin {
 	 */
 	public function print_login_button() {
 
-		// Get the settings
-		$settings = $this->get_settings();
-
-		// Make sure we have at least one feature enabled
-		if ( ! ( isset( $settings[ 'features' ] ) && ! empty( $settings[ 'features' ] ) ) ) {
+		// If we shouldn't hide the admin bar, then get out of here
+		if ( ! $this->should_hide_the_admin_bar() ) {
 			return;
 		}
 
+		// Get the settings
+		$settings = $this->get_settings();
+
 		// If logged in...
 		if ( is_user_logged_in() ) {
-
-			// Don't add if the user doesn't want the admin bar
-			if ( ! $this->user_wants_admin_bar ) {
-				return;
-			}
-
-			// Don't add if the user is disabled
-			if ( isset( $settings[ 'disable' ] ) && $settings[ 'disable' ] == true ) {
-				return;
-			}
 
 			// If the button feature is enabled, we need to add the button
 			if ( in_array( 'button', $settings[ 'features' ] ) ) {
