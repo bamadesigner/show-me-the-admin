@@ -383,7 +383,7 @@ class Show_Me_The_Admin_Admin {
 				?><table id="show-me-the-admin-features" class="form-table show-me-the-admin-settings">
 					<tbody>
 						<tr>
-							<td>
+							<td id="stma-features-td">
 								<fieldset>
 									<legend><strong><?php _e( 'What features would you like to enable?', 'show-me-the-admin' ); ?></strong></legend>
 									<div class="smta-choices vertical">

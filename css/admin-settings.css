@@ -35,6 +35,14 @@
   display: block;
 }
 
+#show-me-the-admin-features {
+  margin-top: 12px;
+}
+
+#stma-features-td {
+  background: rgba(33, 117, 155, 0.2);
+}
+
 #smta-user-profile-settings {
   background: rgba(0, 0, 0, 0.04);
   padding: 20px;
