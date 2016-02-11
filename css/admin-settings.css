@@ -42,6 +42,9 @@
 #stma-features-td {
   background: rgba(33, 117, 155, 0.2);
 }
+#stma-features-td .description {
+  margin-top: 10px;
+}
 
 #smta-user-profile-settings {
   background: rgba(0, 0, 0, 0.04);

@@ -342,8 +342,14 @@ class Show_Me_The_Admin_Admin {
 		// The Users
 		add_meta_box( 'show-me-the-admin-users-mb', __( 'The Users', 'show-me-the-admin' ), array( $this, 'print_settings_meta_boxes' ), $this->settings_page_id, 'normal', 'core', array( 'id' => 'users', 'site_settings' => $site_settings ) );
 
-		// The Settings
-		add_meta_box( 'show-me-the-admin-settings-mb', __( 'Settings For Feature #1 - Hide toolbar and make it appear by typing a phrase', 'show-me-the-admin' ), array( $this, 'print_settings_meta_boxes' ), $this->settings_page_id, 'normal', 'core', array( 'id' => 'settings-feature-1', 'site_settings' => $site_settings, 'default_show_phrase' => $default_show_phrase, 'default_hide_phrase' => $default_hide_phrase ) );
+		// The Settings For Feature #1
+		add_meta_box( 'show-me-the-admin-settings-1-mb', __( 'Hide toolbar and make it appear by typing a phrase', 'show-me-the-admin' ), array( $this, 'print_settings_meta_boxes' ), $this->settings_page_id, 'normal', 'core', array( 'id' => 'settings-feature-1', 'site_settings' => $site_settings, 'default_show_phrase' => $default_show_phrase, 'default_hide_phrase' => $default_hide_phrase ) );
+
+		// The Settings For Feature #2
+		add_meta_box( 'show-me-the-admin-settings-2-mb', __( 'Hide toolbar and show WordPress button', 'show-me-the-admin' ), array( $this, 'print_settings_meta_boxes' ), $this->settings_page_id, 'normal', 'core', array( 'id' => 'settings-feature-2', 'site_settings' => $site_settings ) );
+
+		// The Settings For Feature #3
+		add_meta_box( 'show-me-the-admin-settings-3-mb', __( 'Hide toolbar and make it appear when mouse hovers near top of window', 'show-me-the-admin' ), array( $this, 'print_settings_meta_boxes' ), $this->settings_page_id, 'normal', 'core', array( 'id' => 'settings-feature-3', 'site_settings' => $site_settings ) );
 
 	}
 
@@ -387,19 +393,11 @@ class Show_Me_The_Admin_Admin {
 								<fieldset>
 									<legend><strong><?php _e( 'What features would you like to enable?', 'show-me-the-admin' ); ?></strong></legend>
 									<div class="smta-choices vertical">
-										<label><?php _e( '#1', 'show-me-the-admin' ); ?> - <input type="checkbox" name="show_me_the_admin[features][]" value="keyphrase"<?php checked( isset( $features ) && is_array( $features ) && in_array( 'keyphrase', $features ) ); ?> /> <?php _e( 'Hide toolbar and make it appear by typing a phrase (<em>customize the phrases under Settings</em>)', 'show-me-the-admin' ); ?></label>
-										<label><?php _e( '#2', 'show-me-the-admin' ); ?> - <input type="checkbox" name="show_me_the_admin[features][]" value="button"<?php checked( isset( $features ) && is_array( $features ) && in_array( 'button', $features ) ); ?> /> <?php _e( 'Hide toolbar and place WordPress button in top left corner to click to appear', 'show-me-the-admin' ); ?></label>
+										<label><?php _e( '#1', 'show-me-the-admin' ); ?> - <input type="checkbox" name="show_me_the_admin[features][]" value="keyphrase"<?php checked( isset( $features ) && is_array( $features ) && in_array( 'keyphrase', $features ) ); ?> /> <?php _e( 'Hide toolbar and make it appear by typing a phrase', 'show-me-the-admin' ); ?></label>
+										<label><?php _e( '#2', 'show-me-the-admin' ); ?> - <input type="checkbox" name="show_me_the_admin[features][]" value="button"<?php checked( isset( $features ) && is_array( $features ) && in_array( 'button', $features ) ); ?> /> <?php _e( 'Hide toolbar and show WordPress button in top left corner to click to appear', 'show-me-the-admin' ); ?></label>
 										<label><?php _e( '#3', 'show-me-the-admin' ); ?> - <input type="checkbox" name="show_me_the_admin[features][]" value="hover"<?php checked( isset( $features ) && is_array( $features ) && in_array( 'hover', $features ) ); ?> /> <?php _e( 'Hide toolbar and make it appear when mouse hovers near top of window', 'show-me-the-admin' ); ?></label>
+										<p class="description"><?php _e( 'You can customize settings for each feature in their respective section.', 'show-me-the-admin' ); ?></p>
 									</div>
-								</fieldset>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<fieldset>
-									<legend class="screen-reader-text"><span><?php _e( 'Enable the Login Button', 'show-me-the-admin' ); ?></span></legend>
-									<label for="smta-login-button"><input name="show_me_the_admin[enable_login_button]" type="checkbox" id="smta-login-button" value="1"<?php checked( isset( $metabox[ 'args' ][ 'site_settings' ][ 'enable_login_button' ] ) && $metabox[ 'args' ][ 'site_settings' ][ 'enable_login_button' ] == true ) ?>/> <strong><?php _e( 'If not logged in, show a login button instead of the admin bar', 'show-me-the-admin' ); ?></strong></label>
-									<p class="description"><?php _e( 'If enabled, and not logged in, these features will reveal a login button.', 'show-me-the-admin' ); ?></p>
 								</fieldset>
 							</td>
 						</tr>
@@ -445,8 +443,11 @@ class Show_Me_The_Admin_Admin {
 			// Settings for feature 1 meta box
 			case 'settings-feature-1':
 
-				// Print the settings table
-				?><table id="show-me-the-admin-settings" class="form-table show-me-the-admin-settings">
+				// Get settings
+				$feature_keyphrase = isset( $metabox[ 'args' ][ 'site_settings' ][ 'feature_keyphrase' ] ) ? $metabox[ 'args' ][ 'site_settings' ][ 'feature_keyphrase' ] : array();
+
+				// Print the settings table for feature 1
+				?><table id="show-me-the-admin-settings-1" class="form-table show-me-the-admin-settings">
 					<tbody>
 						<tr>
 							<td>
@@ -460,6 +461,59 @@ class Show_Me_The_Admin_Admin {
 								<label for="smta-hide-phrase"><strong><?php _e( 'Phrase to type to hide the admin bar', 'show-me-the-admin' ); ?></strong></label>
 								<input name="show_me_the_admin[hide_phrase]" type="text" id="smta-hide-phrase" value="<?php esc_attr_e( isset( $metabox[ 'args' ][ 'site_settings' ][ 'hide_phrase' ] ) ? $metabox[ 'args' ][ 'site_settings' ][ 'hide_phrase' ] : null ); ?>" placeholder="<?php esc_attr_e( $metabox[ 'args' ][ 'default_hide_phrase' ] ); ?>"class="regular-text" />
 								<p class="description"><?php printf( __( 'If left blank, will use the default phrase "%s".', 'show-me-the-admin' ), $metabox[ 'args' ][ 'default_hide_phrase' ] ); ?></p>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<fieldset>
+									<legend class="screen-reader-text"><span><?php _e( 'Reveal a WordPress Login Button', 'show-me-the-admin' ); ?></span></legend>
+									<label for="smta-keyphrase-login-button"><input name="show_me_the_admin[feature_keyphrase][enable_login_button]" type="checkbox" id="smta-keyphrase-login-button" value="1"<?php checked( isset( $feature_keyphrase[ 'enable_login_button' ] ) && $feature_keyphrase[ 'enable_login_button' ] == true ) ?>/> <strong><?php _e( 'Reveal a login button if no one is logged in', 'show-me-the-admin' ); ?></strong></label>
+									<p class="description"><?php _e( 'If enabled, and not logged in, typing the phrase will reveal a login button.', 'show-me-the-admin' ); ?></p>
+								</fieldset>
+							</td>
+						</tr>
+					</tbody>
+				</table><?php
+				break;
+
+			// Settings for feature 2 meta box
+			case 'settings-feature-2':
+
+				// Get settings
+				$feature_button = isset( $metabox[ 'args' ][ 'site_settings' ][ 'feature_button' ] ) ? $metabox[ 'args' ][ 'site_settings' ][ 'feature_button' ] : array();
+
+				// Print the settings table for feature 2
+				?><table id="show-me-the-admin-settings-2" class="form-table show-me-the-admin-settings">
+					<tbody>
+						<tr>
+							<td>
+								<fieldset>
+									<legend class="screen-reader-text"><span><?php _e( 'Show the WordPress Button', 'show-me-the-admin' ); ?></span></legend>
+									<label for="smta-button-login-button"><input name="show_me_the_admin[feature_button][enable_login_button]" type="checkbox" id="smta-button-login-button" value="1"<?php checked( isset( $feature_button[ 'enable_login_button' ] ) && $feature_button[ 'enable_login_button' ] == true ) ?>/> <strong><?php _e( 'Show the WordPress button if no one is logged in', 'show-me-the-admin' ); ?></strong></label>
+									<p class="description"><?php _e( 'If enabled, and not logged in, the WordPress button will reveal a login button.', 'show-me-the-admin' ); ?></p>
+								</fieldset>
+							</td>
+						</tr>
+					</tbody>
+				</table><?php
+				break;
+
+			// Settings for feature 3 meta box
+			case 'settings-feature-3':
+
+				// Get settings
+				$feature_hover = isset( $metabox[ 'args' ][ 'site_settings' ][ 'feature_hover' ] ) ? $metabox[ 'args' ][ 'site_settings' ][ 'feature_hover' ] : array();
+
+				// Print the settings table for feature 3
+				?><table id="show-me-the-admin-settings-3" class="form-table show-me-the-admin-settings">
+					<tbody>
+						<tr>
+							<td>
+								<fieldset>
+									<legend class="screen-reader-text"><span><?php _e( 'Reveal a WordPress Login Button', 'show-me-the-admin' ); ?></span></legend>
+									<label for="smta-hover-login-button"><input name="show_me_the_admin[feature_hover][enable_login_button]" type="checkbox" id="smta-hover-login-button" value="1"<?php checked( isset( $feature_hover[ 'enable_login_button' ] ) && $feature_hover[ 'enable_login_button' ] == true ) ?>/> <strong><?php _e( 'Reveal a login button if no one is logged in', 'show-me-the-admin' ); ?></strong></label>
+									<p class="description"><?php _e( 'If enabled, and not logged in, hovering near the top of the window will reveal a login button.', 'show-me-the-admin' ); ?></p>
+								</fieldset>
 							</td>
 						</tr>
 					</tbody>
@@ -676,7 +730,7 @@ class Show_Me_The_Admin_Admin {
 								<legend><strong><?php _e( 'What features would you like to enable?', 'show-me-the-admin' ); ?></strong></legend>
 								<div class="smta-choices vertical">
 									<label><?php _e( '#1', 'show-me-the-admin' ); ?> - <input type="checkbox" name="show_me_the_admin[features][]" value="keyphrase"<?php checked( isset( $user_features ) && is_array( $user_features ) && in_array( 'keyphrase', $user_features ) ); ?> /> <?php _e( 'Hide toolbar and make it appear by typing a phrase (<em>customize the phrases below</em>)', 'show-me-the-admin' ); ?></label>
-									<label><?php _e( '#2', 'show-me-the-admin' ); ?> - <input type="checkbox" name="show_me_the_admin[features][]" value="button"<?php checked( isset( $user_features ) && is_array( $user_features ) && in_array( 'button', $user_features ) ); ?> /> <?php _e( 'Hide toolbar and place WordPress button in top left corner to click to appear', 'show-me-the-admin' ); ?></label>
+									<label><?php _e( '#2', 'show-me-the-admin' ); ?> - <input type="checkbox" name="show_me_the_admin[features][]" value="button"<?php checked( isset( $user_features ) && is_array( $user_features ) && in_array( 'button', $user_features ) ); ?> /> <?php _e( 'Hide toolbar and show WordPress button in top left corner to click to appear', 'show-me-the-admin' ); ?></label>
 									<label><?php _e( '#3', 'show-me-the-admin' ); ?> - <input type="checkbox" name="show_me_the_admin[features][]" value="hover"<?php checked( isset( $user_features ) && is_array( $user_features ) && in_array( 'hover', $user_features ) ); ?> /> <?php _e( 'Hide toolbar and make it appear when mouse hovers near top of window', 'show-me-the-admin' ); ?></label>
 								</div>
 							</fieldset>
