@@ -3,7 +3,7 @@
  * Plugin Name:       Show Me The Admin
  * Plugin URI:        https://wordpress.org/plugins/show-me-the-admin/
  * Description:       Hides your admin toolbar and enables you to make it appear, and disappear, using a variety of methods.
- * Version:           1.0.1
+ * Version:           1.0.2
  * Author:            Rachel Carden
  * Author URI:        https://bamadesigner.com
  * License:           GPL-2.0+
@@ -13,6 +13,7 @@
  */
 
 // @TODO add a link to or embed a demo video to help users understand functionality
+// @TODO add setting to customize how much time admin bar lingers after hover and button
 
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
@@ -20,7 +21,7 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 // If you define them, will they be used?
-define( 'SHOW_ME_THE_ADMIN_VERSION', '1.0.1' );
+define( 'SHOW_ME_THE_ADMIN_VERSION', '1.0.2' );
 define( 'SHOW_ME_THE_ADMIN_PLUGIN_URL', 'https://wordpress.org/plugins/show-me-the-admin/' );
 define( 'SHOW_ME_THE_ADMIN_PLUGIN_FILE', 'show-me-the-admin/plugin.php' );
 define( 'SHOW_ME_THE_ADMIN_SHOW_PHRASE', 'showme' );
@@ -53,15 +54,15 @@ class Show_Me_The_Admin {
 	public $user_wants_admin_bar;
 
 	/**
-	 * Will be true if we should
-	 * hide the admin bar for our
-	 * functionality.
+	 * Will hold whether or not
+	 * hiding the admin should be enabled
+	 * for particular features.
 	 *
 	 * @since	1.0.1
 	 * @access	private
-	 * @var		boolean
+	 * @var		array
 	 */
-	private static $should_hide_the_admin_bar;
+	private static $enable_hide_the_admin_bar;
 
 	/**
 	 * Will hold the plugin's unmodified settings.
@@ -208,7 +209,7 @@ class Show_Me_The_Admin {
 	 * @return  array - the settings
 	 */
 	public function get_default_settings() {
-		return array( 'features' => array( 'keyphrase', 'button' ), 'user_roles' => array( 'administrator' ), 'enable_user_notice' => true, 'enable_login_button' => true );
+		return array( 'features' => array( 'keyphrase', 'button' ), 'feature_keyphrase' => array( 'enable_login_button' => true ), 'user_roles' => array( 'administrator' ), 'enable_user_notice' => true );
 	}
 
 	/**
@@ -222,8 +223,10 @@ class Show_Me_The_Admin {
 	public function get_unmodified_settings( $network = false ) {
 
 		// If already set, return the settings
-		if ( $network && isset( self::$unmodified_settings[ 'network' ] ) ) {
-			return self::$unmodified_settings[ 'network' ];
+		if ( $network ) {
+			if ( isset( self::$unmodified_settings[ 'network' ] ) ) {
+				return self::$unmodified_settings[ 'network' ];
+			}
 		} else if ( isset( self::$unmodified_settings[ 'site' ] ) ) {
 			return self::$unmodified_settings[ 'site' ];
 		}
@@ -231,12 +234,24 @@ class Show_Me_The_Admin {
 		// Get default settings
 		$default_settings = $this->get_default_settings();
 
-		// Get settings
-		$unmodified_settings = $network ? get_site_option( 'show_me_the_admin', $default_settings ) : get_option( 'show_me_the_admin', $default_settings );
+		// If network active, then we have to treat the settings carefully
+		if ( $this->is_network_active ) {
 
-		// Make sure its an array
-		if ( empty( $unmodified_settings ) ) {
-			$unmodified_settings = array();
+			// If after network settings, then just get network settings
+			if ( $network ) {
+				$unmodified_settings = get_site_option( 'show_me_the_admin', $default_settings );
+			}
+
+			// If they're after site settings then make sure they don't pick up default settings that could overwrite network
+			else {
+				$unmodified_settings = get_option( 'show_me_the_admin' );
+			}
+
+		}
+
+		// If not network active, then just get site settings and mix with default
+		else {
+			$unmodified_settings = get_option( 'show_me_the_admin', $default_settings );
 		}
 
 		// Store the settings
@@ -244,8 +259,9 @@ class Show_Me_The_Admin {
 	}
 
 	/**
-	 * Returns a user's settings. If no user ID
-	 * is passed, gets settings for current user.
+	 * Returns a user's unmodified settings.
+	 *
+	 * If no user ID is passed, gets settings for current user.
 	 *
 	 * @access  public
 	 * @since   1.0.0
@@ -265,30 +281,7 @@ class Show_Me_The_Admin {
 		}
 
 		// Get the user meta
-		$user_meta = $user_id > 0 ? get_user_meta( $user_id, 'show_me_the_admin', true ) : false;
-
-		// If array, we're good to go
-		if ( is_array( $user_meta ) ) {
-
-			// Store the settings
-			return self::$user_settings = $user_meta;
-
-		}
-
-		// Get site settings
-		$site_settings = $this->get_unmodified_settings();
-
-		// If network active, merge with network settings
-		if ( $this->is_network_active ) {
-
-			// Merge site with network settings
-			$site_settings = wp_parse_args( $site_settings, $this->get_unmodified_settings( true ) );
-
-		}
-
-		// If not array, it means they haven't been saved before so provide defaults
-		// Store the settings
-		return self::$user_settings = array( 'features' => isset( $site_settings[ 'features' ] ) ? $site_settings[ 'features' ] : '' );
+		return self::$user_settings = $user_id > 0 ? get_user_meta( $user_id, 'show_me_the_admin', true ) : false;
 	}
 
 	/**
@@ -310,13 +303,11 @@ class Show_Me_The_Admin {
 		// Get site settings
 		$site_settings = $this->get_unmodified_settings();
 
-		// Make sure its an array
-		if ( empty( $site_settings ) ) {
-			$site_settings = array();
-		}
+		// If blank and network active, merge with network settings
+		if ( ! is_array( $site_settings ) && $this->is_network_active ) {
 
-		// If network active, merge with network settings
-		if ( $this->is_network_active ) {
+			// Make it an array
+			$site_settings = array();
 
 			// Get network settings
 			$network_settings = $this->get_unmodified_settings( true );
@@ -342,17 +333,21 @@ class Show_Me_The_Admin {
 			$current_user_id = get_current_user_id();
 			$user_settings = $this->get_user_settings( $current_user_id );
 
-			// Remove empty values for merging
-			$site_settings = array_filter( $site_settings );
-			$user_settings = array_filter( $user_settings );
+			// If an array, it means the user has set them so pay attention
+			if ( is_array( $user_settings ) ) {
 
-			// If features isnt set, its because they don't want any so set them blank
-			if ( ! isset( $user_settings[ 'features' ] ) ) {
-				$user_settings[ 'features' ] = array();
+				// The only setting we need concern ourselves with for merging is the features setting
+				if ( isset( $user_settings[ 'features' ] ) && ! empty( $user_settings[ 'features' ] ) ) {
+
+					// Assign site features setting with user features setting
+					$site_settings[ 'features' ] = $user_settings[ 'features' ];
+
+				}
+
+				// Merge the rest
+				$site_settings = wp_parse_args( $user_settings, $site_settings );
+
 			}
-
-			// Merge site with user settings
-			$site_settings = wp_parse_args( $user_settings, $site_settings );
 
 			// Disable if the user role isn't allowed
 			$user = get_userdata( $current_user_id );
@@ -467,42 +462,69 @@ class Show_Me_The_Admin {
 	}
 
 	/**
-	 * Returns true if we should hide the admin bar
-	 * for our functionality.
+	 * Returns true if we should hide the admin bar.
+	 * You can test against a specific feature.
 	 *
 	 * @access  public
 	 * @since   1.0.1
+	 * @param	$feature - string - the feature we're checking (keyphrase, button, hover)
 	 * @return	bool - true if we should hide the admin bar
 	 */
-	public function should_hide_the_admin_bar() {
+	public function enable_hide_the_admin_bar( $feature = '' ) {
 
-		// If already set, return the setting
-		if ( isset( self::$should_hide_the_admin_bar ) ) {
-			return self::$should_hide_the_admin_bar;
+		// If it's already been tested, will be an array
+		if ( is_array( self::$enable_hide_the_admin_bar ) ) {
+
+			// If specific feature, see if it has already been decided
+			if ( '' != $feature ) {
+				if ( in_array( $feature, self::$enable_hide_the_admin_bar ) ) {
+					return true;
+				}
+			}
+
+			// If no specific feature passed, if not empty then means something is enabled
+			else if ( ! empty( self::$enable_hide_the_admin_bar ) ) {
+				return true;
+			}
+
+			// Has already been tested and should not be enabled
+			return false;
+
+		}
+
+		// Create array for testing
+		self::$enable_hide_the_admin_bar = array();
+
+		// Don't add if the user doesn't want the admin bar
+		if ( ! $this->user_wants_admin_bar ) {
+			return false;
 		}
 
 		// Get the settings
 		$settings = $this->get_settings();
 
-		// Should we hide the admin bar?
-		$should_hide_the_admin_bar = true;
-
-		// Make sure we have at least one feature enabled
+		// Check to make sure any features are set
 		if ( ! ( isset( $settings[ 'features' ] ) && ! empty( $settings[ 'features' ] ) ) ) {
-			$should_hide_the_admin_bar = false;
+			return false;
+		}
+
+		// Check to make sure the specific feature is set
+		if ( '' != $feature && ! isset( $settings[ 'features' ][ $feature ] ) ) {
+			return false;
 		}
 
 		// If logged in...
 		if ( is_user_logged_in() ) {
 
-			// Don't add if the user doesn't want the admin bar
-			if ( ! $this->user_wants_admin_bar ) {
-				$should_hide_the_admin_bar = false;
+			// Don't add if functionality is disabled for this user
+			if ( isset( $settings[ 'disable' ] ) && $settings[ 'disable' ] == true ) {
+				return false;
 			}
 
-			// Don't add if the user is disabled
-			if ( isset( $settings[ 'disable' ] ) && $settings[ 'disable' ] == true ) {
-				$should_hide_the_admin_bar = false;
+			// Assign features
+			if ( ! empty( $settings[ 'features' ] ) ) {
+				self::$enable_hide_the_admin_bar = $settings[ 'features' ];
+				return true;
 			}
 
 		}
@@ -510,15 +532,40 @@ class Show_Me_The_Admin {
 		// If not logged in...
 		else {
 
-			// Don't add if the login button is not enabled
-			if ( ! ( isset( $settings[ 'enable_login_button' ] ) && $settings[ 'enable_login_button' ] == true ) ) {
-				$should_hide_the_admin_bar = false;
+			// Check a specific feature...
+			if ( '' != $feature ) {
+
+				// To see if the login button should be enabled
+				if ( isset( $settings[ "feature_{$feature}" ][ 'enable_login_button' ] ) && $settings[ "feature_{$feature}" ][ 'enable_login_button' ] == true ) {
+					self::$enable_hide_the_admin_bar[] = $feature;
+					return true;
+				}
+
+			}
+
+			// Check all features
+			else {
+
+				// Check each feature for the login button
+				foreach ( $settings[ 'features' ] as $feature ) {
+
+					// Add if the login button is not enabled for any feature
+					if ( isset( $settings[ "feature_{$feature}" ][ 'enable_login_button' ] ) && $settings[ "feature_{$feature}" ][ 'enable_login_button' ] == true ) {
+						self::$enable_hide_the_admin_bar[] = $feature;
+					}
+
+				}
+
+				// As long as one is enabled, return true
+				if ( ! empty( self::$enable_hide_the_admin_bar ) ) {
+					return true;
+				}
+
 			}
 
 		}
 
-		// Store the setting
-		return self::$should_hide_the_admin_bar = $should_hide_the_admin_bar;
+		return false;
 	}
 
 	/**
@@ -533,7 +580,7 @@ class Show_Me_The_Admin {
 	public function enqueue_styles_scripts() {
 
 		// If we shouldn't hide the admin bar, then get out of here
-		if ( ! $this->should_hide_the_admin_bar() ) {
+		if ( ! $this->enable_hide_the_admin_bar() ) {
 			return;
 		}
 
@@ -541,10 +588,10 @@ class Show_Me_The_Admin {
 		$settings = $this->get_settings();
 
 		// Build our data array
-		$localize = array( 'features' => $settings[ 'features' ] );
+		$localize = array( 'features' => self::$enable_hide_the_admin_bar );
 
 		// If keyphrase is enabled, add settings
-		if ( in_array( 'keyphrase', $settings[ 'features' ] ) ) {
+		if ( $this->enable_hide_the_admin_bar( 'keyphrase' ) ) {
 
 			// Add 'show_phrase'
 			$show_phrase = isset( $settings[ 'show_phrase' ] ) && ! empty( $settings[ 'show_phrase' ] ) ? $this->get_phrase_keycode( $settings[ 'show_phrase' ] ) : $this->get_phrase_keycode( SHOW_ME_THE_ADMIN_SHOW_PHRASE );
@@ -585,7 +632,7 @@ class Show_Me_The_Admin {
 	public function filter_body_class( $classes, $class ) {
 
 		// If we shouldn't hide the admin bar, then get out of here
-		if ( ! $this->should_hide_the_admin_bar() ) {
+		if ( ! $this->enable_hide_the_admin_bar() ) {
 			return $classes;
 		}
 
@@ -604,33 +651,21 @@ class Show_Me_The_Admin {
 	 */
 	public function print_login_button() {
 
-		// If we shouldn't hide the admin bar, then get out of here
-		if ( ! $this->should_hide_the_admin_bar() ) {
-			return;
+		// If the button feature is enabled, we need to add the button
+		if ( $this->enable_hide_the_admin_bar( 'button' ) ) {
+			?><div id="show-me-the-admin-button"></div><?php
 		}
 
-		// Get the settings
-		$settings = $this->get_settings();
-
-		// If logged in...
-		if ( is_user_logged_in() ) {
-
-			// If the button feature is enabled, we need to add the button
-			if ( in_array( 'button', $settings[ 'features' ] ) ) {
-				?><div id="show-me-the-admin-button"></div><?php
-			}
-
+		// If the hover feature is enabled, we need an element to tie it to
+		if ( $this->enable_hide_the_admin_bar( 'hover' ) ) {
+			?><div id="show-me-the-admin-hover"></div><?php
 		}
 
 		// If not logged in...
-		else {
+		if ( ! is_user_logged_in() ) {
 
-			// Do we want to show the login button?
-			// Don't show the login button if for some reason the admin bar is showing
-			$show_login_button = ! is_admin_bar_showing() && isset( $settings[ 'enable_login_button' ] ) && $settings[ 'enable_login_button' ] == true;
-
-			// Show the login button
-			if ( $show_login_button ) {
+			// Show the login button if a feature is enabled
+			if ( ! is_admin_bar_showing() && $this->enable_hide_the_admin_bar() ) {
 
 				// Print the login button with redirect
 				$login_redirect = isset( $_SERVER[ 'REQUEST_URI' ] ) ? $_SERVER[ 'REQUEST_URI' ] : null;
@@ -643,11 +678,6 @@ class Show_Me_The_Admin {
 
 			}
 
-		}
-
-		// If the hover feature is enabled, we need an element to tie it to
-		if ( in_array( 'hover', $settings[ 'features' ] ) ) {
-			?><div id="show-me-the-admin-hover"></div><?php
 		}
 
 	}

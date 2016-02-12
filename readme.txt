@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=ZCAN2
 Tags: admin, admin bar, adminbar, toolbar, bar, login, show, hide
 Requires at least: 3.0
 Tested up to: 4.4.2
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -18,7 +18,7 @@ The WordPress admin bar makes it really easy to move between viewing your site a
 
 = Features include: =
 * Hide your toolbar and make it appear by typing a phrase
-* Hide your toolbar and place WordPress button in top left corner to click to appear
+* Hide your toolbar and show WordPress button in top left corner to click to appear
 * Hide your toolbar and make it appear when mouse hovers near top of window
 
 **Show Me The Admin is also multisite-friendly.** Please use the [Show Me The Admin GitHub repo](https://github.com/bamadesigner/show-me-the-admin) to contribute, submit issues, and suggest features.
@@ -33,6 +33,10 @@ Your "Show Toolbar when viewing site" profile setting must be enabled. If not lo
 
 == Changelog ==
 
+= 1.0.2 =
+* CHECK YOUR SETTINGS - I modified the settings so users can enable/disable not logged in functionality for each feature
+* Optimized/cleaned up the settings
+
 = 1.0.1 =
 * Removed margin top change when admin bar slides down to decrease conflicts with themes
 * Now removes the <body> admin-bar CSS to help get rid of a theme's conflicting styles
@@ -41,6 +45,10 @@ Your "Show Toolbar when viewing site" profile setting must be enabled. If not lo
 Plugin launch
 
 == Upgrade Notice ==
+
+= 1.0.2 =
+* CHECK YOUR SETTINGS - I modified the settings so users can enable/disable not logged in functionality for each feature
+* Optimized/cleaned up the settings
 
 = 1.0.1 =
 * Removed margin top change when admin bar slides down to decrease conflicts with themes

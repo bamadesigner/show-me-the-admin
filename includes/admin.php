@@ -105,7 +105,7 @@ class Show_Me_The_Admin_Admin {
 		add_action( 'update_wpmu_options', array( $this, 'update_network_settings' ) );
 
 		// Register our settings
-		add_action( 'admin_init', array( $this, 'register_settings' ) );
+		add_action( 'admin_init', array( $this, 'register_settings' ), 1 );
 
 		// Add user profile settings
 		add_action( 'profile_personal_options', array( $this, 'add_user_profile_settings' ), 0 );
@@ -120,6 +120,9 @@ class Show_Me_The_Admin_Admin {
 		// Runs an ajax call to add the users setting and user notice
 		add_action( 'wp_ajax_smta_add_users_setting_notice', array( $this, 'add_users_setting_notice' ) );
 		add_action( 'wp_ajax_smta_add_user_notice', array( $this, 'smta_add_user_notice' ) );
+
+		// Checks to see if user wants to reset network settings
+		add_action( 'admin_init', array( $this, 'user_reset_network_settings' ), 2 );
 
 	}
 
@@ -262,6 +265,11 @@ class Show_Me_The_Admin_Admin {
 				// Get the settings
 				$site_settings = show_me_the_admin()->get_unmodified_settings();
 
+				// Make sure its an array
+				if ( empty( $site_settings ) ) {
+					$site_settings = array();
+				}
+
 				// Disable if the user role isn't allowed
 				$user = get_userdata( $current_user_id );
 				if ( isset( $site_settings[ 'user_roles' ] ) && ! ( $user->roles && is_array( $site_settings[ 'user_roles' ] ) && array_intersect( $user->roles, $site_settings[ 'user_roles' ] ) ) ) {
@@ -314,6 +322,23 @@ class Show_Me_The_Admin_Admin {
 		// Get our settings
 		$site_settings = show_me_the_admin()->get_unmodified_settings( $this->is_network_admin );
 
+		// HOUSEKEEPING
+		// Used to have 'enable_login_button' as a base level setting
+		// Make sure it gets moved to each specific feature
+		if ( isset( $site_settings[ 'enable_login_button' ] ) && $site_settings[ 'enable_login_button' ] == true ) {
+
+			// Enable for each feature
+			if ( isset( $site_settings[ 'features' ] ) ) {
+				foreach( $site_settings[ 'features' ] as $feature ) {
+					$site_settings[ "feature_{$feature}" ][ 'enable_login_button' ] = true;
+				}
+			}
+
+			// Remove the setting
+			unset( $site_settings[ 'enable_login_button' ] );
+
+		}
+
 		// Set the default phrases
 		$default_show_phrase = SHOW_ME_THE_ADMIN_SHOW_PHRASE;
 		$default_hide_phrase = SHOW_ME_THE_ADMIN_HIDE_PHRASE;
@@ -324,10 +349,28 @@ class Show_Me_The_Admin_Admin {
 			// Get network settings
 			$network_settings = show_me_the_admin()->get_unmodified_settings( true );
 
+			// Make sure its an array
+			if ( empty( $network_settings ) ) {
+				$network_settings = array();
+			}
+
+			// If no saved site settings, pull from network
+			if ( ! $site_settings ) {
+
+				// Assign network settings
+				$site_settings = $network_settings;
+
+			}
+
 			// Set the default phrases
 			$default_show_phrase = ! empty( $network_settings[ 'show_phrase' ] ) ? $network_settings[ 'show_phrase' ] : $default_show_phrase;
 			$default_hide_phrase = ! empty( $network_settings[ 'hide_phrase' ] ) ? $network_settings[ 'hide_phrase' ] : $default_hide_phrase;
 
+		}
+
+		// Make sure site settings is an array
+		if ( empty( $site_settings ) ) {
+			$site_settings = array();
 		}
 
 		// About this Plugin
@@ -342,8 +385,14 @@ class Show_Me_The_Admin_Admin {
 		// The Users
 		add_meta_box( 'show-me-the-admin-users-mb', __( 'The Users', 'show-me-the-admin' ), array( $this, 'print_settings_meta_boxes' ), $this->settings_page_id, 'normal', 'core', array( 'id' => 'users', 'site_settings' => $site_settings ) );
 
-		// The Settings
-		add_meta_box( 'show-me-the-admin-settings-mb', __( 'Settings For Feature #1 - Hide toolbar and make it appear by typing a phrase', 'show-me-the-admin' ), array( $this, 'print_settings_meta_boxes' ), $this->settings_page_id, 'normal', 'core', array( 'id' => 'settings-feature-1', 'site_settings' => $site_settings, 'default_show_phrase' => $default_show_phrase, 'default_hide_phrase' => $default_hide_phrase ) );
+		// The Settings For Feature #1
+		add_meta_box( 'show-me-the-admin-settings-1-mb', __( 'Hide toolbar and make it appear by typing a phrase', 'show-me-the-admin' ), array( $this, 'print_settings_meta_boxes' ), $this->settings_page_id, 'normal', 'core', array( 'id' => 'settings-feature-1', 'site_settings' => $site_settings, 'default_show_phrase' => $default_show_phrase, 'default_hide_phrase' => $default_hide_phrase ) );
+
+		// The Settings For Feature #2
+		add_meta_box( 'show-me-the-admin-settings-2-mb', __( 'Hide toolbar and show WordPress button', 'show-me-the-admin' ), array( $this, 'print_settings_meta_boxes' ), $this->settings_page_id, 'normal', 'core', array( 'id' => 'settings-feature-2', 'site_settings' => $site_settings ) );
+
+		// The Settings For Feature #3
+		add_meta_box( 'show-me-the-admin-settings-3-mb', __( 'Hide toolbar and make it appear when mouse hovers near top of window', 'show-me-the-admin' ), array( $this, 'print_settings_meta_boxes' ), $this->settings_page_id, 'normal', 'core', array( 'id' => 'settings-feature-3', 'site_settings' => $site_settings ) );
 
 	}
 
@@ -383,23 +432,15 @@ class Show_Me_The_Admin_Admin {
 				?><table id="show-me-the-admin-features" class="form-table show-me-the-admin-settings">
 					<tbody>
 						<tr>
-							<td id="stma-features-td">
+							<td id="smta-features-enable-td">
 								<fieldset>
 									<legend><strong><?php _e( 'What features would you like to enable?', 'show-me-the-admin' ); ?></strong></legend>
 									<div class="smta-choices vertical">
-										<label><?php _e( '#1', 'show-me-the-admin' ); ?> - <input type="checkbox" name="show_me_the_admin[features][]" value="keyphrase"<?php checked( isset( $features ) && is_array( $features ) && in_array( 'keyphrase', $features ) ); ?> /> <?php _e( 'Hide toolbar and make it appear by typing a phrase (<em>customize the phrases under Settings</em>)', 'show-me-the-admin' ); ?></label>
-										<label><?php _e( '#2', 'show-me-the-admin' ); ?> - <input type="checkbox" name="show_me_the_admin[features][]" value="button"<?php checked( isset( $features ) && is_array( $features ) && in_array( 'button', $features ) ); ?> /> <?php _e( 'Hide toolbar and place WordPress button in top left corner to click to appear', 'show-me-the-admin' ); ?></label>
+										<label><?php _e( '#1', 'show-me-the-admin' ); ?> - <input type="checkbox" name="show_me_the_admin[features][]" value="keyphrase"<?php checked( isset( $features ) && is_array( $features ) && in_array( 'keyphrase', $features ) ); ?> /> <?php _e( 'Hide toolbar and make it appear by typing a phrase', 'show-me-the-admin' ); ?></label>
+										<label><?php _e( '#2', 'show-me-the-admin' ); ?> - <input type="checkbox" name="show_me_the_admin[features][]" value="button"<?php checked( isset( $features ) && is_array( $features ) && in_array( 'button', $features ) ); ?> /> <?php _e( 'Hide toolbar and show WordPress button in top left corner to click to appear', 'show-me-the-admin' ); ?></label>
 										<label><?php _e( '#3', 'show-me-the-admin' ); ?> - <input type="checkbox" name="show_me_the_admin[features][]" value="hover"<?php checked( isset( $features ) && is_array( $features ) && in_array( 'hover', $features ) ); ?> /> <?php _e( 'Hide toolbar and make it appear when mouse hovers near top of window', 'show-me-the-admin' ); ?></label>
+										<p class="description"><?php _e( 'You can customize settings for each feature in their respective section.', 'show-me-the-admin' ); ?></p>
 									</div>
-								</fieldset>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<fieldset>
-									<legend class="screen-reader-text"><span><?php _e( 'Enable the Login Button', 'show-me-the-admin' ); ?></span></legend>
-									<label for="smta-login-button"><input name="show_me_the_admin[enable_login_button]" type="checkbox" id="smta-login-button" value="1"<?php checked( isset( $metabox[ 'args' ][ 'site_settings' ][ 'enable_login_button' ] ) && $metabox[ 'args' ][ 'site_settings' ][ 'enable_login_button' ] == true ) ?>/> <strong><?php _e( 'If not logged in, show a login button instead of the admin bar', 'show-me-the-admin' ); ?></strong></label>
-									<p class="description"><?php _e( 'If enabled, and not logged in, these features will reveal a login button.', 'show-me-the-admin' ); ?></p>
 								</fieldset>
 							</td>
 						</tr>
@@ -445,8 +486,11 @@ class Show_Me_The_Admin_Admin {
 			// Settings for feature 1 meta box
 			case 'settings-feature-1':
 
-				// Print the settings table
-				?><table id="show-me-the-admin-settings" class="form-table show-me-the-admin-settings">
+				// Get settings
+				$feature_keyphrase = isset( $metabox[ 'args' ][ 'site_settings' ][ 'feature_keyphrase' ] ) ? $metabox[ 'args' ][ 'site_settings' ][ 'feature_keyphrase' ] : array();
+
+				// Print the settings table for feature 1
+				?><table id="show-me-the-admin-settings-1" class="form-table show-me-the-admin-settings">
 					<tbody>
 						<tr>
 							<td>
@@ -460,6 +504,59 @@ class Show_Me_The_Admin_Admin {
 								<label for="smta-hide-phrase"><strong><?php _e( 'Phrase to type to hide the admin bar', 'show-me-the-admin' ); ?></strong></label>
 								<input name="show_me_the_admin[hide_phrase]" type="text" id="smta-hide-phrase" value="<?php esc_attr_e( isset( $metabox[ 'args' ][ 'site_settings' ][ 'hide_phrase' ] ) ? $metabox[ 'args' ][ 'site_settings' ][ 'hide_phrase' ] : null ); ?>" placeholder="<?php esc_attr_e( $metabox[ 'args' ][ 'default_hide_phrase' ] ); ?>"class="regular-text" />
 								<p class="description"><?php printf( __( 'If left blank, will use the default phrase "%s".', 'show-me-the-admin' ), $metabox[ 'args' ][ 'default_hide_phrase' ] ); ?></p>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<fieldset>
+									<legend class="screen-reader-text"><span><?php _e( 'Reveal a WordPress Login Button', 'show-me-the-admin' ); ?></span></legend>
+									<label for="smta-keyphrase-login-button"><input name="show_me_the_admin[feature_keyphrase][enable_login_button]" type="checkbox" id="smta-keyphrase-login-button" value="1"<?php checked( isset( $feature_keyphrase[ 'enable_login_button' ] ) && $feature_keyphrase[ 'enable_login_button' ] == true ) ?>/> <strong><?php _e( 'Reveal a login button if no one is logged in', 'show-me-the-admin' ); ?></strong></label>
+									<p class="description"><?php _e( 'If enabled, and not logged in, typing the phrase will reveal a login button.', 'show-me-the-admin' ); ?></p>
+								</fieldset>
+							</td>
+						</tr>
+					</tbody>
+				</table><?php
+				break;
+
+			// Settings for feature 2 meta box
+			case 'settings-feature-2':
+
+				// Get settings
+				$feature_button = isset( $metabox[ 'args' ][ 'site_settings' ][ 'feature_button' ] ) ? $metabox[ 'args' ][ 'site_settings' ][ 'feature_button' ] : array();
+
+				// Print the settings table for feature 2
+				?><table id="show-me-the-admin-settings-2" class="form-table show-me-the-admin-settings">
+					<tbody>
+						<tr>
+							<td>
+								<fieldset>
+									<legend class="screen-reader-text"><span><?php _e( 'Show the WordPress Button', 'show-me-the-admin' ); ?></span></legend>
+									<label for="smta-button-login-button"><input name="show_me_the_admin[feature_button][enable_login_button]" type="checkbox" id="smta-button-login-button" value="1"<?php checked( isset( $feature_button[ 'enable_login_button' ] ) && $feature_button[ 'enable_login_button' ] == true ) ?>/> <strong><?php _e( 'Show the WordPress button if no one is logged in', 'show-me-the-admin' ); ?></strong></label>
+									<p class="description"><?php _e( 'If enabled, and not logged in, the WordPress button will reveal a login button.', 'show-me-the-admin' ); ?></p>
+								</fieldset>
+							</td>
+						</tr>
+					</tbody>
+				</table><?php
+				break;
+
+			// Settings for feature 3 meta box
+			case 'settings-feature-3':
+
+				// Get settings
+				$feature_hover = isset( $metabox[ 'args' ][ 'site_settings' ][ 'feature_hover' ] ) ? $metabox[ 'args' ][ 'site_settings' ][ 'feature_hover' ] : array();
+
+				// Print the settings table for feature 3
+				?><table id="show-me-the-admin-settings-3" class="form-table show-me-the-admin-settings">
+					<tbody>
+						<tr>
+							<td>
+								<fieldset>
+									<legend class="screen-reader-text"><span><?php _e( 'Reveal a WordPress Login Button', 'show-me-the-admin' ); ?></span></legend>
+									<label for="smta-hover-login-button"><input name="show_me_the_admin[feature_hover][enable_login_button]" type="checkbox" id="smta-hover-login-button" value="1"<?php checked( isset( $feature_hover[ 'enable_login_button' ] ) && $feature_hover[ 'enable_login_button' ] == true ) ?>/> <strong><?php _e( 'Reveal a login button if no one is logged in', 'show-me-the-admin' ); ?></strong></label>
+									<p class="description"><?php _e( 'If enabled, and not logged in, hovering near the top of the window will reveal a login button.', 'show-me-the-admin' ); ?></p>
+								</fieldset>
 							</td>
 						</tr>
 					</tbody>
@@ -481,9 +578,61 @@ class Show_Me_The_Admin_Admin {
 		?><div class="wrap">
 			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1><?php
 
-			// Need this to show errors in network admin
+			// If network admin...
 			if ( $this->is_network_admin ) {
+
+				// Need this to show errors in network admin
 				settings_errors( 'show_me_the_admin' );
+
+			}
+
+			// For the individual site settings page
+			else {
+
+				// If network active and viewing a site's settings, and site doesn't have its own settings, then show a message
+				if ( show_me_the_admin()->is_network_active ) {
+
+					// Get the site settings
+					if ( ! ( $site_settings = show_me_the_admin()->get_unmodified_settings() ) ) {
+
+						// Were the network settings reset?
+						if ( isset( $_GET[ 'network-reset' ] ) ) {
+							?><div id="smta-users-setting-notice" class="updated notice is-dismissible">
+								<p><?php _e( 'The settings have been reset to match network settings.', 'show-me-the-admin' ); ?></p>
+							</div><?php
+						}
+
+						// Print the network message if inheriting network settings
+						?><div id="smta-network-settings-message" class="wp-ui-highlight">
+							<span class="dashicons dashicons-info"></span>
+							<p><?php _e( 'This plugin is activated network-wide and is currently inheriting the network settings. If you customize the settings below, you will overwrite the network and create custom settings for this site.', 'show-me-the-admin' ); ?></p><?php
+
+							// If the user can manage the network, give them a link
+							if ( current_user_can( 'manage_network' ) ) {
+								?><p><a class="button" href="<?php echo add_query_arg( array( 'page' => 'show-me-the-admin' ), network_admin_url( 'settings.php' ) ); ?>"><?php _e( 'Manage network settings', 'show-me-the-admin' ); ?></a></p><?php
+							}
+
+						?></div><?php
+
+					} else {
+
+						// Print the network message if NOT inheriting network settings
+						?><div id="smta-network-settings-message" class="wp-ui-highlight">
+							<span class="dashicons dashicons-info"></span>
+							<p><?php _e( 'This plugin is activated network-wide but the settings below have been selected for this site only.', 'show-me-the-admin' ); ?></p>
+							<p><a class="button" href="<?php echo wp_nonce_url( $this->settings_page_url, 'reset_network_settings', 'smta_nonce' ); ?>"><?php _e( 'Reset to network settings', 'show-me-the-admin' ); ?></a><?php
+
+							// If the user can manage the network, give them a link
+							if ( current_user_can( 'manage_network' ) ) {
+								?> <a class="button" href="<?php echo add_query_arg( array( 'page' => 'show-me-the-admin' ), network_admin_url( 'settings.php' ) ); ?>"><?php _e( 'Manage network settings', 'show-me-the-admin' ); ?></a><?php
+							}
+
+						?></p></div><?php
+
+					}
+
+				}
+
 			}
 
 			// Print the settings form
@@ -585,6 +734,29 @@ class Show_Me_The_Admin_Admin {
 	}
 
 	/**
+	 * Runs when the user selects that they want
+	 * to reset the network settings.
+	 *
+	 * @access  public
+	 * @since   1.0.2
+	 */
+	public function user_reset_network_settings() {
+
+		// Detect/verify our nonce
+		if (  isset( $_GET[ 'smta_nonce' ] ) && wp_verify_nonce( $_GET[ 'smta_nonce' ], 'reset_network_settings') ) {
+
+			// Clear out the settings
+			update_option( 'show_me_the_admin', null );
+
+			// Redirect to settings page
+			wp_redirect( add_query_arg( array( 'network-reset' => 'true' ), $this->settings_page_url ) );
+			exit();
+
+		}
+
+	}
+
+	/**
 	 * Updates the 'show_me_the_admin' setting.
 	 *
 	 * @access  public
@@ -626,14 +798,22 @@ class Show_Me_The_Admin_Admin {
 	 */
 	public function add_user_profile_settings( $profile_user ) {
 
-		// Get site settings in order to tell user the default phrases
+		// Get site settings
 		$site_settings = show_me_the_admin()->get_unmodified_settings();
 
-		// If network active, merge site settings with network settings
-		if ( show_me_the_admin()->is_network_active ) {
+		// If blank and network active, merge with network settings
+		if ( ! is_array( $site_settings ) && show_me_the_admin()->is_network_active ) {
+
+			// Make it an array
+			$site_settings = array();
 
 			// Get network settings
 			$network_settings = show_me_the_admin()->get_unmodified_settings( true );
+
+			// Make sure its an array
+			if ( empty( $network_settings ) ) {
+				$network_settings = array();
+			}
 
 			// Remove empty values for merging
 			$site_settings = array_filter( $site_settings );
@@ -676,8 +856,21 @@ class Show_Me_The_Admin_Admin {
 								<legend><strong><?php _e( 'What features would you like to enable?', 'show-me-the-admin' ); ?></strong></legend>
 								<div class="smta-choices vertical">
 									<label><?php _e( '#1', 'show-me-the-admin' ); ?> - <input type="checkbox" name="show_me_the_admin[features][]" value="keyphrase"<?php checked( isset( $user_features ) && is_array( $user_features ) && in_array( 'keyphrase', $user_features ) ); ?> /> <?php _e( 'Hide toolbar and make it appear by typing a phrase (<em>customize the phrases below</em>)', 'show-me-the-admin' ); ?></label>
-									<label><?php _e( '#2', 'show-me-the-admin' ); ?> - <input type="checkbox" name="show_me_the_admin[features][]" value="button"<?php checked( isset( $user_features ) && is_array( $user_features ) && in_array( 'button', $user_features ) ); ?> /> <?php _e( 'Hide toolbar and place WordPress button in top left corner to click to appear', 'show-me-the-admin' ); ?></label>
+									<label><?php _e( '#2', 'show-me-the-admin' ); ?> - <input type="checkbox" name="show_me_the_admin[features][]" value="button"<?php checked( isset( $user_features ) && is_array( $user_features ) && in_array( 'button', $user_features ) ); ?> /> <?php _e( 'Hide toolbar and show WordPress button in top left corner to click to appear', 'show-me-the-admin' ); ?></label>
 									<label><?php _e( '#3', 'show-me-the-admin' ); ?> - <input type="checkbox" name="show_me_the_admin[features][]" value="hover"<?php checked( isset( $user_features ) && is_array( $user_features ) && in_array( 'hover', $user_features ) ); ?> /> <?php _e( 'Hide toolbar and make it appear when mouse hovers near top of window', 'show-me-the-admin' ); ?></label>
+								</div>
+							</fieldset>
+						</td>
+					</tr>
+					<tr>
+						<td id="smta-features-disable-td">
+							<fieldset>
+								<legend class="screen-reader-text">
+									<span><?php _e( 'Disable all features', 'show-me-the-admin' ); ?></span>
+								</legend>
+								<div class="smta-choices vertical">
+									<label for="smta-features-disable">*&nbsp;&nbsp;&nbsp;<input name="show_me_the_admin[disable]" type="checkbox" id="smta-features-disable" value="1"<?php checked( isset( $user_settings[ 'disable' ] ) && $user_settings[ 'disable' ] == true ) ?>/> <strong><?php _e( 'Disable all features', 'show-me-the-admin' ); ?></strong></label>
+									<p class="description"><?php _e( 'If you leave all features unchecked, it will implement the site\'s selected features. Use this setting if you would like to disable this toolbar functionality for when you are logged in.', 'show-me-the-admin' ); ?></p>
 								</div>
 							</fieldset>
 						</td>

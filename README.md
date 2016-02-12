@@ -6,7 +6,7 @@ The WordPress admin bar makes it really easy to move between viewing your site a
 
 ## Features include:
 * Hide your toolbar and make it appear by typing a phrase
-* Hide your toolbar and place WordPress button in top left corner to click to appear
+* Hide your toolbar and show WordPress button in top left corner to click to appear
 * Hide your toolbar and make it appear when mouse hovers near top of window
 
 **Show Me The Admin is also multisite-friendly.**
