@@ -322,6 +322,23 @@ class Show_Me_The_Admin_Admin {
 		// Get our settings
 		$site_settings = show_me_the_admin()->get_unmodified_settings( $this->is_network_admin );
 
+		// HOUSEKEEPING
+		// Used to have 'enable_login_button' as a base level setting
+		// Make sure it gets moved to each specific feature
+		if ( isset( $site_settings[ 'enable_login_button' ] ) && $site_settings[ 'enable_login_button' ] == true ) {
+
+			// Enable for each feature
+			if ( isset( $site_settings[ 'features' ] ) ) {
+				foreach( $site_settings[ 'features' ] as $feature ) {
+					$site_settings[ "feature_{$feature}" ][ 'enable_login_button' ] = true;
+				}
+			}
+
+			// Remove the setting
+			unset( $site_settings[ 'enable_login_button' ] );
+
+		}
+
 		// Set the default phrases
 		$default_show_phrase = SHOW_ME_THE_ADMIN_SHOW_PHRASE;
 		$default_hide_phrase = SHOW_ME_THE_ADMIN_HIDE_PHRASE;
