@@ -14,6 +14,7 @@
 
 // @TODO add a link to or embed a demo video to help users understand functionality
 // @TODO add setting to customize how much time admin bar lingers after hover and button
+// @TODO test ability to do sound recognition - https://github.com/daveross/speak-to-wp/blob/master/assets/js/speak-to-wp.js
 
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
