@@ -33,6 +33,38 @@
 
 }
 
+// Our network message
+#smta-network-settings-message {
+    padding: 15px 15px 15px 40px;
+    margin: 8px 0 6px 0;
+    position: relative;
+
+    a {
+        color: inherit;
+    }
+
+    .button {
+        color: #000;
+        margin: 0 5px 0 0;
+    }
+
+    .dashicons {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        margin: -10px 0 0 0; // Icon is 20 pixels tall
+    }
+
+    p {
+        margin: 0 0 0.8em 0;
+    }
+
+    *:last-child {
+        margin-bottom: 0;
+    }
+
+}
+
 // Any of our settings tables
 .show-me-the-admin-settings {
 
@@ -66,13 +98,21 @@
 #show-me-the-admin-features {
     margin-top: 12px;
 }
-#stma-features-td {
+#smta-features-enable-td {
     background: rgba( #21759b, 0.2 );
 
     .description {
         margin-top: 10px;
     }
 
+}
+#smta-features-disable-td {
+    padding: 10px 0 0 0;
+    fieldset {
+        display: block;
+        background: rgba(#800, 0.2);
+        padding: 15px 10px;
+    }
 }
 
 // Our user settings area

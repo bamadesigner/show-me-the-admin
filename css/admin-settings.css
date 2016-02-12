@@ -19,6 +19,31 @@
   vertical-align: middle;
 }
 
+#smta-network-settings-message {
+  padding: 15px 15px 15px 40px;
+  margin: 8px 0 6px 0;
+  position: relative;
+}
+#smta-network-settings-message a {
+  color: inherit;
+}
+#smta-network-settings-message .button {
+  color: #000;
+  margin: 0 5px 0 0;
+}
+#smta-network-settings-message .dashicons {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  margin: -10px 0 0 0;
+}
+#smta-network-settings-message p {
+  margin: 0 0 0.8em 0;
+}
+#smta-network-settings-message *:last-child {
+  margin-bottom: 0;
+}
+
 .show-me-the-admin-settings label,
 .show-me-the-admin-settings legend {
   display: block;
@@ -39,11 +64,20 @@
   margin-top: 12px;
 }
 
-#stma-features-td {
+#smta-features-enable-td {
   background: rgba(33, 117, 155, 0.2);
 }
-#stma-features-td .description {
+#smta-features-enable-td .description {
   margin-top: 10px;
+}
+
+#smta-features-disable-td {
+  padding: 10px 0 0 0;
+}
+#smta-features-disable-td fieldset {
+  display: block;
+  background: rgba(136, 0, 0, 0.2);
+  padding: 15px 10px;
 }
 
 #smta-user-profile-settings {

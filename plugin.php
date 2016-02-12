@@ -13,6 +13,7 @@
  */
 
 // @TODO add a link to or embed a demo video to help users understand functionality
+// @TODO add setting to customize how much time admin bar lingers after hover and button
 
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
@@ -222,8 +223,10 @@ class Show_Me_The_Admin {
 	public function get_unmodified_settings( $network = false ) {
 
 		// If already set, return the settings
-		if ( $network && isset( self::$unmodified_settings[ 'network' ] ) ) {
-			return self::$unmodified_settings[ 'network' ];
+		if ( $network ) {
+			if ( isset( self::$unmodified_settings[ 'network' ] ) ) {
+				return self::$unmodified_settings[ 'network' ];
+			}
 		} else if ( isset( self::$unmodified_settings[ 'site' ] ) ) {
 			return self::$unmodified_settings[ 'site' ];
 		}
@@ -231,12 +234,24 @@ class Show_Me_The_Admin {
 		// Get default settings
 		$default_settings = $this->get_default_settings();
 
-		// Get settings
-		$unmodified_settings = $network ? get_site_option( 'show_me_the_admin', $default_settings ) : get_option( 'show_me_the_admin', $default_settings );
+		// If network active, then we have to treat the settings carefully
+		if ( $this->is_network_active ) {
 
-		// Make sure its an array
-		if ( empty( $unmodified_settings ) ) {
-			$unmodified_settings = array();
+			// If after network settings, then just get network settings
+			if ( $network ) {
+				$unmodified_settings = get_site_option( 'show_me_the_admin', $default_settings );
+			}
+
+			// If they're after site settings then make sure they don't pick up default settings that could overwrite network
+			else {
+				$unmodified_settings = get_option( 'show_me_the_admin' );
+			}
+
+		}
+
+		// If not network active, then just get site settings and mix with default
+		else {
+			$unmodified_settings = get_option( 'show_me_the_admin', $default_settings );
 		}
 
 		// Store the settings
@@ -244,8 +259,9 @@ class Show_Me_The_Admin {
 	}
 
 	/**
-	 * Returns a user's settings. If no user ID
-	 * is passed, gets settings for current user.
+	 * Returns a user's unmodified settings.
+	 *
+	 * If no user ID is passed, gets settings for current user.
 	 *
 	 * @access  public
 	 * @since   1.0.0
@@ -265,30 +281,7 @@ class Show_Me_The_Admin {
 		}
 
 		// Get the user meta
-		$user_meta = $user_id > 0 ? get_user_meta( $user_id, 'show_me_the_admin', true ) : false;
-
-		// If array, we're good to go
-		if ( is_array( $user_meta ) ) {
-
-			// Store the settings
-			return self::$user_settings = $user_meta;
-
-		}
-
-		// Get site settings
-		$site_settings = $this->get_unmodified_settings();
-
-		// If network active, merge with network settings
-		if ( $this->is_network_active ) {
-
-			// Merge site with network settings
-			$site_settings = wp_parse_args( $site_settings, $this->get_unmodified_settings( true ) );
-
-		}
-
-		// If not array, it means they haven't been saved before so provide defaults
-		// Store the settings
-		return self::$user_settings = array( 'features' => isset( $site_settings[ 'features' ] ) ? $site_settings[ 'features' ] : '' );
+		return self::$user_settings = $user_id > 0 ? get_user_meta( $user_id, 'show_me_the_admin', true ) : false;
 	}
 
 	/**
@@ -310,13 +303,11 @@ class Show_Me_The_Admin {
 		// Get site settings
 		$site_settings = $this->get_unmodified_settings();
 
-		// Make sure its an array
-		if ( empty( $site_settings ) ) {
-			$site_settings = array();
-		}
+		// If blank and network active, merge with network settings
+		if ( ! is_array( $site_settings ) && $this->is_network_active ) {
 
-		// If network active, merge with network settings
-		if ( $this->is_network_active ) {
+			// Make it an array
+			$site_settings = array();
 
 			// Get network settings
 			$network_settings = $this->get_unmodified_settings( true );
@@ -342,17 +333,21 @@ class Show_Me_The_Admin {
 			$current_user_id = get_current_user_id();
 			$user_settings = $this->get_user_settings( $current_user_id );
 
-			// Remove empty values for merging
-			$site_settings = array_filter( $site_settings );
-			$user_settings = array_filter( $user_settings );
+			// If an array, it means the user has set them so pay attention
+			if ( is_array( $user_settings ) ) {
 
-			// If features isnt set, its because they don't want any so set them blank
-			if ( ! isset( $user_settings[ 'features' ] ) ) {
-				$user_settings[ 'features' ] = array();
+				// The only setting we need concern ourselves with for merging is the features setting
+				if ( isset( $user_settings[ 'features' ] ) && ! empty( $user_settings[ 'features' ] ) ) {
+
+					// Assign site features setting with user features setting
+					$site_settings[ 'features' ] = $user_settings[ 'features' ];
+
+				}
+
+				// Merge the rest
+				$site_settings = wp_parse_args( $user_settings, $site_settings );
+
 			}
-
-			// Merge site with user settings
-			$site_settings = wp_parse_args( $user_settings, $site_settings );
 
 			// Disable if the user role isn't allowed
 			$user = get_userdata( $current_user_id );
@@ -524,6 +519,12 @@ class Show_Me_The_Admin {
 			// Don't add if functionality is disabled for this user
 			if ( isset( $settings[ 'disable' ] ) && $settings[ 'disable' ] == true ) {
 				return false;
+			}
+
+			// Assign features
+			if ( ! empty( $settings[ 'features' ] ) ) {
+				self::$enable_hide_the_admin_bar = $settings[ 'features' ];
+				return true;
 			}
 
 		}
