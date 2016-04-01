@@ -108,6 +108,26 @@
 
 		}
 
+		// If speak feature is enabled...
+		/*if ( jQuery.inArray( 'speak', show_me_the_admin.features ) > -1 && annyang ) {
+
+			// Define our commands to show and hide the bar
+			var $commands = {
+				'show me': function() {
+					console.log('hello');
+					show_me_the_admin_show_bar();
+					setTimeout(show_me_the_admin_hide_bar, 2000);
+				}
+			};
+
+			// Add our commands to annyang
+			annyang.addCommands($commands);
+
+			// Start listening. You can call this here, or attach this call to an event, button, etc.
+			annyang.start();
+
+		}*/
+
 	});
 
 	///// FUNCTIONS /////

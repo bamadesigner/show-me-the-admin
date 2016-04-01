@@ -604,6 +604,12 @@ class Show_Me_The_Admin {
 
 		}
 
+		// If speak is enabled, enqueue its script
+		/*if ( $this->enable_hide_the_admin_bar( 'speak' ) ) {
+			$localize[ 'features' ][] = 'speak';
+			wp_enqueue_script( 'annyang', '//cdnjs.cloudflare.com/ajax/libs/annyang/2.1.0/annyang.min.js', array(), SHOW_ME_THE_ADMIN_VERSION, true );
+		}*/
+
 		// Enqueue the style
 		wp_enqueue_style( 'show-me-the-admin', trailingslashit( plugin_dir_url( __FILE__ ) . 'css' ) . 'show-me-the-admin.min.css', array(), SHOW_ME_THE_ADMIN_VERSION );
 
