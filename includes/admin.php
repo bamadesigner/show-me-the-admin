@@ -575,6 +575,9 @@ class Show_Me_The_Admin_Admin {
 	 */
 	public function print_settings_page() {
 
+		// Make sure we don't show these notices anymore since they've viewed the settings
+		$this->add_users_setting_notice();
+
 		?><div class="wrap">
 			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1><?php
 
@@ -711,7 +714,7 @@ class Show_Me_The_Admin_Admin {
 				// Validate the settings
 				$settings = $this->validate_settings( $settings );
 
-				// Make sure we don't show these notices since they've saved settings
+				// Make sure we don't show these notices anymore since they've saved their settings
 				$this->add_users_setting_notice();
 
 				// Update settings
@@ -769,7 +772,7 @@ class Show_Me_The_Admin_Admin {
 		// Validate the settings
 		$settings = $this->validate_settings( $settings );
 
-		// Make sure we don't show these notices since they've saved settings
+		// Make sure we don't show these notices anymore since they've saved their settings
 		$this->add_users_setting_notice();
 
 		// Return the validated settings
@@ -844,6 +847,9 @@ class Show_Me_The_Admin_Admin {
 		// Set the default phrases
 		$default_show_phrase = ! empty( $site_settings[ 'show_phrase' ] ) ? $site_settings[ 'show_phrase' ] : SHOW_ME_THE_ADMIN_SHOW_PHRASE;
 		$default_hide_phrase = ! empty( $site_settings[ 'hide_phrase' ] ) ? $site_settings[ 'hide_phrase' ] : SHOW_ME_THE_ADMIN_HIDE_PHRASE;
+
+		// Make sure we don't show the notice anymore since they've viewed their profile settings
+		$this->add_user_notice();
 
 		?><div id="smta-user-profile-settings">
 			<h2><?php _e( 'Show Me The Admin Toolbar', 'show-me-the-admin' ); ?></h2>
@@ -920,7 +926,7 @@ class Show_Me_The_Admin_Admin {
 		// Update the user meta
 		update_user_meta( $user_id, 'show_me_the_admin', $show_me_the_admin );
 
-		// Make sure we don't show these notices since they've saved settings
+		// Make sure we don't show the notice anymore since they've saved their profile settings
 		$this->add_user_notice();
 
 	}
@@ -953,7 +959,10 @@ class Show_Me_The_Admin_Admin {
 	}
 
 	/**
-	 * Adds a users setting notice.
+	 * Adds a users setting notice timestamp.
+	 *
+	 * If set, will not display the plugin settings
+	 * notice to the user who activated the plugin.
 	 *
 	 * If no ID, then adds for the current user.
 	 *
@@ -966,7 +975,10 @@ class Show_Me_The_Admin_Admin {
 	}
 
 	/**
-	 * Adds a user notice.
+	 * Adds a user notice timestamp.
+	 *
+	 * If set, will not display the profile
+	 * settings notice to the site's users.
 	 *
 	 * If no ID, then adds the current user.
 	 *
