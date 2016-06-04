@@ -23,7 +23,7 @@ The WordPress admin bar makes it really easy to move between viewing your site a
 
 **Show Me The Admin is also multisite-friendly.** Please use the [Show Me The Admin GitHub repo](https://github.com/bamadesigner/show-me-the-admin) to contribute, submit issues, and suggest features.
 
-Your "Show Toolbar when viewing site" profile setting must be enabled. If not logged in, a login button will drop down.
+Your "Show Toolbar when viewing site" profile setting must be enabled.
 
 == Installation ==
 
