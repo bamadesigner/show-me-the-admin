@@ -176,7 +176,7 @@ class Show_Me_The_Admin {
 	 */
 	public function install() {
 
-		// Add this option so we know who enabled the plugin and should get the
+		// Add this option so we know who enabled the plugin
 		add_user_meta( get_current_user_id(), 'show_me_the_admin_activated_user', time(), true );
 
 	}
