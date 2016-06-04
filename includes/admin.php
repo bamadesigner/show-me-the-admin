@@ -660,6 +660,8 @@ class Show_Me_The_Admin_Admin {
 								do_meta_boxes( $this->settings_page_id, 'side', array() );
 							?></div> <!-- #side-sortables -->
 
+							<?php submit_button( 'Save Changes', 'primary', 'show_me_the_admin_save_changes_side', false ); ?>
+
 						</div> <!-- #postbox-container-1 -->
 
 						<div id="postbox-container-2" class="postbox-container">
@@ -670,11 +672,11 @@ class Show_Me_The_Admin_Admin {
 
 							<div id="advanced-sortables" class="meta-box-sortables"><?php
 								do_meta_boxes( $this->settings_page_id, 'advanced', array() );
-							?></div> <!-- #advanced-sortables --><?php
+							?></div> <!-- #advanced-sortables -->
 
-							submit_button( 'Save Changes', 'primary', 'show_me_the_admin_save_changes', false );
+							<?php submit_button( 'Save Changes', 'primary', 'show_me_the_admin_save_changes', false ); ?>
 
-						?></div> <!-- #postbox-container-2 -->
+						</div> <!-- #postbox-container-2 -->
 
 					</div> <!-- #post-body -->
 					<br class="clear" />
