@@ -13,7 +13,6 @@
  */
 
 // @TODO add a link to or embed a demo video to help users understand functionality
-// @TODO add setting to customize how much time admin bar lingers after hover and button
 // @TODO test ability to do sound recognition - https://github.com/daveross/speak-to-wp/blob/master/assets/js/speak-to-wp.js
 
 // If this file is called directly, abort.
@@ -46,7 +45,7 @@ class Show_Me_The_Admin {
 
 	/**
 	 * Will hold whether or not the
-	 * user wants the admin bar.
+	 * user wants the toolbar.
 	 *
 	 * @since	1.0.0
 	 * @access	public
@@ -136,7 +135,7 @@ class Show_Me_The_Admin {
 		// Runs when the plugin is upgraded
 		add_action( 'upgrader_process_complete', array( $this, 'upgrader_process_complete' ), 1, 2 );
 
-		// Detects the user's admin bar preference
+		// Detects the user's toolbar preference
 		add_action( 'plugins_loaded', array( $this, 'get_admin_bar_pref' ), 1 );
 
 		// Add needed styles and scripts
@@ -210,7 +209,18 @@ class Show_Me_The_Admin {
 	 * @return  array - the settings
 	 */
 	public function get_default_settings() {
-		return array( 'features' => array( 'keyphrase', 'button' ), 'feature_keyphrase' => array( 'enable_login_button' => true ), 'user_roles' => array( 'administrator' ), 'enable_user_notice' => true );
+		return array(
+			'features' => array( 'keyphrase', 'button' ),
+			'feature_keyphrase' => array( 'enable_login_button' => true ),
+			'feature_button' => array(
+				'mouseleave_delay' => 2,
+			),
+			'feature_hover' => array(
+				'mouseleave_delay' => 2,
+			),
+			'user_roles' => array( 'administrator' ),
+			'enable_user_notice' => true
+		);
 	}
 
 	/**
@@ -338,7 +348,7 @@ class Show_Me_The_Admin {
 			if ( is_array( $user_settings ) ) {
 
 				// The only setting we need concern ourselves with for merging is the features setting
-				if ( isset( $user_settings[ 'features' ] ) && ! empty( $user_settings[ 'features' ] ) ) {
+				if ( ! empty( $user_settings[ 'features' ] ) ) {
 
 					// Assign site features setting with user features setting
 					$site_settings[ 'features' ] = $user_settings[ 'features' ];
@@ -449,11 +459,11 @@ class Show_Me_The_Admin {
 		);
 
 		// Return the code
-		return isset( $keycodes[$key] ) && ! empty( $keycodes[$key] ) ? $keycodes[$key] : null;
+		return ! empty( $keycodes[$key] ) ? $keycodes[$key] : null;
 	}
 
 	/**
-	 * Detects the user's admin bar preference.
+	 * Detects the user's toolbar preference.
 	 *
 	 * @access  public
 	 * @since   1.0.0
@@ -463,13 +473,13 @@ class Show_Me_The_Admin {
 	}
 
 	/**
-	 * Returns true if we should hide the admin bar.
+	 * Returns true if we should hide the toolbar.
 	 * You can test against a specific feature.
 	 *
 	 * @access  public
 	 * @since   1.0.1
 	 * @param	$feature - string - the feature we're checking (keyphrase, button, hover)
-	 * @return	bool - true if we should hide the admin bar
+	 * @return	bool - true if we should hide the toolbar
 	 */
 	public function enable_hide_the_admin_bar( $feature = '' ) {
 
@@ -496,7 +506,7 @@ class Show_Me_The_Admin {
 		// Create array for testing
 		self::$enable_hide_the_admin_bar = array();
 
-		// Don't add if the user doesn't want the admin bar
+		// Don't add if the user doesn't want the toolbar
 		if ( ! $this->user_wants_admin_bar ) {
 			return false;
 		}
@@ -505,7 +515,7 @@ class Show_Me_The_Admin {
 		$settings = $this->get_settings();
 
 		// Check to make sure any features are set
-		if ( ! ( isset( $settings[ 'features' ] ) && ! empty( $settings[ 'features' ] ) ) ) {
+		if ( empty( $settings[ 'features' ] ) ) {
 			return false;
 		}
 
@@ -580,7 +590,7 @@ class Show_Me_The_Admin {
 	 */
 	public function enqueue_styles_scripts() {
 
-		// If we shouldn't hide the admin bar, then get out of here
+		// If we shouldn't hide the toolbar, then get out of here
 		if ( ! $this->enable_hide_the_admin_bar() ) {
 			return;
 		}
@@ -595,20 +605,56 @@ class Show_Me_The_Admin {
 		if ( $this->enable_hide_the_admin_bar( 'keyphrase' ) ) {
 
 			// Add 'show_phrase'
-			$show_phrase = isset( $settings[ 'show_phrase' ] ) && ! empty( $settings[ 'show_phrase' ] ) ? $this->get_phrase_keycode( $settings[ 'show_phrase' ] ) : $this->get_phrase_keycode( SHOW_ME_THE_ADMIN_SHOW_PHRASE );
+			$show_phrase = ! empty( $settings[ 'show_phrase' ] ) ? $this->get_phrase_keycode( $settings[ 'show_phrase' ] ) : $this->get_phrase_keycode( SHOW_ME_THE_ADMIN_SHOW_PHRASE );
 			$localize[ 'show_phrase' ] = apply_filters( 'show_me_the_admin_show_phrase', $show_phrase );
 
 			// Add 'hide_phrase'
-			$hide_phrase = isset( $settings[ 'hide_phrase' ] ) && ! empty( $settings[ 'hide_phrase' ] ) ? $this->get_phrase_keycode( $settings[ 'hide_phrase' ] ) : $this->get_phrase_keycode( SHOW_ME_THE_ADMIN_HIDE_PHRASE );
+			$hide_phrase = ! empty( $settings[ 'hide_phrase' ] ) ? $this->get_phrase_keycode( $settings[ 'hide_phrase' ] ) : $this->get_phrase_keycode( SHOW_ME_THE_ADMIN_HIDE_PHRASE );
 			$localize[ 'hide_phrase' ] = apply_filters( 'show_me_the_admin_hide_phrase', $hide_phrase );
 
 		}
 
+		// If button is enabled, add settings
+		if ( $this->enable_hide_the_admin_bar( 'button' ) ) {
+
+			// Define the mouseleave delay, default is 2 seconds
+			$mouseleave_delay = 2;
+			if ( ! empty( $settings['feature_button']['mouseleave_delay'] ) ) {
+				if ( $settings['feature_button']['mouseleave_delay'] > 0 ) {
+					$mouseleave_delay = $settings['feature_button']['mouseleave_delay'];
+				}
+			}
+
+			// Convert to milliseconds
+			$mouseleave_delay = $mouseleave_delay * 1000;
+
+			// Send to script
+			$localize['button_mouseleave_delay'] = $mouseleave_delay;
+
+		}
+
+		// If hover is enabled, add settings
+		if ( $this->enable_hide_the_admin_bar( 'hover' ) ) {
+
+			// Define the mouseleave delay, default is 2 seconds
+			$mouseleave_delay = 2;
+			if ( ! empty( $settings['feature_hover']['mouseleave_delay'] ) && $settings['feature_hover']['mouseleave_delay'] > 0 ) {
+				$mouseleave_delay = $settings['feature_hover']['mouseleave_delay'];
+			}
+
+			// Convert to milliseconds
+			$mouseleave_delay = $mouseleave_delay * 1000;
+
+			// Send to script
+			$localize['hover_mouseleave_delay'] = $mouseleave_delay;
+
+		}
+
 		// Enqueue the style
-		wp_enqueue_style( 'show-me-the-admin', trailingslashit( plugin_dir_url( __FILE__ ) . 'css' ) . 'show-me-the-admin.min.css', array(), SHOW_ME_THE_ADMIN_VERSION );
+		wp_enqueue_style( 'show-me-the-admin', trailingslashit( plugin_dir_url( __FILE__ ) . 'assets/css' ) . 'show-me-the-admin.min.css', array(), SHOW_ME_THE_ADMIN_VERSION );
 
 		// Enqueue the script
-		wp_enqueue_script( 'show-me-the-admin', trailingslashit( plugin_dir_url( __FILE__ ) . 'js' ) . 'show-me-the-admin.min.js', array( 'jquery' ), SHOW_ME_THE_ADMIN_VERSION, true );
+		wp_enqueue_script( 'show-me-the-admin', trailingslashit( plugin_dir_url( __FILE__ ) . 'assets/js' ) . 'show-me-the-admin.min.js', array( 'jquery' ), SHOW_ME_THE_ADMIN_VERSION, true );
 
 		// Pass some data
 		wp_localize_script( 'show-me-the-admin', 'show_me_the_admin', $localize );
@@ -632,7 +678,7 @@ class Show_Me_The_Admin {
 	 */
 	public function filter_body_class( $classes, $class ) {
 
-		// If we shouldn't hide the admin bar, then get out of here
+		// If we shouldn't hide the toolbar, then get out of here
 		if ( ! $this->enable_hide_the_admin_bar() ) {
 			return $classes;
 		}
@@ -669,7 +715,7 @@ class Show_Me_The_Admin {
 			if ( ! is_admin_bar_showing() && $this->enable_hide_the_admin_bar() ) {
 
 				// Print the login button with redirect
-				$login_redirect = isset( $_SERVER[ 'REQUEST_URI' ] ) ? $_SERVER[ 'REQUEST_URI' ] : null;
+				$login_redirect = ! empty( $_SERVER[ 'REQUEST_URI' ] ) ? $_SERVER[ 'REQUEST_URI' ] : null;
 
 				// Set the button label
 				$login_label = apply_filters( 'show_me_the_admin_login_text', __( 'Login to WordPress', 'show-me-the-admin' ) );
