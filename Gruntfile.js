@@ -7,18 +7,6 @@ module.exports = function(grunt) {
                 noCache: true,
                 update: false
             },
-            showme: {
-                options: {
-                    style: 'expanded',
-                },
-                files: [{
-                    expand: true,
-                    src: '*.scss',
-                    cwd: 'css',
-                    dest: 'css',
-                    ext: '.css'
-                }]
-            },
             showmemin: {
                 options: {
                     style: 'compressed',
@@ -50,7 +38,7 @@ module.exports = function(grunt) {
         watch: {
             showmesass: {
                 files: [ 'css/*.scss' ],
-                tasks: [ 'sass:showme', 'sass:showmemin' ]
+                tasks: [ 'sass:showmemin' ]
             },
             js: {
                 files: [ 'js/**/*.js', '!js/**/*.min.js' ],
