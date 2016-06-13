@@ -805,6 +805,27 @@ class Show_Me_The_Admin_Admin {
 	 * @return	array - the validated settings
 	 */
 	public function validate_settings( $settings ) {
+
+		// Make sure text fields are sanitized
+		foreach( array( 'show_phrase', 'hide_phrase' ) as $key ) {
+			if ( isset( $settings[ $key ] ) ) {
+				$settings[ $key ] = sanitize_text_field( $settings[ $key ] );
+			}
+		}
+
+		// Sanitize delays
+		foreach( array( 'button', 'hover' ) as $key ) {
+			if ( isset( $settings["feature_{$key}"]['mouseleave_delay'] ) ) {
+				$settings["feature_{$key}"]['mouseleave_delay'] = sanitize_text_field( $settings["feature_{$key}"]['mouseleave_delay'] );
+
+				// Make sure its an integer
+				if ( ! ( $settings["feature_{$key}"]['mouseleave_delay'] > 0 ) ) {
+					$settings["feature_{$key}"]['mouseleave_delay'] = '';
+				}
+
+			}
+		}
+
 		return $settings;
 	}
 
