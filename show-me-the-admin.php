@@ -604,6 +604,11 @@ class Show_Me_The_Admin {
 
 		}
 
+		// If hover is enabled, add settings
+		if ( $this->enable_hide_the_admin_bar( 'hover' ) ) {
+			$localize['mouseleave_delay'] = 2000;
+		}
+
 		// If speak is enabled, enqueue its script
 		/*if ( $this->enable_hide_the_admin_bar( 'speak' ) ) {
 			$localize[ 'features' ][] = 'speak';

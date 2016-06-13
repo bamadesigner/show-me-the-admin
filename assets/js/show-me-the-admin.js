@@ -98,7 +98,7 @@
 
 				// Only initiate if enabled
 				if ( $enable_admin_bar_mouseleave ) {
-					setTimeout(show_me_the_admin_hide_bar, 2000);
+					setTimeout( show_me_the_admin_hide_bar, show_me_the_admin.mouseleave_delay );
 				}
 
 				// Reset the setting
