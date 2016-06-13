@@ -208,7 +208,7 @@ class Show_Me_The_Admin_Admin {
 		if ( in_array( $hook_suffix, array( $this->settings_page_id, 'profile.php' ) ) ) {
 
 			// Enqueue our main styles
-			wp_enqueue_style( 'show-me-the-admin-settings', trailingslashit( plugin_dir_url( dirname( __FILE__ ) ) . 'css' ) . 'admin-settings.min.css', array(), SHOW_ME_THE_ADMIN_VERSION );
+			wp_enqueue_style( 'show-me-the-admin-settings', trailingslashit( plugin_dir_url( dirname( __FILE__ ) ) . 'assets/css' ) . 'admin-settings.min.css', array(), SHOW_ME_THE_ADMIN_VERSION );
 
 			// We only need this stuff on our settings page
 			if ( $hook_suffix == $this->settings_page_id ) {
@@ -218,7 +218,7 @@ class Show_Me_The_Admin_Admin {
 				wp_enqueue_script( 'show-me-the-admin-select2', '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/js/select2.min.js', array( 'jquery' ) );
 
 				// Enqueue our settings script
-				wp_enqueue_script( 'show-me-the-admin-settings', trailingslashit( plugin_dir_url( dirname( __FILE__ ) ) . 'js' ) . 'show-me-the-admin-settings.min.js', array( 'jquery', 'show-me-the-admin-select2' ), SHOW_ME_THE_ADMIN_VERSION );
+				wp_enqueue_script( 'show-me-the-admin-settings', trailingslashit( plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js' ) . 'show-me-the-admin-settings.min.js', array( 'jquery', 'show-me-the-admin-select2' ), SHOW_ME_THE_ADMIN_VERSION );
 
 				// Need these scripts for the meta boxes to work correctly on our settings page
 				wp_enqueue_script( 'post' );
@@ -304,7 +304,7 @@ class Show_Me_The_Admin_Admin {
 
 			// Enqueue our script
 			if ( $enqueue_user_notice_script ) {
-				wp_enqueue_script( 'show-me-the-admin-user-notice', trailingslashit( plugin_dir_url( dirname( __FILE__ ) ) . 'js' ) . 'show-me-the-admin-user-notice.min.js', array( 'jquery' ), SHOW_ME_THE_ADMIN_VERSION, true );
+				wp_enqueue_script( 'show-me-the-admin-user-notice', trailingslashit( plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js' ) . 'show-me-the-admin-user-notice.min.js', array( 'jquery' ), SHOW_ME_THE_ADMIN_VERSION, true );
 			}
 
 		}

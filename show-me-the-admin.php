@@ -611,10 +611,10 @@ class Show_Me_The_Admin {
 		}*/
 
 		// Enqueue the style
-		wp_enqueue_style( 'show-me-the-admin', trailingslashit( plugin_dir_url( __FILE__ ) . 'css' ) . 'show-me-the-admin.min.css', array(), SHOW_ME_THE_ADMIN_VERSION );
+		wp_enqueue_style( 'show-me-the-admin', trailingslashit( plugin_dir_url( __FILE__ ) . 'assets/css' ) . 'show-me-the-admin.min.css', array(), SHOW_ME_THE_ADMIN_VERSION );
 
 		// Enqueue the script
-		wp_enqueue_script( 'show-me-the-admin', trailingslashit( plugin_dir_url( __FILE__ ) . 'js' ) . 'show-me-the-admin.min.js', array( 'jquery' ), SHOW_ME_THE_ADMIN_VERSION, true );
+		wp_enqueue_script( 'show-me-the-admin', trailingslashit( plugin_dir_url( __FILE__ ) . 'assets/js' ) . 'show-me-the-admin.min.js', array( 'jquery' ), SHOW_ME_THE_ADMIN_VERSION, true );
 
 		// Pass some data
 		wp_localize_script( 'show-me-the-admin', 'show_me_the_admin', $localize );

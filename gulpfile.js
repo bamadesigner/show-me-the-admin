@@ -5,24 +5,24 @@ var watch = require('gulp-watch');
 var rename = require('gulp-rename');
 
 gulp.task('sass', function() {
-	gulp.src('css/*.scss')
+	gulp.src('assets/css/*.scss')
 		.pipe(sass({outputStyle:'compressed'}))
 		.pipe(rename({ suffix: '.min' }))
-		.pipe(gulp.dest('css'));
+		.pipe(gulp.dest('assets/css'));
 });
 
 gulp.task('compress', function() {
-	gulp.src(['js/*.js','!js/*.min.js'])
+	gulp.src(['assets/js/*.js','!assets/js/*.min.js'])
 		.pipe(minify({
 			ext:{
             	min:'.js'
             }
 		}))
 		.pipe(rename({ suffix: '.min' }))
-		.pipe(gulp.dest('js'))
+		.pipe(gulp.dest('assets/js'))
 });
 
 gulp.task('default', ['sass','compress'], function() {
-	gulp.watch('css/*.scss',['sass']);
-	gulp.watch(['js/*.js','!js/*.min.js'],['compress']);
+	gulp.watch('assets/css/*.scss',['sass']);
+	gulp.watch(['assets/js/*.js','!assets/js/*.min.js'],['compress']);
 });
