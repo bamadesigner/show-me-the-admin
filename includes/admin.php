@@ -475,7 +475,7 @@ class Show_Me_The_Admin_Admin {
 								<fieldset>
 									<legend class="screen-reader-text"><span><?php _e( 'Provide A User Notice', 'show-me-the-admin' ); ?></span></legend>
 									<label for="smta-user-notice"><input name="show_me_the_admin[enable_user_notice]" type="checkbox" id="smta-user-notice" value="1"<?php checked( isset( $metabox[ 'args' ][ 'site_settings' ][ 'enable_user_notice' ] ) && $metabox[ 'args' ][ 'site_settings' ][ 'enable_user_notice' ] == true ) ?>/> <strong><?php _e( 'Provide an admin notice that will alert your users to this plugin\'s functionality', 'show-me-the-admin' ); ?></strong></label>
-									<p class="description"><?php _e( 'Otherwise, I imagine the hidden admin bar might cause confusion.', 'show-me-the-admin' ); ?></p>
+									<p class="description"><?php _e( 'Otherwise, I imagine the hidden toolbar might cause confusion.', 'show-me-the-admin' ); ?></p>
 								</fieldset>
 							</td>
 						</tr>
@@ -494,14 +494,14 @@ class Show_Me_The_Admin_Admin {
 					<tbody>
 						<tr>
 							<td>
-								<label for="smta-show-phrase"><strong><?php _e( 'Phrase to type to show the admin bar', 'show-me-the-admin' ); ?></strong></label>
+								<label for="smta-show-phrase"><strong><?php _e( 'Phrase to type to show the toolbar', 'show-me-the-admin' ); ?></strong></label>
 								<input name="show_me_the_admin[show_phrase]" type="text" id="smta-show-phrase" value="<?php esc_attr( isset( $metabox[ 'args' ][ 'site_settings' ][ 'show_phrase' ] ) ? $metabox[ 'args' ][ 'site_settings' ][ 'show_phrase' ] : null ); ?>" placeholder="<?php esc_attr( $metabox[ 'args' ][ 'default_show_phrase' ] ); ?>" class="regular-text" />
 								<p class="description"><?php printf( __( 'If left blank, will use the default phrase "%s".', 'show-me-the-admin' ), $metabox[ 'args' ][ 'default_show_phrase' ] ); ?></p>
 							</td>
 						</tr>
 						<tr>
 							<td>
-								<label for="smta-hide-phrase"><strong><?php _e( 'Phrase to type to hide the admin bar', 'show-me-the-admin' ); ?></strong></label>
+								<label for="smta-hide-phrase"><strong><?php _e( 'Phrase to type to hide the toolbar', 'show-me-the-admin' ); ?></strong></label>
 								<input name="show_me_the_admin[hide_phrase]" type="text" id="smta-hide-phrase" value="<?php esc_attr( isset( $metabox[ 'args' ][ 'site_settings' ][ 'hide_phrase' ] ) ? $metabox[ 'args' ][ 'site_settings' ][ 'hide_phrase' ] : null ); ?>" placeholder="<?php esc_attr( $metabox[ 'args' ][ 'default_hide_phrase' ] ); ?>"class="regular-text" />
 								<p class="description"><?php printf( __( 'If left blank, will use the default phrase "%s".', 'show-me-the-admin' ), $metabox[ 'args' ][ 'default_hide_phrase' ] ); ?></p>
 							</td>
@@ -561,9 +561,9 @@ class Show_Me_The_Admin_Admin {
 						</tr>
 						<tr>
 							<td>
-								<label class="inline" for="smta-hover-mouseleave-delay"><strong><?php _e( 'Display admin bar for', 'show-me-the-admin' ); ?></strong></label>
-								<input name="show_me_the_admin[feature_hover][mouseleave_delay]" type="number" min="0" id="smta-hover-mouseleave-delay" value="<?php echo ! empty( $feature_hover['mouseleave_delay'] ) ? esc_attr( $feature_hover['mouseleave_delay'] ) : '2'; ?>" placeholder="2" class="regular-text inline" /> <span><?php _e( 'seconds', 'show-me-the-admin' ); ?></span>
-								<p class="description"><?php _e( 'If enabled, define how long you want the admin bar to appear (in seconds) after hover. The default is 2 seconds.', 'show-me-the-admin' ); ?></p>
+								<label class="inline" for="smta-hover-mouseleave-delay"><strong><?php _e( 'Display toolbar for', 'show-me-the-admin' ); ?></strong></label>
+								<input name="show_me_the_admin[feature_hover][mouseleave_delay]" type="number" min="0" id="smta-hover-mouseleave-delay" value="<?php echo ! empty( $feature_hover['mouseleave_delay'] ) ? esc_attr( $feature_hover['mouseleave_delay'] ) : '2'; ?>" placeholder="2" class="regular-text inline" /> <span><?php _e( 'second(s)', 'show-me-the-admin' ); ?></span>
+								<p class="description"><?php _e( 'If enabled, define how long you want the toolbar to appear (in seconds) after hover. The default is 2 seconds.', 'show-me-the-admin' ); ?></p>
 							</td>
 						</tr>
 					</tbody>
@@ -862,7 +862,7 @@ class Show_Me_The_Admin_Admin {
 
 		?><div id="smta-user-profile-settings">
 			<h2><?php _e( 'Show Me The Admin Toolbar', 'show-me-the-admin' ); ?></h2>
-			<p><?php _e( 'The admin bar makes it really easy to move back and forth between viewing your site and editing your site but sometimes the toolbar itself can be intrusive. This functionality hides your toolbar and enables you to make it appear, and disappear, using a variety of methods. <strong><em>Your "Show Toolbar when viewing site" setting must be enabled.</em></strong>', 'show-me-the-admin' ); ?></p>
+			<p><?php _e( 'The toolbar makes it really easy to move back and forth between viewing your site and editing your site but sometimes the toolbar itself can be intrusive. This functionality hides your toolbar and enables you to make it appear, and disappear, using a variety of methods. <strong><em>Your "Show Toolbar when viewing site" setting must be enabled.</em></strong>', 'show-me-the-admin' ); ?></p>
 			<table id="show-me-the-admin-user-profile" class="form-table show-me-the-admin-settings smta-user-profile-settings">
 				<tbody>
 					<tr>
@@ -898,14 +898,14 @@ class Show_Me_The_Admin_Admin {
 				<tbody>
 					<tr>
 						<td>
-							<label for="smta-show-phrase"><strong><?php _e( 'Phrase to type to show the admin bar', 'show-me-the-admin' ); ?></strong></label>
+							<label for="smta-show-phrase"><strong><?php _e( 'Phrase to type to show the toolbar', 'show-me-the-admin' ); ?></strong></label>
 							<input name="show_me_the_admin[show_phrase]" type="text" id="smta-show-phrase" value="<?php esc_attr( isset( $user_settings[ 'show_phrase' ] ) ? $user_settings[ 'show_phrase' ] : null ); ?>" placeholder="<?php esc_attr( $default_show_phrase ); ?>" class="regular-text" />
 							<p class="description"><?php printf( __( 'If left blank, will use your site\'s default phrase "%s".', 'show-me-the-admin' ), $default_show_phrase ); ?></p>
 						</td>
 					</tr>
 					<tr>
 						<td>
-							<label for="smta-hide-phrase"><strong><?php _e( 'Phrase to type to hide the admin bar', 'show-me-the-admin' ); ?></strong></label>
+							<label for="smta-hide-phrase"><strong><?php _e( 'Phrase to type to hide the toolbar', 'show-me-the-admin' ); ?></strong></label>
 							<input name="show_me_the_admin[hide_phrase]" type="text" id="smta-hide-phrase" value="<?php esc_attr( isset( $user_settings[ 'hide_phrase' ] ) ? $user_settings[ 'hide_phrase' ] : null ); ?>" placeholder="<?php esc_attr( $default_hide_phrase ); ?>" class="regular-text" />
 							<p class="description"><?php printf( __( 'If left blank, will use your site\'s default phrase "%s".', 'show-me-the-admin' ), $default_hide_phrase ); ?></p>
 						</td>
