@@ -495,14 +495,14 @@ class Show_Me_The_Admin_Admin {
 						<tr>
 							<td>
 								<label for="smta-show-phrase"><strong><?php _e( 'Phrase to type to show the admin bar', 'show-me-the-admin' ); ?></strong></label>
-								<input name="show_me_the_admin[show_phrase]" type="text" id="smta-show-phrase" value="<?php esc_attr_e( isset( $metabox[ 'args' ][ 'site_settings' ][ 'show_phrase' ] ) ? $metabox[ 'args' ][ 'site_settings' ][ 'show_phrase' ] : null ); ?>" placeholder="<?php esc_attr_e( $metabox[ 'args' ][ 'default_show_phrase' ] ); ?>" class="regular-text" />
+								<input name="show_me_the_admin[show_phrase]" type="text" id="smta-show-phrase" value="<?php esc_attr( isset( $metabox[ 'args' ][ 'site_settings' ][ 'show_phrase' ] ) ? $metabox[ 'args' ][ 'site_settings' ][ 'show_phrase' ] : null ); ?>" placeholder="<?php esc_attr( $metabox[ 'args' ][ 'default_show_phrase' ] ); ?>" class="regular-text" />
 								<p class="description"><?php printf( __( 'If left blank, will use the default phrase "%s".', 'show-me-the-admin' ), $metabox[ 'args' ][ 'default_show_phrase' ] ); ?></p>
 							</td>
 						</tr>
 						<tr>
 							<td>
 								<label for="smta-hide-phrase"><strong><?php _e( 'Phrase to type to hide the admin bar', 'show-me-the-admin' ); ?></strong></label>
-								<input name="show_me_the_admin[hide_phrase]" type="text" id="smta-hide-phrase" value="<?php esc_attr_e( isset( $metabox[ 'args' ][ 'site_settings' ][ 'hide_phrase' ] ) ? $metabox[ 'args' ][ 'site_settings' ][ 'hide_phrase' ] : null ); ?>" placeholder="<?php esc_attr_e( $metabox[ 'args' ][ 'default_hide_phrase' ] ); ?>"class="regular-text" />
+								<input name="show_me_the_admin[hide_phrase]" type="text" id="smta-hide-phrase" value="<?php esc_attr( isset( $metabox[ 'args' ][ 'site_settings' ][ 'hide_phrase' ] ) ? $metabox[ 'args' ][ 'site_settings' ][ 'hide_phrase' ] : null ); ?>" placeholder="<?php esc_attr( $metabox[ 'args' ][ 'default_hide_phrase' ] ); ?>"class="regular-text" />
 								<p class="description"><?php printf( __( 'If left blank, will use the default phrase "%s".', 'show-me-the-admin' ), $metabox[ 'args' ][ 'default_hide_phrase' ] ); ?></p>
 							</td>
 						</tr>
@@ -892,14 +892,14 @@ class Show_Me_The_Admin_Admin {
 					<tr>
 						<td>
 							<label for="smta-show-phrase"><strong><?php _e( 'Phrase to type to show the admin bar', 'show-me-the-admin' ); ?></strong></label>
-							<input name="show_me_the_admin[show_phrase]" type="text" id="smta-show-phrase" value="<?php esc_attr_e( isset( $user_settings[ 'show_phrase' ] ) ? $user_settings[ 'show_phrase' ] : null ); ?>" placeholder="<?php esc_attr_e( $default_show_phrase ); ?>" class="regular-text" />
+							<input name="show_me_the_admin[show_phrase]" type="text" id="smta-show-phrase" value="<?php esc_attr( isset( $user_settings[ 'show_phrase' ] ) ? $user_settings[ 'show_phrase' ] : null ); ?>" placeholder="<?php esc_attr( $default_show_phrase ); ?>" class="regular-text" />
 							<p class="description"><?php printf( __( 'If left blank, will use your site\'s default phrase "%s".', 'show-me-the-admin' ), $default_show_phrase ); ?></p>
 						</td>
 					</tr>
 					<tr>
 						<td>
 							<label for="smta-hide-phrase"><strong><?php _e( 'Phrase to type to hide the admin bar', 'show-me-the-admin' ); ?></strong></label>
-							<input name="show_me_the_admin[hide_phrase]" type="text" id="smta-hide-phrase" value="<?php esc_attr_e( isset( $user_settings[ 'hide_phrase' ] ) ? $user_settings[ 'hide_phrase' ] : null ); ?>" placeholder="<?php esc_attr_e( $default_hide_phrase ); ?>" class="regular-text" />
+							<input name="show_me_the_admin[hide_phrase]" type="text" id="smta-hide-phrase" value="<?php esc_attr( isset( $user_settings[ 'hide_phrase' ] ) ? $user_settings[ 'hide_phrase' ] : null ); ?>" placeholder="<?php esc_attr( $default_hide_phrase ); ?>" class="regular-text" />
 							<p class="description"><?php printf( __( 'If left blank, will use your site\'s default phrase "%s".', 'show-me-the-admin' ), $default_hide_phrase ); ?></p>
 						</td>
 					</tr>
