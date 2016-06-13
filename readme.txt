@@ -12,7 +12,7 @@ Hides your admin toolbar and enables you to make it appear, and disappear, using
 
 == Description ==
 
-The WordPress admin bar makes it really easy to move between viewing your site and editing your site but sometimes the toolbar itself can be intrusive.
+The WordPress toolbar makes it really easy to move between viewing your site and editing your site but sometimes the toolbar itself can be intrusive.
 
 "Show Me The Admin" is a WordPress plugin that hides your toolbar and enables you to make it appear, and disappear, using a variety of methods.
 
@@ -44,7 +44,7 @@ Your "Show Toolbar when viewing site" profile setting must be enabled.
 * Optimized/cleaned up the settings
 
 = 1.0.1 =
-* Removed margin top change when admin bar slides down to decrease conflicts with themes
+* Removed margin top change when toolbar slides down to decrease conflicts with themes
 * Now removes the <body> admin-bar CSS to help get rid of a theme's conflicting styles
 
 = 1.0.0 =
@@ -63,7 +63,7 @@ Plugin launch
 * Optimized/cleaned up the settings
 
 = 1.0.1 =
-* Removed margin top change when admin bar slides down to decrease conflicts with themes
+* Removed margin top change when toolbar slides down to decrease conflicts with themes
 * Now removes the <body> admin-bar CSS to help get rid of a theme's conflicting styles
 
 == Filters ==
@@ -82,19 +82,19 @@ function filter_show_me_the_admin_settings( $settings ) {
 
     // Change the settings
 
-    // For example, change the phrase you type to show the admin bar, default is 'showme'
+    // For example, change the phrase you type to show the toolbar, default is 'showme'
     $settings[ 'show_phrase' ] = 'hello';
 
-    // Or change the phrase you type to hide the admin bar, default is 'hideme'
+    // Or change the phrase you type to hide the toolbar, default is 'hideme'
     $settings[ 'hide_phrase' ] = 'goodbye';
 
     // Return the settings
     return $settings;
 }`
 
-= Filter the phrase to show the admin bar =
+= Filter the phrase to show the toolbar =
 `/**
- * Filters the phrase to show the admin bar.
+ * Filters the phrase to show the toolbar.
  *
  * @param   string - $show_phrase - the original phrase
  * @return  string - the filtered phrase
@@ -109,9 +109,9 @@ function filter_show_me_the_admin_show_phrase( $show_phrase ) {
     return $show_phrase;
 }`
 
-= Filter the phrase to hide the admin bar =
+= Filter the phrase to hide the toolbar =
 `/**
- * Filters the phrase to hide the admin bar.
+ * Filters the phrase to hide the toolbar.
  *
  * @param   string - $hide_phrase - the original phrase
  * @return  string - the filtered phrase

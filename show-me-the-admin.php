@@ -13,7 +13,6 @@
  */
 
 // @TODO add a link to or embed a demo video to help users understand functionality
-// @TODO add setting to customize how much time admin bar lingers after hover and button
 // @TODO test ability to do sound recognition - https://github.com/daveross/speak-to-wp/blob/master/assets/js/speak-to-wp.js
 
 // If this file is called directly, abort.
@@ -46,7 +45,7 @@ class Show_Me_The_Admin {
 
 	/**
 	 * Will hold whether or not the
-	 * user wants the admin bar.
+	 * user wants the toolbar.
 	 *
 	 * @since	1.0.0
 	 * @access	public
@@ -136,7 +135,7 @@ class Show_Me_The_Admin {
 		// Runs when the plugin is upgraded
 		add_action( 'upgrader_process_complete', array( $this, 'upgrader_process_complete' ), 1, 2 );
 
-		// Detects the user's admin bar preference
+		// Detects the user's toolbar preference
 		add_action( 'plugins_loaded', array( $this, 'get_admin_bar_pref' ), 1 );
 
 		// Add needed styles and scripts
@@ -461,7 +460,7 @@ class Show_Me_The_Admin {
 	}
 
 	/**
-	 * Detects the user's admin bar preference.
+	 * Detects the user's toolbar preference.
 	 *
 	 * @access  public
 	 * @since   1.0.0
@@ -471,13 +470,13 @@ class Show_Me_The_Admin {
 	}
 
 	/**
-	 * Returns true if we should hide the admin bar.
+	 * Returns true if we should hide the toolbar.
 	 * You can test against a specific feature.
 	 *
 	 * @access  public
 	 * @since   1.0.1
 	 * @param	$feature - string - the feature we're checking (keyphrase, button, hover)
-	 * @return	bool - true if we should hide the admin bar
+	 * @return	bool - true if we should hide the toolbar
 	 */
 	public function enable_hide_the_admin_bar( $feature = '' ) {
 
@@ -504,7 +503,7 @@ class Show_Me_The_Admin {
 		// Create array for testing
 		self::$enable_hide_the_admin_bar = array();
 
-		// Don't add if the user doesn't want the admin bar
+		// Don't add if the user doesn't want the toolbar
 		if ( ! $this->user_wants_admin_bar ) {
 			return false;
 		}
@@ -588,7 +587,7 @@ class Show_Me_The_Admin {
 	 */
 	public function enqueue_styles_scripts() {
 
-		// If we shouldn't hide the admin bar, then get out of here
+		// If we shouldn't hide the toolbar, then get out of here
 		if ( ! $this->enable_hide_the_admin_bar() ) {
 			return;
 		}
@@ -648,12 +647,6 @@ class Show_Me_The_Admin {
 
 		}
 
-		// If speak is enabled, enqueue its script
-		/*if ( $this->enable_hide_the_admin_bar( 'speak' ) ) {
-			$localize[ 'features' ][] = 'speak';
-			wp_enqueue_script( 'annyang', '//cdnjs.cloudflare.com/ajax/libs/annyang/2.1.0/annyang.min.js', array(), SHOW_ME_THE_ADMIN_VERSION, true );
-		}*/
-
 		// Enqueue the style
 		wp_enqueue_style( 'show-me-the-admin', trailingslashit( plugin_dir_url( __FILE__ ) . 'assets/css' ) . 'show-me-the-admin.min.css', array(), SHOW_ME_THE_ADMIN_VERSION );
 
@@ -682,7 +675,7 @@ class Show_Me_The_Admin {
 	 */
 	public function filter_body_class( $classes, $class ) {
 
-		// If we shouldn't hide the admin bar, then get out of here
+		// If we shouldn't hide the toolbar, then get out of here
 		if ( ! $this->enable_hide_the_admin_bar() ) {
 			return $classes;
 		}
