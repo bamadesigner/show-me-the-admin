@@ -212,6 +212,9 @@ class Show_Me_The_Admin {
 		return array(
 			'features' => array( 'keyphrase', 'button' ),
 			'feature_keyphrase' => array( 'enable_login_button' => true ),
+			'feature_button' => array(
+				'mouseleave_delay' => 2,
+			),
 			'feature_hover' => array(
 				'mouseleave_delay' => 2,
 			),

@@ -33,7 +33,7 @@ Your "Show Toolbar when viewing site" profile setting must be enabled.
 
 == Changelog ==
 
-= 1.0.4 =
+= 1.1.0 =
 * Added setting to define how long to display toolbar after hover and button click
 
 = 1.0.3 =
@@ -52,7 +52,7 @@ Plugin launch
 
 == Upgrade Notice ==
 
-= 1.0.4 =
+= 1.1.0 =
 * Added setting to define how long to display toolbar after hover and button click
 
 = 1.0.3 =
