@@ -386,13 +386,13 @@ class Show_Me_The_Admin_Admin {
 		add_meta_box( 'show-me-the-admin-users-mb', __( 'The Users', 'show-me-the-admin' ), array( $this, 'print_settings_meta_boxes' ), $this->settings_page_id, 'normal', 'core', array( 'id' => 'users', 'site_settings' => $site_settings ) );
 
 		// The Settings For Feature #1
-		add_meta_box( 'show-me-the-admin-settings-1-mb', __( 'Hide toolbar and make it appear by typing a phrase', 'show-me-the-admin' ), array( $this, 'print_settings_meta_boxes' ), $this->settings_page_id, 'normal', 'core', array( 'id' => 'settings-feature-1', 'site_settings' => $site_settings, 'default_show_phrase' => $default_show_phrase, 'default_hide_phrase' => $default_hide_phrase ) );
+		add_meta_box( 'show-me-the-admin-settings-keyphrase-mb', __( 'Hide toolbar and make it appear by typing a phrase', 'show-me-the-admin' ), array( $this, 'print_settings_meta_boxes' ), $this->settings_page_id, 'normal', 'core', array( 'id' => 'settings-feature-keyphrase', 'site_settings' => $site_settings, 'default_show_phrase' => $default_show_phrase, 'default_hide_phrase' => $default_hide_phrase ) );
 
-		// The Settings For Feature #2
-		add_meta_box( 'show-me-the-admin-settings-2-mb', __( 'Hide toolbar and show WordPress button', 'show-me-the-admin' ), array( $this, 'print_settings_meta_boxes' ), $this->settings_page_id, 'normal', 'core', array( 'id' => 'settings-feature-2', 'site_settings' => $site_settings ) );
+		// The Settings For Feature #2: button
+		add_meta_box( 'show-me-the-admin-settings-button-mb', __( 'Hide toolbar and show WordPress button', 'show-me-the-admin' ), array( $this, 'print_settings_meta_boxes' ), $this->settings_page_id, 'normal', 'core', array( 'id' => 'settings-feature-button', 'site_settings' => $site_settings ) );
 
-		// The Settings For Feature #3
-		add_meta_box( 'show-me-the-admin-settings-3-mb', __( 'Hide toolbar and make it appear when mouse hovers near top of window', 'show-me-the-admin' ), array( $this, 'print_settings_meta_boxes' ), $this->settings_page_id, 'normal', 'core', array( 'id' => 'settings-feature-3', 'site_settings' => $site_settings ) );
+		// The Settings For Feature #3: Hover
+		add_meta_box( 'show-me-the-admin-settings-hover-mb', __( 'Hide toolbar and make it appear when mouse hovers near top of window', 'show-me-the-admin' ), array( $this, 'print_settings_meta_boxes' ), $this->settings_page_id, 'normal', 'core', array( 'id' => 'settings-feature-hover', 'site_settings' => $site_settings ) );
 
 	}
 
@@ -483,14 +483,14 @@ class Show_Me_The_Admin_Admin {
 				</table><?php
 				break;
 
-			// Settings for feature 1 meta box
-			case 'settings-feature-1':
+			// Settings for keyphrase feature
+			case 'settings-feature-keyphrase':
 
 				// Get settings
 				$feature_keyphrase = isset( $metabox[ 'args' ][ 'site_settings' ][ 'feature_keyphrase' ] ) ? $metabox[ 'args' ][ 'site_settings' ][ 'feature_keyphrase' ] : array();
 
-				// Print the settings table for feature 1
-				?><table id="show-me-the-admin-settings-1" class="form-table show-me-the-admin-settings">
+				// Print the keyphrase settings
+				?><table id="show-me-the-admin-settings-keyphrase" class="form-table show-me-the-admin-settings">
 					<tbody>
 						<tr>
 							<td>
@@ -519,14 +519,14 @@ class Show_Me_The_Admin_Admin {
 				</table><?php
 				break;
 
-			// Settings for feature 2 meta box
-			case 'settings-feature-2':
+			// Settings for button feature
+			case 'settings-feature-button':
 
 				// Get settings
 				$feature_button = isset( $metabox[ 'args' ][ 'site_settings' ][ 'feature_button' ] ) ? $metabox[ 'args' ][ 'site_settings' ][ 'feature_button' ] : array();
 
-				// Print the settings table for feature 2
-				?><table id="show-me-the-admin-settings-2" class="form-table show-me-the-admin-settings">
+				// Print the button settings table
+				?><table id="show-me-the-admin-settings-button" class="form-table show-me-the-admin-settings">
 					<tbody>
 						<tr>
 							<td>
@@ -541,14 +541,14 @@ class Show_Me_The_Admin_Admin {
 				</table><?php
 				break;
 
-			// Settings for feature 3 meta box
-			case 'settings-feature-3':
+			// Settings for hover feature
+			case 'settings-feature-hover':
 
 				// Get settings
 				$feature_hover = isset( $metabox[ 'args' ][ 'site_settings' ][ 'feature_hover' ] ) ? $metabox[ 'args' ][ 'site_settings' ][ 'feature_hover' ] : array();
 
-				// Print the settings table for feature 3
-				?><table id="show-me-the-admin-settings-3" class="form-table show-me-the-admin-settings">
+				// Print the hover settings table
+				?><table id="show-me-the-admin-settings-hover" class="form-table show-me-the-admin-settings">
 					<tbody>
 						<tr>
 							<td>
@@ -921,7 +921,7 @@ class Show_Me_The_Admin_Admin {
 	public function save_user_profile_settings( $user_id ) {
 
 		// Make sure our array is set
-		if ( ! ( $show_me_the_admin = isset( $_POST[ 'show_me_the_admin' ] ) && ! empty( $_POST[ 'show_me_the_admin' ] ) ? $_POST[ 'show_me_the_admin' ] : NULL ) ) {
+		if ( ! ( $show_me_the_admin = ! empty( $_POST[ 'show_me_the_admin' ] ) ? $_POST[ 'show_me_the_admin' ] : NULL ) ) {
 			return;
 		}
 

@@ -338,7 +338,7 @@ class Show_Me_The_Admin {
 			if ( is_array( $user_settings ) ) {
 
 				// The only setting we need concern ourselves with for merging is the features setting
-				if ( isset( $user_settings[ 'features' ] ) && ! empty( $user_settings[ 'features' ] ) ) {
+				if ( ! empty( $user_settings[ 'features' ] ) ) {
 
 					// Assign site features setting with user features setting
 					$site_settings[ 'features' ] = $user_settings[ 'features' ];
@@ -449,7 +449,7 @@ class Show_Me_The_Admin {
 		);
 
 		// Return the code
-		return isset( $keycodes[$key] ) && ! empty( $keycodes[$key] ) ? $keycodes[$key] : null;
+		return ! empty( $keycodes[$key] ) ? $keycodes[$key] : null;
 	}
 
 	/**
@@ -505,7 +505,7 @@ class Show_Me_The_Admin {
 		$settings = $this->get_settings();
 
 		// Check to make sure any features are set
-		if ( ! ( isset( $settings[ 'features' ] ) && ! empty( $settings[ 'features' ] ) ) ) {
+		if ( empty( $settings[ 'features' ] ) ) {
 			return false;
 		}
 
@@ -595,11 +595,11 @@ class Show_Me_The_Admin {
 		if ( $this->enable_hide_the_admin_bar( 'keyphrase' ) ) {
 
 			// Add 'show_phrase'
-			$show_phrase = isset( $settings[ 'show_phrase' ] ) && ! empty( $settings[ 'show_phrase' ] ) ? $this->get_phrase_keycode( $settings[ 'show_phrase' ] ) : $this->get_phrase_keycode( SHOW_ME_THE_ADMIN_SHOW_PHRASE );
+			$show_phrase = ! empty( $settings[ 'show_phrase' ] ) ? $this->get_phrase_keycode( $settings[ 'show_phrase' ] ) : $this->get_phrase_keycode( SHOW_ME_THE_ADMIN_SHOW_PHRASE );
 			$localize[ 'show_phrase' ] = apply_filters( 'show_me_the_admin_show_phrase', $show_phrase );
 
 			// Add 'hide_phrase'
-			$hide_phrase = isset( $settings[ 'hide_phrase' ] ) && ! empty( $settings[ 'hide_phrase' ] ) ? $this->get_phrase_keycode( $settings[ 'hide_phrase' ] ) : $this->get_phrase_keycode( SHOW_ME_THE_ADMIN_HIDE_PHRASE );
+			$hide_phrase = ! empty( $settings[ 'hide_phrase' ] ) ? $this->get_phrase_keycode( $settings[ 'hide_phrase' ] ) : $this->get_phrase_keycode( SHOW_ME_THE_ADMIN_HIDE_PHRASE );
 			$localize[ 'hide_phrase' ] = apply_filters( 'show_me_the_admin_hide_phrase', $hide_phrase );
 
 		}
@@ -680,7 +680,7 @@ class Show_Me_The_Admin {
 			if ( ! is_admin_bar_showing() && $this->enable_hide_the_admin_bar() ) {
 
 				// Print the login button with redirect
-				$login_redirect = isset( $_SERVER[ 'REQUEST_URI' ] ) ? $_SERVER[ 'REQUEST_URI' ] : null;
+				$login_redirect = ! empty( $_SERVER[ 'REQUEST_URI' ] ) ? $_SERVER[ 'REQUEST_URI' ] : null;
 
 				// Set the button label
 				$login_label = apply_filters( 'show_me_the_admin_login_text', __( 'Login to WordPress', 'show-me-the-admin' ) );
