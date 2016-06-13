@@ -12,17 +12,14 @@ gulp.task('sass', function() {
 });
 
 gulp.task('compress', function() {
-	gulp.src(['assets/js/*.js','!assets/js/*.min.js'])
+	gulp.src(['assets/js/*.js','!assets/js/*.min.js','!assets/js/*-min.js'])
 		.pipe(minify({
-			ext:{
-            	min:'.js'
-            }
+			ext: '.min.js'
 		}))
-		.pipe(rename({ suffix: '.min' }))
 		.pipe(gulp.dest('assets/js'))
 });
 
 gulp.task('default', ['sass','compress'], function() {
 	gulp.watch('assets/css/*.scss',['sass']);
-	gulp.watch(['assets/js/*.js','!assets/js/*.min.js'],['compress']);
+	gulp.watch(['assets/js/*.js','!assets/js/*.min.js','!assets/js/*-min.js'],['compress']);
 });
