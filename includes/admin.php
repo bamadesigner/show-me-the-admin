@@ -537,6 +537,13 @@ class Show_Me_The_Admin_Admin {
 								</fieldset>
 							</td>
 						</tr>
+						<tr>
+							<td>
+								<label class="inline" for="smta-button-mouseleave-delay"><strong><?php _e( 'Display toolbar for', 'show-me-the-admin' ); ?></strong></label>
+								<input name="show_me_the_admin[feature_button][mouseleave_delay]" type="number" min="0" id="smta-button-mouseleave-delay" value="<?php echo ! empty( $feature_button['mouseleave_delay'] ) ? esc_attr( $feature_button['mouseleave_delay'] ) : '2'; ?>" placeholder="2" class="regular-text inline" /> <span><?php _e( 'second(s)', 'show-me-the-admin' ); ?></span>
+								<p class="description"><?php _e( 'If enabled, define how long you want the toolbar to appear (in seconds) after you click the button.<br /><strong>The default is 2 seconds.</strong>', 'show-me-the-admin' ); ?></p>
+							</td>
+						</tr>
 					</tbody>
 				</table><?php
 				break;
@@ -563,7 +570,7 @@ class Show_Me_The_Admin_Admin {
 							<td>
 								<label class="inline" for="smta-hover-mouseleave-delay"><strong><?php _e( 'Display toolbar for', 'show-me-the-admin' ); ?></strong></label>
 								<input name="show_me_the_admin[feature_hover][mouseleave_delay]" type="number" min="0" id="smta-hover-mouseleave-delay" value="<?php echo ! empty( $feature_hover['mouseleave_delay'] ) ? esc_attr( $feature_hover['mouseleave_delay'] ) : '2'; ?>" placeholder="2" class="regular-text inline" /> <span><?php _e( 'second(s)', 'show-me-the-admin' ); ?></span>
-								<p class="description"><?php _e( 'If enabled, define how long you want the toolbar to appear (in seconds) after hover. The default is 2 seconds.', 'show-me-the-admin' ); ?></p>
+								<p class="description"><?php _e( 'If enabled, define how long you want the toolbar to appear (in seconds) after hover.<br /><strong>The default is 2 seconds.</strong>', 'show-me-the-admin' ); ?></p>
 							</td>
 						</tr>
 					</tbody>

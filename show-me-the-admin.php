@@ -612,6 +612,25 @@ class Show_Me_The_Admin {
 
 		}
 
+		// If button is enabled, add settings
+		if ( $this->enable_hide_the_admin_bar( 'button' ) ) {
+
+			// Define the mouseleave delay, default is 2 seconds
+			$mouseleave_delay = 2;
+			if ( ! empty( $settings['feature_button']['mouseleave_delay'] ) ) {
+				if ( $settings['feature_button']['mouseleave_delay'] > 0 ) {
+					$mouseleave_delay = $settings['feature_button']['mouseleave_delay'];
+				}
+			}
+
+			// Convert to milliseconds
+			$mouseleave_delay = $mouseleave_delay * 1000;
+
+			// Send to script
+			$localize['button_mouseleave_delay'] = $mouseleave_delay;
+
+		}
+
 		// If hover is enabled, add settings
 		if ( $this->enable_hide_the_admin_bar( 'hover' ) ) {
 
@@ -625,8 +644,8 @@ class Show_Me_The_Admin {
 			$mouseleave_delay = $mouseleave_delay * 1000;
 
 			// Send to script
-			$localize['mouseleave_delay'] = $mouseleave_delay;
-			
+			$localize['hover_mouseleave_delay'] = $mouseleave_delay;
+
 		}
 
 		// If speak is enabled, enqueue its script

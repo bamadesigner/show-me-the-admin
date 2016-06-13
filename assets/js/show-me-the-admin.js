@@ -59,6 +59,10 @@
 		// Will be true if we should initiate the mouseleave functionality
 		var $init_admin_bar_mouseleave = false;
 
+		// Will hold the mouseleave delay (in seconds) to display the admin bar
+		// Default is 2 seconds
+		var $admin_bar_mouseleave = 2000;
+
 		// Will be true when we want mouseleave functionality to work
 		// Need this in case 1 feature w/mouseleave is enabled along with a feature without mouseleave
 		var $enable_admin_bar_mouseleave = false;
@@ -70,6 +74,14 @@
 			$('#show-me-the-admin-hover').mouseenter(function() {
 				$enable_admin_bar_mouseleave = true;
 				show_me_the_admin_show_bar();
+
+				// Define the mouseleave delay
+				if ( show_me_the_admin.hover_mouseleave_delay !== undefined ) {
+					if ( show_me_the_admin.hover_mouseleave_delay > 0 ) {
+						$admin_bar_mouseleave = parseInt( show_me_the_admin.hover_mouseleave_delay );
+					}
+				}
+
 			});
 
 			// Initiate admin bar mouseleave functionality
@@ -83,6 +95,14 @@
 			$('#show-me-the-admin-button').click(function () {
 				$enable_admin_bar_mouseleave = true;
 				show_me_the_admin_show_bar();
+
+				// Define the mouseleave delay
+				if ( show_me_the_admin.button_mouseleave_delay !== undefined ) {
+					if ( show_me_the_admin.button_mouseleave_delay > 0 ) {
+						$admin_bar_mouseleave = parseInt( show_me_the_admin.button_mouseleave_delay );
+					}
+				}
+
 			});
 
 			// Initiate admin bar mouseleave functionality
@@ -98,7 +118,7 @@
 
 				// Only initiate if enabled
 				if ( $enable_admin_bar_mouseleave ) {
-					setTimeout( show_me_the_admin_hide_bar, parseInt( show_me_the_admin.mouseleave_delay ) );
+					setTimeout( show_me_the_admin_hide_bar, $admin_bar_mouseleave );
 				}
 
 				// Reset the setting
