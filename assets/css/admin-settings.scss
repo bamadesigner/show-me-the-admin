@@ -73,10 +73,23 @@
         display: block;
         font-size: inherit !important;
         margin: 0 0 5px 0;
+
+	    &.inline {
+		    display: inline-block;
+	    }
+
     }
 
-    input.regular-text {
-        width: 100%;
+    input{
+
+	    &.regular-text {
+		    width: 100%;
+	    }
+
+	    &.inline {
+		    width: auto;
+	    }
+
     }
 
     .smta-choices {
@@ -113,6 +126,14 @@
         background: rgba(#800, 0.2);
         padding: 15px 10px;
     }
+}
+
+// The mouseleave delay setting for hover feature
+#smta-hover-mouseleave-delay {
+	width: 60px;
+	text-align: right;
+	margin-right: 5px;
+	margin-left: 5px;
 }
 
 // Our user settings area

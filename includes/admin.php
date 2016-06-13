@@ -559,6 +559,13 @@ class Show_Me_The_Admin_Admin {
 								</fieldset>
 							</td>
 						</tr>
+						<tr>
+							<td>
+								<label class="inline" for="smta-hover-mouseleave-delay"><strong><?php _e( 'Display admin bar for', 'show-me-the-admin' ); ?></strong></label>
+								<input name="show_me_the_admin[feature_hover][mouseleave_delay]" type="number" min="0" id="smta-hover-mouseleave-delay" value="<?php echo ! empty( $feature_hover['mouseleave_delay'] ) ? esc_attr( $feature_hover['mouseleave_delay'] ) : '2'; ?>" placeholder="2" class="regular-text inline" /> <span><?php _e( 'seconds', 'show-me-the-admin' ); ?></span>
+								<p class="description"><?php _e( 'If enabled, define how long you want the admin bar to appear (in seconds) after hover. The default is 2 seconds.', 'show-me-the-admin' ); ?></p>
+							</td>
+						</tr>
 					</tbody>
 				</table><?php
 				break;

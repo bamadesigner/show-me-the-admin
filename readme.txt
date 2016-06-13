@@ -33,6 +33,9 @@ Your "Show Toolbar when viewing site" profile setting must be enabled.
 
 == Changelog ==
 
+= 1.0.4 =
+* Added setting to define how long to display admin bar after hover
+
 = 1.0.3 =
 * Made sure user notices end once users view settings
 
@@ -48,6 +51,9 @@ Your "Show Toolbar when viewing site" profile setting must be enabled.
 Plugin launch
 
 == Upgrade Notice ==
+
+= 1.0.4 =
+* Added setting to define how long to display admin bar after hover
 
 = 1.0.3 =
 * Made sure user notices end once users view settings
