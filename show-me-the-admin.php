@@ -249,8 +249,7 @@ class Show_Me_The_Admin {
 		/*
 		 * If network active, then we have to treat the settings carefully.
 		 *
-		 * Otherwise, if not network active, then just get
-		 * site settings and mix with default.
+		 * Otherwise, then just get site settings and mix with default.
 		 */
 		if ( $this->is_network_active ) {
 
