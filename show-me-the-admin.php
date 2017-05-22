@@ -12,8 +12,11 @@
  * Domain Path:       /languages
  */
 
-// @TODO add a link to or embed a demo video to help users understand functionality
-// @TODO test ability to do sound recognition - https://github.com/daveross/speak-to-wp/blob/master/assets/js/speak-to-wp.js
+/*
+ * @TODO:
+ * Add a link to or embed a demo video to help users understand functionality.
+ * Test ability to do sound recognition - https://github.com/daveross/speak-to-wp/blob/master/assets/js/speak-to-wp.js
+ */
 
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
@@ -27,7 +30,7 @@ define( 'SHOW_ME_THE_ADMIN_PLUGIN_FILE', 'show-me-the-admin/show-me-the-admin.ph
 define( 'SHOW_ME_THE_ADMIN_SHOW_PHRASE', 'showme' );
 define( 'SHOW_ME_THE_ADMIN_HIDE_PHRASE', 'hideme' );
 
-// We only need you in the admin
+// We only need you in the admin.
 if ( is_admin() ) {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/admin.php';
 }
@@ -126,45 +129,38 @@ class Show_Me_The_Admin {
 		// Is this plugin network active?
 		$this->is_network_active = is_multisite() && ( $plugins = get_site_option( 'active_sitewide_plugins' ) ) && isset( $plugins[ SHOW_ME_THE_ADMIN_PLUGIN_FILE ] );
 
-		// Load our textdomain
+		// Load our textdomain.
 		add_action( 'init', array( $this, 'textdomain' ) );
 
-		// Runs on install
+		// Runs on install.
 		register_activation_hook( __FILE__, array( $this, 'install' ) );
 
-		// Runs when the plugin is upgraded
+		// Runs when the plugin is upgraded.
 		add_action( 'upgrader_process_complete', array( $this, 'upgrader_process_complete' ), 1, 2 );
 
-		// Detects the user's toolbar preference
+		// Detects the user's toolbar preference.
 		add_action( 'plugins_loaded', array( $this, 'get_admin_bar_pref' ), 1 );
 
-		// Add needed styles and scripts
+		// Add needed styles and scripts.
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles_scripts' ) );
 
-		// Filters the body class
+		// Filters the body class.
 		add_filter( 'body_class', array( $this, 'filter_body_class' ), 100000, 2 );
 
-		// Print dropdown login button
+		// Print dropdown login button.
 		add_action( 'wp_footer', array( $this, 'print_login_button' ), 2000 );
 
 	}
 
 	/**
-	 * Method to keep our instance from being cloned.
+	 * Method to keep our instance from
+	 * being cloned or unserialized.
 	 *
 	 * @since	1.0.0
 	 * @access	private
 	 * @return	void
 	 */
 	private function __clone() {}
-
-	/**
-	 * Method to keep our instance from being unserialized.
-	 *
-	 * @since	1.0.0
-	 * @access	private
-	 * @return	void
-	 */
 	private function __wakeup() {}
 
 	/**
@@ -175,7 +171,7 @@ class Show_Me_The_Admin {
 	 */
 	public function install() {
 
-		// Add this option so we know who enabled the plugin
+		// Add this option so we know who enabled the plugin.
 		add_user_meta( get_current_user_id(), 'show_me_the_admin_activated_user', time(), true );
 
 	}
@@ -210,16 +206,21 @@ class Show_Me_The_Admin {
 	 */
 	public function get_default_settings() {
 		return array(
-			'features' => array( 'keyphrase', 'button' ),
-			'feature_keyphrase' => array( 'enable_login_button' => true ),
-			'feature_button' => array(
-				'mouseleave_delay' => 2,
+			'features'                  => array(
+				'keyphrase',
+				'button',
 			),
-			'feature_hover' => array(
-				'mouseleave_delay' => 2,
+			'feature_keyphrase'         => array(
+				'enable_login_button'   => true,
 			),
-			'user_roles' => array( 'administrator' ),
-			'enable_user_notice' => true
+			'feature_button'            => array(
+				'mouseleave_delay'      => 2,
+			),
+			'feature_hover'             => array(
+				'mouseleave_delay'      => 2,
+			),
+			'user_roles'                => array( 'administrator' ),
+			'enable_user_notice'        => true,
 		);
 	}
 
@@ -228,45 +229,48 @@ class Show_Me_The_Admin {
 	 *
 	 * @access  public
 	 * @since   1.0.0
-	 * @param	boolean - $network - whether or not to retrieve network settings
+	 * @param   boolean - $network - whether or not to retrieve network settings.
 	 * @return  array - the settings
 	 */
 	public function get_unmodified_settings( $network = false ) {
 
-		// If already set, return the settings
+		// If already set, return the settings.
 		if ( $network ) {
-			if ( isset( self::$unmodified_settings[ 'network' ] ) ) {
-				return self::$unmodified_settings[ 'network' ];
+			if ( isset( self::$unmodified_settings['network'] ) ) {
+				return self::$unmodified_settings['network'];
 			}
-		} else if ( isset( self::$unmodified_settings[ 'site' ] ) ) {
-			return self::$unmodified_settings[ 'site' ];
+		} elseif ( isset( self::$unmodified_settings['site'] ) ) {
+			return self::$unmodified_settings['site'];
 		}
 
-		// Get default settings
+		// Get default settings.
 		$default_settings = $this->get_default_settings();
 
-		// If network active, then we have to treat the settings carefully
+		/*
+		 * If network active, then we have to treat the settings carefully.
+		 *
+		 * Otherwise, if not network active, then just get
+		 * site settings and mix with default.
+		 */
 		if ( $this->is_network_active ) {
 
-			// If after network settings, then just get network settings
+			/*
+			 * If after network settings, then just get network settings.
+			 *
+			 * Otherwise, if they're after site settings then make sure
+			 * they don't pick up default settings that could overwrite network.
+			 */
 			if ( $network ) {
 				$unmodified_settings = get_site_option( 'show_me_the_admin', $default_settings );
-			}
-
-			// If they're after site settings then make sure they don't pick up default settings that could overwrite network
-			else {
+			} else {
 				$unmodified_settings = get_option( 'show_me_the_admin' );
 			}
-
-		}
-
-		// If not network active, then just get site settings and mix with default
-		else {
+		} else {
 			$unmodified_settings = get_option( 'show_me_the_admin', $default_settings );
 		}
 
-		// Store the settings
-		return self::$unmodified_settings[ $network ? 'network' : 'site' ] = $unmodified_settings;
+		// Store the settings.
+		return self::$unmodified_settings[ ( $network ? 'network' : 'site' ) ] = $unmodified_settings;
 	}
 
 	/**
@@ -276,22 +280,22 @@ class Show_Me_The_Admin {
 	 *
 	 * @access  public
 	 * @since   1.0.0
-	 * @param	int - $user_id - the user ID
+	 * @param   int - $user_id - the user ID.
 	 * @return  array - the settings
 	 */
 	public function get_user_settings( $user_id = 0 ) {
 
-		// If already set, return the settings
+		// If already set, return the settings.
 		if ( isset( self::$user_settings ) ) {
 			return self::$user_settings;
 		}
 
-		// Make sure we have a valid user iD
+		// Make sure we have a valid user ID.
 		if ( ! $user_id ) {
 			$user_id = get_current_user_id();
 		}
 
-		// Get the user meta
+		// Get the user meta.
 		return self::$user_settings = $user_id > 0 ? get_user_meta( $user_id, 'show_me_the_admin', true ) : false;
 	}
 
@@ -306,69 +310,68 @@ class Show_Me_The_Admin {
 	 */
 	public function get_settings() {
 
-		// If already set, return the settings
+		// If already set, return the settings.
 		if ( isset( self::$settings ) ) {
 			return self::$settings;
 		}
 
-		// Get site settings
+		// Get site settings.
 		$site_settings = $this->get_unmodified_settings();
 
-		// If blank and network active, merge with network settings
+		// If blank and network active, merge with network settings.
 		if ( ! is_array( $site_settings ) && $this->is_network_active ) {
 
-			// Make it an array
+			// Make it an array.
 			$site_settings = array();
 
-			// Get network settings
+			// Get network settings.
 			$network_settings = $this->get_unmodified_settings( true );
 
-			// Make sure its an array
+			// Make sure its an array.
 			if ( empty( $network_settings ) ) {
 				$network_settings = array();
 			}
 
-			// Remove empty values for merging
+			// Remove empty values for merging.
 			$site_settings = array_filter( $site_settings );
 			$network_settings = array_filter( $network_settings );
 
-			// Merge site with network settings
+			// Merge site with network settings.
 			$site_settings = wp_parse_args( $site_settings, $network_settings );
 
 		}
 
-		// If logged in, merge with user settings
+		// If logged in, merge with user settings.
 		if ( function_exists( 'is_user_logged_in' ) && is_user_logged_in() ) {
 
-			// Get user settings
+			// Get user settings.
 			$current_user_id = get_current_user_id();
 			$user_settings = $this->get_user_settings( $current_user_id );
 
-			// If an array, it means the user has set them so pay attention
+			// If an array, it means the user has set them so pay attention.
 			if ( is_array( $user_settings ) ) {
 
-				// The only setting we need concern ourselves with for merging is the features setting
-				if ( ! empty( $user_settings[ 'features' ] ) ) {
+				// The only setting we need concern ourselves with for merging is the features setting.
+				if ( ! empty( $user_settings['features'] ) ) {
 
-					// Assign site features setting with user features setting
-					$site_settings[ 'features' ] = $user_settings[ 'features' ];
+					// Assign site features setting with user features setting.
+					$site_settings['features'] = $user_settings['features'];
 
 				}
 
-				// Merge the rest
+				// Merge the rest.
 				$site_settings = wp_parse_args( $user_settings, $site_settings );
 
 			}
 
-			// Disable if the user role isn't allowed
+			// Disable if the user role isn't allowed.
 			$user = get_userdata( $current_user_id );
-			if ( isset( $site_settings[ 'user_roles' ] ) && ! ( $user->roles && is_array( $site_settings[ 'user_roles' ] ) && array_intersect( $user->roles, $site_settings[ 'user_roles' ] ) ) ) {
-				$site_settings[ 'disable' ] = true;
+			if ( isset( $site_settings['user_roles'] ) && ! ( $user->roles && is_array( $site_settings['user_roles'] ) && array_intersect( $user->roles, $site_settings['user_roles'] ) ) ) {
+				$site_settings['disable'] = true;
 			}
-
 		}
 
-		// Store the settings
+		// Store the settings.
 		return self::$settings = apply_filters( 'show_me_the_admin_settings', $site_settings );
 	}
 
@@ -382,30 +385,29 @@ class Show_Me_The_Admin {
 	 */
 	public function get_phrase_keycode( $phrase ) {
 
-		// Make sure the phrase only has alphanumeric characters
+		// Make sure the phrase only has alphanumeric characters.
 		$phrase = preg_replace( '/[^a-z0-9]/i', '', $phrase );
 
-		// Split phrase into array
+		// Split phrase into array.
 		$phrase = str_split( $phrase );
 
-		// Make sure we have a phrase
+		// Make sure we have a phrase.
 		if ( empty( $phrase ) ) {
 			return null;
 		}
 
-		// Will hold the entire keycode
+		// Will hold the entire keycode.
 		$keycode = '';
 
-		// Build the phrase
-		foreach( $phrase as $key ) {
+		// Build the phrase.
+		foreach ( $phrase as $key ) {
 			if ( $code = $this->get_keycode( $key ) ) {
 				$keycode .= $code;
 			}
 		}
 
-		// Return keycode
+		// Return keycode.
 		return ! empty( $keycode ) ? $keycode : null;
-
 	}
 
 	/**
@@ -418,7 +420,7 @@ class Show_Me_The_Admin {
 	 */
 	public function get_keycode( $key ) {
 
-		// Index the keycodes by key
+		// Index the keycodes by key.
 		$keycodes = array(
 			'0' => '48',
 			'1' => '49',
@@ -458,8 +460,8 @@ class Show_Me_The_Admin {
 			'z' => '90',
 		);
 
-		// Return the code
-		return ! empty( $keycodes[$key] ) ? $keycodes[$key] : null;
+		// Return the code.
+		return ! empty( $keycodes[ $key ] ) ? $keycodes[ $key ] : null;
 	}
 
 	/**
@@ -483,97 +485,86 @@ class Show_Me_The_Admin {
 	 */
 	public function enable_hide_the_admin_bar( $feature = '' ) {
 
-		// If it's already been tested, will be an array
+		// If it's already been tested, will be an array.
 		if ( is_array( self::$enable_hide_the_admin_bar ) ) {
 
-			// If specific feature, see if it has already been decided
+			/*
+			 * If specific feature, see if it has already been decided.
+			 *
+			 * Otherwise, if not empty then means something is enabled.
+			 */
 			if ( '' != $feature ) {
 				if ( in_array( $feature, self::$enable_hide_the_admin_bar ) ) {
 					return true;
 				}
-			}
-
-			// If no specific feature passed, if not empty then means something is enabled
-			else if ( ! empty( self::$enable_hide_the_admin_bar ) ) {
+			} elseif ( ! empty( self::$enable_hide_the_admin_bar ) ) {
 				return true;
 			}
 
-			// Has already been tested and should not be enabled
+			// Has already been tested and should not be enabled.
 			return false;
-
 		}
 
-		// Create array for testing
+		// Create array for testing.
 		self::$enable_hide_the_admin_bar = array();
 
-		// Don't add if the user doesn't want the toolbar
+		// Don't add if the user doesn't want the toolbar.
 		if ( ! $this->user_wants_admin_bar ) {
 			return false;
 		}
 
-		// Get the settings
+		// Get the settings.
 		$settings = $this->get_settings();
 
-		// Check to make sure any features are set
-		if ( empty( $settings[ 'features' ] ) ) {
+		// Check to make sure any features are set.
+		if ( empty( $settings['features'] ) ) {
 			return false;
 		}
 
-		// Check to make sure the specific feature is set
-		if ( '' != $feature && ! isset( $settings[ 'features' ][ $feature ] ) ) {
+		// Check to make sure the specific feature is set.
+		if ( '' != $feature && ! isset( $settings['features'][ $feature ] ) ) {
 			return false;
 		}
 
-		// If logged in...
+		// Check features dependent on whether the user is logged in.
 		if ( is_user_logged_in() ) {
 
-			// Don't add if functionality is disabled for this user
-			if ( isset( $settings[ 'disable' ] ) && $settings[ 'disable' ] == true ) {
+			// Don't add if functionality is disabled for this user.
+			if ( isset( $settings['disable'] ) && true == $settings['disable'] ) {
 				return false;
 			}
 
-			// Assign features
-			if ( ! empty( $settings[ 'features' ] ) ) {
-				self::$enable_hide_the_admin_bar = $settings[ 'features' ];
+			// Assign features.
+			if ( ! empty( $settings['features'] ) ) {
+				self::$enable_hide_the_admin_bar = $settings['features'];
 				return true;
 			}
+		} else {
 
-		}
-
-		// If not logged in...
-		else {
-
-			// Check a specific feature...
+			// Check a specific feature or all features.
 			if ( '' != $feature ) {
 
-				// To see if the login button should be enabled
-				if ( isset( $settings[ "feature_{$feature}" ][ 'enable_login_button' ] ) && $settings[ "feature_{$feature}" ][ 'enable_login_button' ] == true ) {
+				// To see if the login button should be enabled.
+				if ( isset( $settings[ "feature_{$feature}" ]['enable_login_button'] ) && true == $settings[ "feature_{$feature}" ]['enable_login_button'] ) {
 					self::$enable_hide_the_admin_bar[] = $feature;
 					return true;
 				}
+			} else {
 
-			}
+				// Check each feature for the login button.
+				foreach ( $settings['features'] as $feature ) {
 
-			// Check all features
-			else {
-
-				// Check each feature for the login button
-				foreach ( $settings[ 'features' ] as $feature ) {
-
-					// Add if the login button is not enabled for any feature
-					if ( isset( $settings[ "feature_{$feature}" ][ 'enable_login_button' ] ) && $settings[ "feature_{$feature}" ][ 'enable_login_button' ] == true ) {
+					// Add if the login button is not enabled for any feature.
+					if ( isset( $settings[ "feature_{$feature}" ]['enable_login_button'] ) && true == $settings[ "feature_{$feature}" ]['enable_login_button'] ) {
 						self::$enable_hide_the_admin_bar[] = $feature;
 					}
-
 				}
 
-				// As long as one is enabled, return true
+				// As long as one is enabled, return true.
 				if ( ! empty( self::$enable_hide_the_admin_bar ) ) {
 					return true;
 				}
-
 			}
-
 		}
 
 		return false;
@@ -584,40 +575,40 @@ class Show_Me_The_Admin {
 	 *
 	 * @access  public
 	 * @since   1.0.0
-	 * @param	string - $hook_suffix - the ID of the current page
-	 * @filter	show_me_the_admin_show_phrase
-	 * @filter	show_me_the_admin_hide_phrase
+	 * @param   string - $hook_suffix - the ID of the current page.
+	 * @filter  show_me_the_admin_show_phrase
+	 * @filter  show_me_the_admin_hide_phrase
 	 */
 	public function enqueue_styles_scripts() {
 
-		// If we shouldn't hide the toolbar, then get out of here
+		// If we shouldn't hide the toolbar, then get out of here.
 		if ( ! $this->enable_hide_the_admin_bar() ) {
 			return;
 		}
 
-		// Get the settings
+		// Get the settings.
 		$settings = $this->get_settings();
 
-		// Build our data array
+		// Build our data array.
 		$localize = array( 'features' => self::$enable_hide_the_admin_bar );
 
-		// If keyphrase is enabled, add settings
+		// If keyphrase is enabled, add settings.
 		if ( $this->enable_hide_the_admin_bar( 'keyphrase' ) ) {
 
-			// Add 'show_phrase'
-			$show_phrase = ! empty( $settings[ 'show_phrase' ] ) ? $this->get_phrase_keycode( $settings[ 'show_phrase' ] ) : $this->get_phrase_keycode( SHOW_ME_THE_ADMIN_SHOW_PHRASE );
-			$localize[ 'show_phrase' ] = apply_filters( 'show_me_the_admin_show_phrase', $show_phrase );
+			// Add 'show_phrase'.
+			$show_phrase = ! empty( $settings['show_phrase'] ) ? $this->get_phrase_keycode( $settings['show_phrase'] ) : $this->get_phrase_keycode( SHOW_ME_THE_ADMIN_SHOW_PHRASE );
+			$localize['show_phrase'] = apply_filters( 'show_me_the_admin_show_phrase', $show_phrase );
 
-			// Add 'hide_phrase'
-			$hide_phrase = ! empty( $settings[ 'hide_phrase' ] ) ? $this->get_phrase_keycode( $settings[ 'hide_phrase' ] ) : $this->get_phrase_keycode( SHOW_ME_THE_ADMIN_HIDE_PHRASE );
-			$localize[ 'hide_phrase' ] = apply_filters( 'show_me_the_admin_hide_phrase', $hide_phrase );
+			// Add 'hide_phrase'.
+			$hide_phrase = ! empty( $settings['hide_phrase'] ) ? $this->get_phrase_keycode( $settings['hide_phrase'] ) : $this->get_phrase_keycode( SHOW_ME_THE_ADMIN_HIDE_PHRASE );
+			$localize['hide_phrase'] = apply_filters( 'show_me_the_admin_hide_phrase', $hide_phrase );
 
 		}
 
-		// If button is enabled, add settings
+		// If button is enabled, add settings.
 		if ( $this->enable_hide_the_admin_bar( 'button' ) ) {
 
-			// Define the mouseleave delay, default is 2 seconds
+			// Define the mouseleave delay, default is 2 seconds.
 			$mouseleave_delay = 2;
 			if ( ! empty( $settings['feature_button']['mouseleave_delay'] ) ) {
 				if ( $settings['feature_button']['mouseleave_delay'] > 0 ) {
@@ -625,49 +616,50 @@ class Show_Me_The_Admin {
 				}
 			}
 
-			// Convert to milliseconds
+			// Convert to milliseconds.
 			$mouseleave_delay = $mouseleave_delay * 1000;
 
-			// Send to script
+			// Send to script.
 			$localize['button_mouseleave_delay'] = $mouseleave_delay;
 
 		}
 
-		// If hover is enabled, add settings
+		// If hover is enabled, add settings.
 		if ( $this->enable_hide_the_admin_bar( 'hover' ) ) {
 
-			// Define the mouseleave delay, default is 2 seconds
+			// Define the mouseleave delay, default is 2 seconds.
 			$mouseleave_delay = 2;
 			if ( ! empty( $settings['feature_hover']['mouseleave_delay'] ) && $settings['feature_hover']['mouseleave_delay'] > 0 ) {
 				$mouseleave_delay = $settings['feature_hover']['mouseleave_delay'];
 			}
 
-			// Convert to milliseconds
+			// Convert to milliseconds.
 			$mouseleave_delay = $mouseleave_delay * 1000;
 
-			// Send to script
+			// Send to script.
 			$localize['hover_mouseleave_delay'] = $mouseleave_delay;
 
 		}
 
-		// Enqueue the style
+		// Enqueue the style.
 		wp_enqueue_style( 'show-me-the-admin', trailingslashit( plugin_dir_url( __FILE__ ) . 'assets/css' ) . 'show-me-the-admin.min.css', array(), SHOW_ME_THE_ADMIN_VERSION );
 
-		// Enqueue the script
+		// Enqueue the script.
 		wp_enqueue_script( 'show-me-the-admin', trailingslashit( plugin_dir_url( __FILE__ ) . 'assets/js' ) . 'show-me-the-admin.min.js', array( 'jquery' ), SHOW_ME_THE_ADMIN_VERSION, true );
 
-		// Pass some data
+		// Pass some data.
 		wp_localize_script( 'show-me-the-admin', 'show_me_the_admin', $localize );
 
-		// Hide the bar out the gate
-		?><style type="text/css" media="screen">
+		// Hide the bar out the gate.
+		?>
+		<style type="text/css" media="screen">
 			#wpadminbar, #wpadminbar.hidden { display:none; }
 			html.hide-show-me-the-admin-bar, * html.hide-show-me-the-admin-bar body { margin-top: 0 !important; }
 		</style>
 		<script type="text/javascript">
 			document.documentElement.className = 'hide-show-me-the-admin-bar';
-		</script><?php
-
+		</script>
+		<?php
 	}
 
 	/**
@@ -678,12 +670,12 @@ class Show_Me_The_Admin {
 	 */
 	public function filter_body_class( $classes, $class ) {
 
-		// If we shouldn't hide the toolbar, then get out of here
+		// If we shouldn't hide the toolbar, then get out of here.
 		if ( ! $this->enable_hide_the_admin_bar() ) {
 			return $classes;
 		}
 
-		// Remove any theme's admin-bar CSS so it gets rid of their styles
+		// Remove any theme's admin-bar CSS so it gets rid of their styles.
 		unset( $classes[ array_search( 'admin-bar', $classes ) ] );
 
 		return $classes;
@@ -698,37 +690,34 @@ class Show_Me_The_Admin {
 	 */
 	public function print_login_button() {
 
-		// If the button feature is enabled, we need to add the button
-		if ( $this->enable_hide_the_admin_bar( 'button' ) ) {
+		// If the button feature is enabled, we need to add the button.
+		if ( $this->enable_hide_the_admin_bar( 'button' ) ) :
 			?><div id="show-me-the-admin-button"></div><?php
-		}
+		endif;
 
-		// If the hover feature is enabled, we need an element to tie it to
-		if ( $this->enable_hide_the_admin_bar( 'hover' ) ) {
+		// If the hover feature is enabled, we need an element to tie it to.
+		if ( $this->enable_hide_the_admin_bar( 'hover' ) ) :
 			?><div id="show-me-the-admin-hover"></div><?php
-		}
+		endif;
 
 		// If not logged in...
-		if ( ! is_user_logged_in() ) {
+		if ( ! is_user_logged_in() ) :
 
-			// Show the login button if a feature is enabled
-			if ( ! is_admin_bar_showing() && $this->enable_hide_the_admin_bar() ) {
+			// Show the login button if a feature is enabled.
+			if ( ! is_admin_bar_showing() && $this->enable_hide_the_admin_bar() ) :
 
-				// Print the login button with redirect
-				$login_redirect = ! empty( $_SERVER[ 'REQUEST_URI' ] ) ? $_SERVER[ 'REQUEST_URI' ] : null;
+				// Print the login button with redirect.
+				$login_redirect = ! empty( $_SERVER['REQUEST_URI'] ) ? $_SERVER['REQUEST_URI'] : null;
 
-				// Set the button label
+				// Set the button label.
 				$login_label = apply_filters( 'show_me_the_admin_login_text', __( 'Login to WordPress', 'show-me-the-admin' ) );
 
-				// Print the button
+				// Print the button.
 				?><a id="show-me-the-admin-login" href="<?php echo wp_login_url( site_url( $login_redirect ) ); ?>"><?php echo $login_label; ?></a><?php
 
-			}
-
-		}
-
+			endif;
+		endif;
 	}
-
 }
 
 /**
@@ -745,5 +734,5 @@ function show_me_the_admin() {
 	return Show_Me_The_Admin::instance();
 }
 
-// Let's get this show on the road
+// Let's get this show on the road.
 show_me_the_admin();
