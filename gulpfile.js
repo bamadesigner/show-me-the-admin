@@ -10,10 +10,10 @@ var rename = require('gulp-rename');
  */
 var sass_files = ['assets/css/*.scss'];
 gulp.task('sass', function() {
-		gulp.src(sass_files)
-				.pipe(sass({outputStyle:'compressed'}))
-				.pipe(rename({ suffix: '.min' }))
-				.pipe(gulp.dest('assets/css'));
+	gulp.src(sass_files)
+		.pipe(sass({outputStyle:'compressed'}))
+		.pipe(rename({ suffix: '.min' }))
+		.pipe(gulp.dest('assets/css'));
 });
 
 /**
@@ -21,11 +21,11 @@ gulp.task('sass', function() {
  */
 var js_files = ['assets/js/*.js','!assets/js/*.min.js','!assets/js/*-min.js'];
 gulp.task('js', function() {
-		gulp.src(js_files)
-				.pipe(minify({
-				    ext: '.min.js'
-				}))
-				.pipe(gulp.dest('assets/js'))
+	gulp.src(js_files)
+		.pipe(minify({
+			ext: '.min.js'
+		}))
+		.pipe(gulp.dest('assets/js'))
 });
 
 /**
@@ -34,14 +34,13 @@ gulp.task('js', function() {
  */
 var php_files = ['**/*.php','!library/**','!vendor/**','!node_modules/**'];
 gulp.task('php', function () {
-		return gulp.src(php_files)
-				// Validate files using PHP Code Sniffer
-				.pipe(phpcs({
-					  bin: './vendor/bin/phpcs',
-					  standard: 'WordPress-Core'
-				}))
-				// Log all problems that was found
-				.pipe(phpcs.reporter('log'));
+	return gulp.src(php_files)
+		.pipe(phpcs({
+			bin: './vendor/bin/phpcs',
+			standard: 'WordPress-Core'
+		}))
+		// Log all problems that was found
+		.pipe(phpcs.reporter('log'));
 });
 
 /**
@@ -50,10 +49,15 @@ gulp.task('php', function () {
 gulp.task('test',['php']);
 
 /**
+ * "Watch" all the things.
+ */
+gulp.task('watch', function() {
+	gulp.watch(sass_files,['sass']);
+	gulp.watch(js_files,['js']);
+	gulp.watch(php_files, ['php']);
+});
+
+/**
  * Runs the default tasks.
  */
-gulp.task('default', ['sass','js','test'], function() {
-		gulp.watch(sass_files,['sass']);
-		gulp.watch(js_files,['js']);
-		gulp.watch(php_files, ['php']);
-});
+gulp.task('default', ['sass','js','test']);
