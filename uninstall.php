@@ -1,4 +1,9 @@
 <?php
+/**
+ * Removes plugin data when it's uninstalled.
+ *
+ * @package Show Me The Admin
+ */
 
 // If uninstall not called from WordPress exit.
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {

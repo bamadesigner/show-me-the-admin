@@ -4,30 +4,30 @@ class Show_Me_The_Admin_Admin {
 
 	/**
 	 * Is true when multisite
-	 * and in the network admin
+	 * and in the network admin.
 	 *
-	 * @since 1.0.0
-	 * @access public
-	 * @var boolean
+	 * @since   1.0.0
+	 * @access  public
+	 * @var     boolean
 	 */
 	public $is_network_admin;
 
 	/**
 	 * Holds the URL for the
-	 * settings page
+	 * settings page.
 	 *
-	 * @since 1.0.0
-	 * @access public
-	 * @var string
+	 * @since   1.0.0
+	 * @access  public
+	 * @var     string
 	 */
 	public $settings_page_url;
 
 	/**
-	 * ID of the regular settings page
+	 * ID of the regular settings page.
 	 *
-	 * @since 1.0.0
-	 * @access public
-	 * @var string
+	 * @since   1.0.0
+	 * @access  public
+	 * @var     string
 	 */
 	public $settings_page_id;
 
@@ -63,83 +63,78 @@ class Show_Me_The_Admin_Admin {
 	 */
 	protected function __construct() {
 
-		// Lets us know if we're dealing with a multisite and in the network admin
+		/*
+		 * These settings let us know if we're dealing
+		 * with a multisite and in the network admin.
+		 */
 		if ( is_multisite() && is_network_admin() ) {
 
-			// We're in the network admin
+			// We're in the network admin.
 			$this->is_network_admin = true;
 
-			// Define the settings page URL
+			// Define the settings page URL.
 			$this->settings_page_url = add_query_arg( array( 'page' => 'show-me-the-admin' ), network_admin_url( 'settings.php' ) );
 
-		} // We're not in the network admin
-		else {
+		} else {
 
-			// We're not in the network admin
+			// We're not in the network admin.
 			$this->is_network_admin = false;
 
-			// Define the settings page URL
+			// Define the settings page URL.
 			$this->settings_page_url = add_query_arg( array( 'page' => 'show-me-the-admin' ), admin_url( 'options-general.php' ) );
 
 		}
 
-		// Add plugin action links
+		// Add plugin action links.
 		add_filter( 'network_admin_plugin_action_links_' . SHOW_ME_THE_ADMIN_PLUGIN_FILE, array( $this, 'add_plugin_action_links' ), 10, 4 );
 		add_filter( 'plugin_action_links_' . SHOW_ME_THE_ADMIN_PLUGIN_FILE, array( $this, 'add_plugin_action_links' ), 10, 4 );
 
-		// Add multisite settings page
+		// Add multisite settings page.
 		add_action( 'network_admin_menu', array( $this, 'add_network_settings_page' ) );
 
-		// Add regular settings page
+		// Add regular settings page.
 		add_action( 'admin_menu', array( $this, 'add_settings_page' ) );
 
-		// Add our settings meta boxes
+		// Add our settings meta boxes.
 		add_action( 'admin_head-settings_page_show-me-the-admin', array( $this, 'add_settings_meta_boxes' ) );
 
-		// Add styles and scripts for the settings page
+		// Add styles and scripts for the settings page.
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_styles_scripts' ) );
 
-		// Update multisite settings
+		// Update multisite settings.
 		add_action( 'update_wpmu_options', array( $this, 'update_network_settings' ) );
 
-		// Register our settings
+		// Register our settings.
 		add_action( 'admin_init', array( $this, 'register_settings' ), 1 );
 
-		// Add user profile settings
+		// Add user profile settings.
 		add_action( 'profile_personal_options', array( $this, 'add_user_profile_settings' ), 0 );
 
-		// Save user profile settings
+		// Save user profile settings.
 		add_action( 'personal_options_update', array( $this, 'save_user_profile_settings' ), 0 );
 		add_action( 'edit_user_profile_update', array( $this, 'save_user_profile_settings' ), 0 );
 
-		// Add any admin notices
+		// Add any admin notices.
 		add_action( 'admin_notices', array( $this, 'print_user_admin_notice' ) );
 
-		// Runs an ajax call to add the users setting and user notice
+		// Runs an ajax call to add the users setting and user notice.
 		add_action( 'wp_ajax_smta_add_users_setting_notice', array( $this, 'add_users_setting_notice' ) );
 		add_action( 'wp_ajax_smta_add_user_notice', array( $this, 'smta_add_user_notice' ) );
 
-		// Checks to see if user wants to reset network settings
+		// Checks to see if user wants to reset network settings.
 		add_action( 'admin_init', array( $this, 'user_reset_network_settings' ), 2 );
 
 	}
 
 	/**
-	 * Method to keep our instance from being cloned.
+	 * Method to keep our instance from
+	 * being cloned or unserialized.
 	 *
 	 * @since	1.0.0
 	 * @access	private
 	 * @return	void
 	 */
 	private function __clone() {}
-
-	/**
-	 * Method to keep our instance from being unserialized.
-	 *
-	 * @since	1.0.0
-	 * @access	private
-	 * @return	void
-	 */
 	private function __wakeup() {}
 
 	/**
@@ -147,13 +142,13 @@ class Show_Me_The_Admin_Admin {
 	 *
 	 * @access  public
 	 * @since   1.0.0
-	 * @param   array - $actions - An array of plugin action links
-	 * @param   string - $$plugin_file - Path to the plugin file
-	 * @param   array - $plugin_data - An array of plugin data
+	 * @param   array - $actions - An array of plugin action links.
+	 * @param   string - $plugin_file - Path to the plugin file.
+	 * @param   array - $plugin_data - An array of plugin data.
 	 * @param   string - $context - The plugin context. Defaults are 'All', 'Active',
 	 *                      'Inactive', 'Recently Activated', 'Upgrade',
 	 *                      'Must-Use', 'Drop-ins', 'Search'.
-	 * @return  array - the filtered actions
+	 * @return  array - the filtered actions.
 	 */
 	public function add_plugin_action_links( $actions, $plugin_file, $plugin_data, $context ) {
 		if ( $this->is_network_admin ? current_user_can( 'manage_network_options' ) : current_user_can( 'manage_options' ) ) {
@@ -170,12 +165,12 @@ class Show_Me_The_Admin_Admin {
 	 */
 	public function add_network_settings_page() {
 
-		// Make sure plugin is network activated
+		// Make sure plugin is network activated.
 		if ( ! ( function_exists( 'is_plugin_active_for_network' ) && is_plugin_active_for_network( SHOW_ME_THE_ADMIN_PLUGIN_FILE ) ) ) {
 			return;
 		}
 
-		// Add the network settings page
+		// Add the network settings page.
 		$this->settings_page_id = add_submenu_page( 'settings.php', __( 'Show Me The Admin', 'show-me-the-admin' ), __( 'Show Me The Admin', 'show-me-the-admin' ), 'manage_network_options', 'show-me-the-admin', array( $this, 'print_settings_page' ) );
 
 	}
@@ -195,76 +190,86 @@ class Show_Me_The_Admin_Admin {
 	 *
 	 * @access  public
 	 * @since   1.0.0
-	 * @param	string - $hook_suffix - the ID of the current page
-	 * @global	$smta_users_setting_notice - boolean on whether to include users setting notice
-	 * @global	$smta_user_notice - boolean on whether to include user notice
+	 * @param   string - $hook_suffix - the ID of the current page.
+	 * @global  $smta_users_setting_notice - boolean on whether to include users setting notice.
+	 * @global  $smta_user_notice - boolean on whether to include user notice.
 	 */
 	public function enqueue_styles_scripts( $hook_suffix ) {
 		global $smta_users_setting_notice, $smta_user_notice;
 
-		// We only need our styles for our settings pages and the user profile pages
+		/*
+		 * We only need our styles for our
+		 * settings pages and the user profile pages.
+		 *
+		 * Otherwise, determine whether to include
+		 * our user notice scripts when needed.
+		 */
 		if ( in_array( $hook_suffix, array( $this->settings_page_id, 'profile.php' ) ) ) {
 
-			// Enqueue our main styles
+			// Enqueue our main styles.
 			wp_enqueue_style( 'show-me-the-admin-settings', trailingslashit( plugin_dir_url( dirname( __FILE__ ) ) . 'assets/css' ) . 'admin-settings.min.css', array(), SHOW_ME_THE_ADMIN_VERSION );
 
-			// We only need this stuff on our settings page
+			// We only need this stuff on our settings page.
 			if ( $hook_suffix == $this->settings_page_id ) {
 
-				// Enqueue select2
+				// Enqueue select2.
 				wp_enqueue_style( 'show-me-the-admin-select2', '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/css/select2.min.css' );
 				wp_enqueue_script( 'show-me-the-admin-select2', '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/js/select2.min.js', array( 'jquery' ) );
 
-				// Enqueue our settings script
+				// Enqueue our settings script.
 				wp_enqueue_script( 'show-me-the-admin-settings', trailingslashit( plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js' ) . 'show-me-the-admin-settings.min.js', array( 'jquery', 'show-me-the-admin-select2' ), SHOW_ME_THE_ADMIN_VERSION );
 
-				// Need these scripts for the meta boxes to work correctly on our settings page
+				// Need these scripts for the meta boxes to work correctly on our settings page.
 				wp_enqueue_script( 'post' );
 				wp_enqueue_script( 'postbox' );
-			}
-		} // Determine whether to include our user notice scripts when needed (but not on the settings and profile page)
-		else {
 
-			// Get current user ID
+			}
+		} else {
+
+			// Get current user ID.
 			$current_user_id = get_current_user_id();
 
-			// Don't show notices by default
+			// Don't show notices by default.
 			$smta_users_setting_notice = false;
 			$smta_user_notice = false;
 
-			// Will be true if we should enqueue our user notice script
+			// Will be true if we should enqueue our user notice script.
 			$enqueue_user_notice_script = false;
 
-			// Only show user settings notice for the user who activated the plugin.
+			// Will be true if the current user activated the plugin.
 			$activated_user = get_user_meta( $current_user_id, 'show_me_the_admin_activated_user', true );
+
+			/*
+			 * Only show user settings notice for
+			 * the user who activated the plugin.
+			 */
 			if ( false !== $activated_user && $activated_user > 0 ) {
 
 				// Do we need to show the user settings notice?
 				$users_setting_notice = get_user_meta( get_current_user_id(), 'show_me_the_admin_users_setting_notice', true );
 				$show_users_setting_notice = ! ( false !== $users_setting_notice && $users_setting_notice > 0 && $users_setting_notice <= time() );
 
-				// Include script for the users settings notice
+				// Include script for the users settings notice.
 				if ( $show_users_setting_notice ) {
 
-					// Make sure we include the notice
+					// Make sure we include the notice.
 					$smta_users_setting_notice = true;
 
-					// Enqueue the script
+					// Enqueue the script.
 					$enqueue_user_notice_script = true;
 
 				}
-			} // Show the user notice for everyone else
-			else {
+			} else {
 
-				// Get the settings
+				// Get the settings.
 				$site_settings = show_me_the_admin()->get_unmodified_settings();
 
-				// Make sure its an array
+				// Make sure its an array.
 				if ( empty( $site_settings ) ) {
 					$site_settings = array();
 				}
 
-				// Disable if the user role isn't allowed
+				// Disable if the user role isn't allowed.
 				$user = get_userdata( $current_user_id );
 				if ( isset( $site_settings['user_roles'] ) && ! ( $user->roles && is_array( $site_settings['user_roles'] ) && array_intersect( $user->roles, $site_settings['user_roles'] ) ) ) {
 					$site_settings['disable'] = true;
@@ -294,12 +299,11 @@ class Show_Me_The_Admin_Admin {
 				}
 			}
 
-			// Enqueue our script
+			// Enqueue our script.
 			if ( $enqueue_user_notice_script ) {
 				wp_enqueue_script( 'show-me-the-admin-user-notice', trailingslashit( plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js' ) . 'show-me-the-admin-user-notice.min.js', array( 'jquery' ), SHOW_ME_THE_ADMIN_VERSION, true );
 			}
 		}
-
 	}
 
 	/**
@@ -310,7 +314,7 @@ class Show_Me_The_Admin_Admin {
 	 */
 	public function add_settings_meta_boxes() {
 
-		// Get our settings
+		// Get our settings.
 		$site_settings = show_me_the_admin()->get_unmodified_settings( $this->is_network_admin );
 
 		/*
@@ -367,25 +371,25 @@ class Show_Me_The_Admin_Admin {
 			$site_settings = array();
 		}
 
-		// About this Plugin
+		// About this Plugin.
 		add_meta_box( 'show-me-the-admin-about-mb', __( 'About this Plugin', 'show-me-the-admin' ), array( $this, 'print_settings_meta_boxes' ), $this->settings_page_id, 'side', 'core', array( 'id' => 'about-plugin' ) );
 
-		// Spread the Love
+		// Spread the Love.
 		add_meta_box( 'show-me-the-admin-promote-mb', __( 'Spread the Love', 'show-me-the-admin' ), array( $this, 'print_settings_meta_boxes' ), $this->settings_page_id, 'side', 'core', array( 'id' => 'promote' ) );
 
-		// The Features
+		// The Features.
 		add_meta_box( 'show-me-the-admin-features-mb', __( 'The Features', 'show-me-the-admin' ), array( $this, 'print_settings_meta_boxes' ), $this->settings_page_id, 'normal', 'core', array( 'id' => 'features', 'site_settings' => $site_settings ) );
 
-		// The Users
+		// The Users.
 		add_meta_box( 'show-me-the-admin-users-mb', __( 'The Users', 'show-me-the-admin' ), array( $this, 'print_settings_meta_boxes' ), $this->settings_page_id, 'normal', 'core', array( 'id' => 'users', 'site_settings' => $site_settings ) );
 
-		// The Settings For Feature #1
+		// The Settings For Feature #1.
 		add_meta_box( 'show-me-the-admin-settings-keyphrase-mb', __( 'Hide toolbar and make it appear by typing a phrase', 'show-me-the-admin' ), array( $this, 'print_settings_meta_boxes' ), $this->settings_page_id, 'normal', 'core', array( 'id' => 'settings-feature-keyphrase', 'site_settings' => $site_settings, 'default_show_phrase' => $default_show_phrase, 'default_hide_phrase' => $default_hide_phrase ) );
 
-		// The Settings For Feature #2: button
+		// The Settings For Feature #2: button.
 		add_meta_box( 'show-me-the-admin-settings-button-mb', __( 'Hide toolbar and show WordPress button', 'show-me-the-admin' ), array( $this, 'print_settings_meta_boxes' ), $this->settings_page_id, 'normal', 'core', array( 'id' => 'settings-feature-button', 'site_settings' => $site_settings ) );
 
-		// The Settings For Feature #3: Hover
+		// The Settings For Feature #3: Hover.
 		add_meta_box( 'show-me-the-admin-settings-hover-mb', __( 'Hide toolbar and make it appear when mouse hovers near top of window', 'show-me-the-admin' ), array( $this, 'print_settings_meta_boxes' ), $this->settings_page_id, 'normal', 'core', array( 'id' => 'settings-feature-hover', 'site_settings' => $site_settings ) );
 
 	}
@@ -395,35 +399,41 @@ class Show_Me_The_Admin_Admin {
 	 *
 	 * @access  public
 	 * @since   1.0.0
-	 * @param 	array - $post - information about the current post, which is empty because there is no current post on a settings page
-	 * @param 	array - $metabox - information about the metabox
+	 * @param   array - $post - information about the current post,
+	 *      which is empty because there is no current post on a settings page.
+	 * @param   array - $metabox - information about the metabox.
 	 */
 	public function print_settings_meta_boxes( $post, $metabox ) {
 
 		switch ( $metabox['args']['id'] ) {
 
-			// About meta box
+			// About meta box.
 			case 'about-plugin':
-				?><p><?php _e( 'Hides your admin toolbar and enables you to make it appear, and disappear, using a variety of methods.', 'show-me-the-admin' ); ?></p>
+				?>
+				<p><?php _e( 'Hides your admin toolbar and enables you to make it appear, and disappear, using a variety of methods.', 'show-me-the-admin' ); ?></p>
 				<p><strong><a href="<?php echo SHOW_ME_THE_ADMIN_PLUGIN_URL; ?>" target="_blank"><?php _e( 'Show Me The Admin', 'show-me-the-admin' ); ?></a></strong><br />
-				<strong><?php _e( 'Version', 'show-me-the-admin' ); ?>:</strong> <?php echo SHOW_ME_THE_ADMIN_VERSION; ?><br /><strong><?php _e( 'Author', 'show-me-the-admin' ); ?>:</strong> <a href="http://bamadesigner.com/" target="_blank">Rachel Carden</a></p><?php
+				<strong><?php _e( 'Version', 'show-me-the-admin' ); ?>:</strong> <?php echo SHOW_ME_THE_ADMIN_VERSION; ?><br /><strong><?php _e( 'Author', 'show-me-the-admin' ); ?>:</strong> <a href="http://bamadesigner.com/" target="_blank">Rachel Carden</a></p>
+				<?php
 				break;
 
-			// Promote meta box
+			// Promote meta box.
 			case 'promote':
-				?><p class="star"><a href="<?php echo SHOW_ME_THE_ADMIN_PLUGIN_URL; ?>" title="<?php esc_attr_e( 'Give the plugin a good rating', 'show-me-the-admin' ); ?>" target="_blank"><span class="dashicons dashicons-star-filled"></span> <span class="promote-text"><?php _e( 'Give the plugin a good rating', 'show-me-the-admin' ); ?></span></a></p>
+				?>
+				<p class="star"><a href="<?php echo SHOW_ME_THE_ADMIN_PLUGIN_URL; ?>" title="<?php esc_attr_e( 'Give the plugin a good rating', 'show-me-the-admin' ); ?>" target="_blank"><span class="dashicons dashicons-star-filled"></span> <span class="promote-text"><?php _e( 'Give the plugin a good rating', 'show-me-the-admin' ); ?></span></a></p>
 				<p class="twitter"><a href="https://twitter.com/bamadesigner" title="<?php _e( 'Follow bamadesigner on Twitter', 'show-me-the-admin' ); ?>" target="_blank"><span class="dashicons dashicons-twitter"></span> <span class="promote-text"><?php _e( 'Follow me on Twitter', 'show-me-the-admin' ); ?></span></a></p>
-				<p class="donate"><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=ZCAN2UX7QHZPL&lc=US&item_name=Rachel%20Carden%20%28Show%20Me%20The%20Admin%29&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted" title="<?php esc_attr_e( 'Donate a few bucks to the plugin', 'show-me-the-admin' ); ?>" target="_blank"><img src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" alt="<?php esc_attr_e( 'Donate', 'show-me-the-admin' ); ?>" /> <span class="promote-text"><?php _e( 'and buy me a coffee', 'show-me-the-admin' ); ?></span></a></p><?php
+				<p class="donate"><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=ZCAN2UX7QHZPL&lc=US&item_name=Rachel%20Carden%20%28Show%20Me%20The%20Admin%29&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted" title="<?php esc_attr_e( 'Donate a few bucks to the plugin', 'show-me-the-admin' ); ?>" target="_blank"><img src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" alt="<?php esc_attr_e( 'Donate', 'show-me-the-admin' ); ?>" /> <span class="promote-text"><?php _e( 'and buy me a coffee', 'show-me-the-admin' ); ?></span></a></p>
+				<?php
 				break;
 
-			// Features meta box
+			// Features meta box.
 			case 'features':
 
-				// Get the features settings
+				// Get the features settings.
 				$features = isset( $metabox['args']['site_settings']['features'] ) ? $metabox['args']['site_settings']['features'] : array();
 
-				// Print the features table
-				?><table id="show-me-the-admin-features" class="form-table show-me-the-admin-settings">
+				// Print the features table.
+				?>
+				<table id="show-me-the-admin-features" class="form-table show-me-the-admin-settings">
 					<tbody>
 						<tr>
 							<td id="smta-features-enable-td">
@@ -439,7 +449,8 @@ class Show_Me_The_Admin_Admin {
 							</td>
 						</tr>
 					</tbody>
-				</table><?php
+				</table>
+				<?php
 				break;
 
 			// Users meta box.
@@ -457,11 +468,17 @@ class Show_Me_The_Admin_Admin {
 							<td>
 								<label for="smta-user-roles"><strong><?php _e( 'Enable for specific user roles', 'show-me-the-admin' ); ?></strong></label>
 								<select id="smta-user-roles" name="show_me_the_admin[user_roles][]" multiple="multiple">
-									<option value=""></option><?php
-									foreach ( $user_roles as $user_role_key => $user_role ) {
-										?><option value="<?php echo $user_role_key; ?>"<?php selected( isset( $metabox['args']['site_settings']['user_roles'] ) && is_array( $metabox['args']['site_settings']['user_roles'] ) && in_array( $user_role_key, $metabox['args']['site_settings']['user_roles'] ) ); ?>><?php echo $user_role['name']; ?></option><?php
-									}
-								?></select>
+									<option value=""></option>
+									<?php
+
+									foreach ( $user_roles as $user_role_key => $user_role ) :
+										?>
+										<option value="<?php echo $user_role_key; ?>"<?php selected( isset( $metabox['args']['site_settings']['user_roles'] ) && is_array( $metabox['args']['site_settings']['user_roles'] ) && in_array( $user_role_key, $metabox['args']['site_settings']['user_roles'] ) ); ?>><?php echo $user_role['name']; ?></option>
+										<?php
+									endforeach;
+
+									?>
+								</select>
 								<p class="description"><?php _e( 'If left blank, will be enabled for all users.', 'show-me-the-admin' ); ?></p>
 							</td>
 						</tr>
@@ -469,7 +486,7 @@ class Show_Me_The_Admin_Admin {
 							<td>
 								<fieldset>
 									<legend class="screen-reader-text"><span><?php _e( 'Provide A User Notice', 'show-me-the-admin' ); ?></span></legend>
-									<label for="smta-user-notice"><input name="show_me_the_admin[enable_user_notice]" type="checkbox" id="smta-user-notice" value="1"<?php checked( isset( $metabox['args']['site_settings']['enable_user_notice'] ) && true == $metabox['args']['site_settings']['enable_user_notice'] ) ?>/> <strong><?php _e( 'Provide an admin notice that will alert your users to this plugin\'s functionality', 'show-me-the-admin' ); ?></strong></label>
+									<label for="smta-user-notice"><input name="show_me_the_admin[enable_user_notice]" type="checkbox" id="smta-user-notice" value="1"<?php checked( isset( $metabox['args']['site_settings']['enable_user_notice'] ) && true == $metabox['args']['site_settings']['enable_user_notice'] ); ?>/> <strong><?php _e( 'Provide an admin notice that will alert your users to this plugin\'s functionality', 'show-me-the-admin' ); ?></strong></label>
 									<p class="description"><?php _e( 'Otherwise, I imagine the hidden toolbar might cause confusion.', 'show-me-the-admin' ); ?></p>
 								</fieldset>
 							</td>
@@ -478,14 +495,15 @@ class Show_Me_The_Admin_Admin {
 				</table><?php
 				break;
 
-			// Settings for keyphrase feature
+			// Settings for keyphrase feature.
 			case 'settings-feature-keyphrase':
 
-				// Get settings
+				// Get settings.
 				$feature_keyphrase = isset( $metabox['args']['site_settings']['feature_keyphrase'] ) ? $metabox['args']['site_settings']['feature_keyphrase'] : array();
 
-				// Print the keyphrase settings
-				?><table id="show-me-the-admin-settings-keyphrase" class="form-table show-me-the-admin-settings">
+				// Print the keyphrase settings.
+				?>
+				<table id="show-me-the-admin-settings-keyphrase" class="form-table show-me-the-admin-settings">
 					<tbody>
 						<tr>
 							<td>
@@ -505,7 +523,7 @@ class Show_Me_The_Admin_Admin {
 							<td>
 								<fieldset>
 									<legend class="screen-reader-text"><span><?php _e( 'Reveal a WordPress Login Button', 'show-me-the-admin' ); ?></span></legend>
-									<label for="smta-keyphrase-login-button"><input name="show_me_the_admin[feature_keyphrase][enable_login_button]" type="checkbox" id="smta-keyphrase-login-button" value="1"<?php checked( isset( $feature_keyphrase['enable_login_button'] ) && true == $feature_keyphrase['enable_login_button'] ) ?>/> <strong><?php _e( 'Reveal a login button if no one is logged in', 'show-me-the-admin' ); ?></strong></label>
+									<label for="smta-keyphrase-login-button"><input name="show_me_the_admin[feature_keyphrase][enable_login_button]" type="checkbox" id="smta-keyphrase-login-button" value="1"<?php checked( isset( $feature_keyphrase['enable_login_button'] ) && true == $feature_keyphrase['enable_login_button'] ); ?>/> <strong><?php _e( 'Reveal a login button if no one is logged in', 'show-me-the-admin' ); ?></strong></label>
 									<p class="description"><?php _e( 'If enabled, and not logged in, typing the phrase will reveal a login button.', 'show-me-the-admin' ); ?></p>
 								</fieldset>
 							</td>
@@ -514,20 +532,21 @@ class Show_Me_The_Admin_Admin {
 				</table><?php
 				break;
 
-			// Settings for button feature
+			// Settings for button feature.
 			case 'settings-feature-button':
 
-				// Get settings
+				// Get settings.
 				$feature_button = isset( $metabox['args']['site_settings']['feature_button'] ) ? $metabox['args']['site_settings']['feature_button'] : array();
 
-				// Print the button settings table
-				?><table id="show-me-the-admin-settings-button" class="form-table show-me-the-admin-settings">
+				// Print the button settings table.
+				?>
+				<table id="show-me-the-admin-settings-button" class="form-table show-me-the-admin-settings">
 					<tbody>
 						<tr>
 							<td>
 								<fieldset>
 									<legend class="screen-reader-text"><span><?php _e( 'Show the WordPress Button', 'show-me-the-admin' ); ?></span></legend>
-									<label for="smta-button-login-button"><input name="show_me_the_admin[feature_button][enable_login_button]" type="checkbox" id="smta-button-login-button" value="1"<?php checked( isset( $feature_button['enable_login_button'] ) && true == $feature_button['enable_login_button'] ) ?>/> <strong><?php _e( 'Show the WordPress button if no one is logged in', 'show-me-the-admin' ); ?></strong></label>
+									<label for="smta-button-login-button"><input name="show_me_the_admin[feature_button][enable_login_button]" type="checkbox" id="smta-button-login-button" value="1"<?php checked( isset( $feature_button['enable_login_button'] ) && true == $feature_button['enable_login_button'] ); ?>/> <strong><?php _e( 'Show the WordPress button if no one is logged in', 'show-me-the-admin' ); ?></strong></label>
 									<p class="description"><?php _e( 'If enabled, and not logged in, the WordPress button will reveal a login button.', 'show-me-the-admin' ); ?></p>
 								</fieldset>
 							</td>
@@ -540,23 +559,25 @@ class Show_Me_The_Admin_Admin {
 							</td>
 						</tr>
 					</tbody>
-				</table><?php
+				</table>
+				<?php
 				break;
 
-			// Settings for hover feature
+			// Settings for hover feature.
 			case 'settings-feature-hover':
 
-				// Get settings
+				// Get settings.
 				$feature_hover = isset( $metabox['args']['site_settings']['feature_hover'] ) ? $metabox['args']['site_settings']['feature_hover'] : array();
 
-				// Print the hover settings table
-				?><table id="show-me-the-admin-settings-hover" class="form-table show-me-the-admin-settings">
+				// Print the hover settings table.
+				?>
+				<table id="show-me-the-admin-settings-hover" class="form-table show-me-the-admin-settings">
 					<tbody>
 						<tr>
 							<td>
 								<fieldset>
 									<legend class="screen-reader-text"><span><?php _e( 'Reveal a WordPress Login Button', 'show-me-the-admin' ); ?></span></legend>
-									<label for="smta-hover-login-button"><input name="show_me_the_admin[feature_hover][enable_login_button]" type="checkbox" id="smta-hover-login-button" value="1"<?php checked( isset( $feature_hover['enable_login_button'] ) && true == $feature_hover['enable_login_button'] ) ?>/> <strong><?php _e( 'Reveal a login button if no one is logged in', 'show-me-the-admin' ); ?></strong></label>
+									<label for="smta-hover-login-button"><input name="show_me_the_admin[feature_hover][enable_login_button]" type="checkbox" id="smta-hover-login-button" value="1"<?php checked( isset( $feature_hover['enable_login_button'] ) && true == $feature_hover['enable_login_button'] ); ?>/> <strong><?php _e( 'Reveal a login button if no one is logged in', 'show-me-the-admin' ); ?></strong></label>
 									<p class="description"><?php _e( 'If enabled, and not logged in, hovering near the top of the window will reveal a login button.', 'show-me-the-admin' ); ?></p>
 								</fieldset>
 							</td>
@@ -569,7 +590,8 @@ class Show_Me_The_Admin_Admin {
 							</td>
 						</tr>
 					</tbody>
-				</table><?php
+				</table>
+				<?php
 				break;
 
 		}
@@ -584,64 +606,76 @@ class Show_Me_The_Admin_Admin {
 	 */
 	public function print_settings_page() {
 
-		// Make sure we don't show these notices anymore since they've viewed the settings
+		// Make sure we don't show these notices anymore since they've viewed the settings.
 		$this->add_users_setting_notice();
 
-		?><div class="wrap">
-			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1><?php
+		?>
+		<div class="wrap">
+			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
+			<?php
 
-			// If network admin...
-			if ( $this->is_network_admin ) {
+			// Take care of settings errors.
+			if ( $this->is_network_admin ) :
 
-				// Need this to show errors in network admin
+				// Need this to show errors in network admin.
 				settings_errors( 'show_me_the_admin' );
 
-			} // For the individual site settings page
-			else {
+			else :
 
-				// If network active and viewing a site's settings, and site doesn't have its own settings, then show a message
-				if ( show_me_the_admin()->is_network_active ) {
+				// If network active and viewing a site's settings, and site doesn't have its own settings, then show a message.
+				if ( show_me_the_admin()->is_network_active ) :
 
-					// Get the site settings
-					if ( ! ( $site_settings = show_me_the_admin()->get_unmodified_settings() ) ) {
+					// Get the site settings.
+					if ( ! ( $site_settings = show_me_the_admin()->get_unmodified_settings() ) ) :
 
 						// Were the network settings reset?
-						if ( isset( $_GET['network-reset'] ) ) {
-							?><div id="smta-users-setting-notice" class="updated notice is-dismissible">
+						if ( isset( $_GET['network-reset'] ) ) :
+							?>
+							<div id="smta-users-setting-notice" class="updated notice is-dismissible">
 								<p><?php _e( 'The settings have been reset to match network settings.', 'show-me-the-admin' ); ?></p>
-							</div><?php
-						}
+							</div>
+							<?php
+						endif;
 
-						// Print the network message if inheriting network settings
-						?><div id="smta-network-settings-message" class="wp-ui-highlight">
+						// Print the network message if inheriting network settings.
+						?>
+						<div id="smta-network-settings-message" class="wp-ui-highlight">
 							<span class="dashicons dashicons-info"></span>
-							<p><?php _e( 'This plugin is activated network-wide and is currently inheriting the network settings. If you customize the settings below, you will overwrite the network and create custom settings for this site.', 'show-me-the-admin' ); ?></p><?php
+							<p><?php _e( 'This plugin is activated network-wide and is currently inheriting the network settings. If you customize the settings below, you will overwrite the network and create custom settings for this site.', 'show-me-the-admin' ); ?></p>
+							<?php
 
-							// If the user can manage the network, give them a link
-							if ( current_user_can( 'manage_network' ) ) {
-								?><p><a class="button" href="<?php echo add_query_arg( array( 'page' => 'show-me-the-admin' ), network_admin_url( 'settings.php' ) ); ?>"><?php _e( 'Manage network settings', 'show-me-the-admin' ); ?></a></p><?php
-							}
+							// If the user can manage the network, give them a link.
+							if ( current_user_can( 'manage_network' ) ) :
+								?>
+								<p><a class="button" href="<?php echo add_query_arg( array( 'page' => 'show-me-the-admin' ), network_admin_url( 'settings.php' ) ); ?>"><?php _e( 'Manage network settings', 'show-me-the-admin' ); ?></a></p>
+								<?php
+							endif;
 
-						?></div><?php
+							?>
+						</div>
+						<?php
 
-					} else {
+					else :
 
-						// Print the network message if NOT inheriting network settings
-						?><div id="smta-network-settings-message" class="wp-ui-highlight">
+						// Print the network message if NOT inheriting network settings.
+						?>
+						<div id="smta-network-settings-message" class="wp-ui-highlight">
 							<span class="dashicons dashicons-info"></span>
 							<p><?php _e( 'This plugin is activated network-wide but the settings below have been selected for this site only.', 'show-me-the-admin' ); ?></p>
 							<p><a class="button" href="<?php echo wp_nonce_url( $this->settings_page_url, 'reset_network_settings', 'smta_nonce' ); ?>"><?php _e( 'Reset to network settings', 'show-me-the-admin' ); ?></a><?php
 
-							// If the user can manage the network, give them a link
-							if ( current_user_can( 'manage_network' ) ) {
+							// If the user can manage the network, give them a link.
+							if ( current_user_can( 'manage_network' ) ) :
 								?> <a class="button" href="<?php echo add_query_arg( array( 'page' => 'show-me-the-admin' ), network_admin_url( 'settings.php' ) ); ?>"><?php _e( 'Manage network settings', 'show-me-the-admin' ); ?></a><?php
-							}
+							endif;
 
-						?></p></div><?php
+							?></p>
+						</div>
+						<?php
 
-					}
-				}
-			}
+					endif;
+				endif;
+			endif;
 
 			// Print the settings form.
 			?>
@@ -712,31 +746,31 @@ class Show_Me_The_Admin_Admin {
 	 */
 	public function update_network_settings() {
 
-		// Makes sure we're saving in the network admin
+		// Makes sure we're saving in the network admin.
 		if ( current_user_can( 'manage_network_options' )
 			&& check_admin_referer( 'siteoptions' )
 			&& isset( $_POST['show_me_the_admin_save_changes'] ) ) {
 
-			// Get/update/validate the settings
+			// Get/update/validate the settings.
 			if ( isset( $_POST['show_me_the_admin'] )
 				&& ( $settings = $_POST['show_me_the_admin'] ) ) {
 
-				// Validate the settings
+				// Validate the settings.
 				$settings = $this->validate_settings( $settings );
 
-				// Make sure we don't show these notices anymore since they've saved their settings
+				// Make sure we don't show these notices anymore since they've saved their settings.
 				$this->add_users_setting_notice();
 
-				// Update settings
+				// Update settings.
 				update_site_option( 'show_me_the_admin', $settings );
 
-				// If no errors, then show general message
+				// If no errors, then show general message.
 				add_settings_error( 'show_me_the_admin', 'settings_updated', __( 'Settings saved.', 'show-me-the-admin' ), 'updated' );
 
-				// Stores any settings errors so they can be displayed on redirect
+				// Stores any settings errors so they can be displayed on redirect.
 				set_transient( 'settings_errors', get_settings_errors(), 30 );
 
-				// Redirect to settings page
+				// Redirect to settings page.
 				wp_redirect( add_query_arg( array( 'settings-updated' => 'true' ), $_REQUEST['_wp_http_referer'] ) );
 				exit();
 
@@ -754,13 +788,13 @@ class Show_Me_The_Admin_Admin {
 	 */
 	public function user_reset_network_settings() {
 
-		// Detect/verify our nonce
+		// Detect/verify our nonce.
 		if (  isset( $_GET['smta_nonce'] ) && wp_verify_nonce( $_GET['smta_nonce'], 'reset_network_settings' ) ) {
 
-			// Clear out the settings
+			// Clear out the settings.
 			update_option( 'show_me_the_admin', null );
 
-			// Redirect to settings page
+			// Redirect to settings page.
 			wp_redirect( add_query_arg( array( 'network-reset' => 'true' ), $this->settings_page_url ) );
 			exit();
 
@@ -773,18 +807,18 @@ class Show_Me_The_Admin_Admin {
 	 *
 	 * @access  public
 	 * @since   1.0.0
-	 * @param	array - the settings we're sanitizing
-	 * @return	array - the updated settings
+	 * @param   array - the settings we're sanitizing.
+	 * @return  array - the updated settings.
 	 */
 	public function update_settings( $settings ) {
 
-		// Validate the settings
+		// Validate the settings.
 		$settings = $this->validate_settings( $settings );
 
-		// Make sure we don't show these notices anymore since they've saved their settings
+		// Make sure we don't show these notices anymore since they've saved their settings.
 		$this->add_users_setting_notice();
 
-		// Return the validated settings
+		// Return the validated settings.
 		return $settings;
 
 	}
@@ -794,24 +828,24 @@ class Show_Me_The_Admin_Admin {
 	 *
 	 * @access  public
 	 * @since   1.0.0
-	 * @param	array - the settings being validated
-	 * @return	array - the validated settings
+	 * @param   array - the settings being validated.
+	 * @return  array - the validated settings.
 	 */
 	public function validate_settings( $settings ) {
 
-		// Make sure text fields are sanitized
+		// Make sure text fields are sanitized.
 		foreach ( array( 'show_phrase', 'hide_phrase' ) as $key ) {
 			if ( isset( $settings[ $key ] ) ) {
 				$settings[ $key ] = sanitize_text_field( $settings[ $key ] );
 			}
 		}
 
-		// Sanitize delays
+		// Sanitize delays.
 		foreach ( array( 'button', 'hover' ) as $key ) {
 			if ( isset( $settings[ "feature_{$key}" ]['mouseleave_delay'] ) ) {
 				$settings[ "feature_{$key}" ]['mouseleave_delay'] = sanitize_text_field( $settings[ "feature_{$key}" ]['mouseleave_delay'] );
 
-				// Make sure its an integer
+				// Make sure its an integer.
 				if ( ! ( $settings[ "feature_{$key}" ]['mouseleave_delay'] > 0 ) ) {
 					$settings[ "feature_{$key}" ]['mouseleave_delay'] = '';
 				}
@@ -826,7 +860,7 @@ class Show_Me_The_Admin_Admin {
 	 *
 	 * @access  public
 	 * @since   1.0.0
-	 * @param	WP_User - $profile_user - the current WP_User object
+	 * @param   WP_User - $profile_user - the current WP_User object.
 	 */
 	public function add_user_profile_settings( $profile_user ) {
 
@@ -905,7 +939,7 @@ class Show_Me_The_Admin_Admin {
 									<span><?php _e( 'Disable all features', 'show-me-the-admin' ); ?></span>
 								</legend>
 								<div class="smta-choices vertical">
-									<label for="smta-features-disable">*&nbsp;&nbsp;&nbsp;<input name="show_me_the_admin[disable]" type="checkbox" id="smta-features-disable" value="1"<?php checked( isset( $user_settings['disable'] ) && true == $user_settings['disable'] ) ?>/> <strong><?php _e( 'Disable all features', 'show-me-the-admin' ); ?></strong></label>
+									<label for="smta-features-disable">*&nbsp;&nbsp;&nbsp;<input name="show_me_the_admin[disable]" type="checkbox" id="smta-features-disable" value="1"<?php checked( isset( $user_settings['disable'] ) && true == $user_settings['disable'] ); ?>/> <strong><?php _e( 'Disable all features', 'show-me-the-admin' ); ?></strong></label>
 									<p class="description"><?php _e( 'If you leave all features unchecked, it will implement the site\'s selected features. Use this setting if you would like to disable this toolbar functionality for when you are logged in.', 'show-me-the-admin' ); ?></p>
 								</div>
 							</fieldset>
@@ -944,19 +978,19 @@ class Show_Me_The_Admin_Admin {
 	 *
 	 * @access  public
 	 * @since   1.0.0
-	 * @param	int - $user_id - the user ID
+	 * @param   int - $user_id - the user ID.
 	 */
 	public function save_user_profile_settings( $user_id ) {
 
-		// Make sure our array is set
+		// Make sure our array is set.
 		if ( ! ( $show_me_the_admin = ! empty( $_POST['show_me_the_admin'] ) ? $_POST['show_me_the_admin'] : null ) ) {
 			return;
 		}
 
-		// Update the user meta
+		// Update the user meta.
 		update_user_meta( $user_id, 'show_me_the_admin', $show_me_the_admin );
 
-		// Make sure we don't show the notice anymore since they've saved their profile settings
+		// Make sure we don't show the notice anymore since they've saved their profile settings.
 		$this->add_user_notice();
 
 	}
@@ -966,30 +1000,28 @@ class Show_Me_The_Admin_Admin {
 	 *
 	 * @access  public
 	 * @since   1.0.0
-	 * @global	$smta_users_setting_notice - boolean on whether to include users setting notice
-	 * @global	$smta_user_notice - boolean on whether to include user notice
+	 * @global  $smta_users_setting_notice - boolean on whether to include users setting notice.
+	 * @global  $smta_user_notice - boolean on whether to include user notice.
 	 */
 	public function print_user_admin_notice() {
 		global $smta_users_setting_notice, $smta_user_notice;
 
 		// Show the users settings and user notice.
-		if ( $smta_users_setting_notice ) {
+		if ( $smta_users_setting_notice ) :
 
 			?>
 			<div id="smta-users-setting-notice" class="updated notice is-dismissible">
-				<p><?php printf( __( 'Thank you for installing "%1$s". Be sure to %2$sexplore the settings%3$s to customize its functionality for you and your users.', 'show-me-the-admin' ), 'Show Me The Admin', '<a href="' . $this->settings_page_url . '">', '</a>' ); ?></p>
+				<p><?php printf( __( 'Thank you for installing "Show Me The Admin". Be sure to %1$sexplore the settings%2$s to customize its functionality for you and your users.', 'show-me-the-admin' ), '<a href="' . $this->settings_page_url . '">', '</a>' ); ?></p>
 			</div>
 			<?php
-
-		} elseif ( $smta_user_notice ) {
+		elseif ( $smta_user_notice ) :
 
 			?>
 			<div id="smta-user-notice" class="updated notice is-dismissible">
 				<p><?php printf( __( 'Your site administrator has activated new functionality for your admin toolbar. Be sure to %1$sexplore your profile settings%2$s for more information.', 'show-me-the-admin' ), '<a href="' . admin_url( 'profile.php#smta-user-profile-settings' ) . '">', '</a>' ); ?></p>
 			</div>
 			<?php
-
-		}
+		endif;
 	}
 
 	/**
@@ -1002,7 +1034,7 @@ class Show_Me_The_Admin_Admin {
 	 *
 	 * @access  public
 	 * @since   1.0.0
-	 * @param	$user_id - the user ID
+	 * @param   $user_id - the user ID.
 	 */
 	public function add_users_setting_notice( $user_id = 0 ) {
 		add_user_meta( $user_id > 0 ? $user_id : get_current_user_id(), 'show_me_the_admin_users_setting_notice', time(), true );
@@ -1018,12 +1050,11 @@ class Show_Me_The_Admin_Admin {
 	 *
 	 * @access  public
 	 * @since   1.0.0
-	 * @param	$user_id - the user ID
+	 * @param   $user_id - the user ID.
 	 */
 	public function add_user_notice( $user_id = 0 ) {
 		add_user_meta( $user_id > 0 ? $user_id : get_current_user_id(), 'show_me_the_admin_user_notice', time(), true );
 	}
-
 }
 
 /**
@@ -1040,5 +1071,5 @@ function show_me_the_admin_admin() {
 	return Show_Me_The_Admin_Admin::instance();
 }
 
-// Let's get this show on the road
+// Let's get this show on the road.
 show_me_the_admin_admin();
