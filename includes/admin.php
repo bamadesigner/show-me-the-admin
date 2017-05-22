@@ -807,7 +807,7 @@ class Show_Me_The_Admin_Admin {
 	 *
 	 * @access  public
 	 * @since   1.0.0
-	 * @param   array - the settings we're sanitizing.
+	 * @param   $settings - array - the settings we're sanitizing.
 	 * @return  array - the updated settings.
 	 */
 	public function update_settings( $settings ) {
@@ -1050,7 +1050,7 @@ class Show_Me_The_Admin_Admin {
 	 *
 	 * @access  public
 	 * @since   1.0.0
-	 * @param   $user_id - the user ID.
+	 * @param   $user_id - int - the user ID.
 	 */
 	public function add_user_notice( $user_id = 0 ) {
 		add_user_meta( $user_id > 0 ? $user_id : get_current_user_id(), 'show_me_the_admin_user_notice', time(), true );
