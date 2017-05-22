@@ -109,8 +109,8 @@ class Show_Me_The_Admin {
 	 */
 	public static function instance() {
 		if ( ! isset( self::$instance ) ) {
-			$className = __CLASS__;
-			self::$instance = new $className;
+			$class_name = __CLASS__;
+			self::$instance = new $class_name;
 		}
 		return self::$instance;
 	}
