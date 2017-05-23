@@ -4,7 +4,6 @@
     p {
         line-height: 19px;
     }
-
 }
 
 // Our promote meta box
@@ -30,7 +29,6 @@
         margin: 0 4px 2px 0;
         vertical-align: middle;
     }
-
 }
 
 // Our network message
@@ -62,7 +60,6 @@
     *:last-child {
         margin-bottom: 0;
     }
-
 }
 
 // Any of our settings tables
@@ -77,7 +74,6 @@
 	    &.inline {
 		    display: inline-block;
 	    }
-
     }
 
     input{
@@ -89,7 +85,6 @@
 	    &.inline {
 		    width: auto;
 	    }
-
     }
 
     .smta-choices {
@@ -100,11 +95,8 @@
             label {
                 display: block;
             }
-
         }
-
     }
-
 }
 
 // The features settings table
@@ -116,9 +108,10 @@
 
     .description {
         margin-top: 10px;
+        color: #222;
     }
-
 }
+
 #smta-features-disable-td {
     padding: 10px 0 0 0;
     fieldset {
@@ -162,9 +155,7 @@
         td {
             padding: 10px 0;
         }
-
     }
-
 }
 
 // The user roles
@@ -181,9 +172,7 @@
         input.regular-text {
             width: 80%;
         }
-
     }
-
 }
 
 // The main save button
