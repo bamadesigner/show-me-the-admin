@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=ZCAN2
 Tags: admin, admin bar, adminbar, toolbar, bar, login, show, hide
 Requires at least: 3.0
 Tested up to: 4.7.5
-Stable tag: 1.1.1
+Stable tag: 1.1.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -33,6 +33,9 @@ Your "Show Toolbar when viewing site" profile setting must be enabled.
 
 == Changelog ==
 
+= 1.1.2 =
+* Fixing esc_attr() bug where show and hide phrases weren't being printed on the settings page. Thanks @kevinwhoffman!
+
 = 1.1.1 =
 * Simply optimizing syntax and updating for 4.7.5.
 
@@ -54,6 +57,9 @@ Your "Show Toolbar when viewing site" profile setting must be enabled.
 Plugin launch
 
 == Upgrade Notice ==
+
+= 1.1.2 =
+* Fixing esc_attr() bug where show and hide phrases weren't being printed on the settings page. Thanks @kevinwhoffman!
 
 = 1.1.1 =
 * Simply optimizing syntax and updating for 4.7.5.
