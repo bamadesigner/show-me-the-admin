@@ -1,8 +1,8 @@
 {
   "name": "show-me-the-admin",
-  "version": "1.0.0",
+  "version": "1.1.1",
   "description": "Hides your admin toolbar and enables you to make it appear, and disappear, using a variety of methods.",
-  "author": "Rachel Carden",
+  "author": "Rachel Cherry",
   "license": "GPL-2.0+",
   "repository": {
     "type": "git",
@@ -11,6 +11,7 @@
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-minify": "0.0.12",
+    "gulp-phpcs": "^1.4.0",
     "gulp-rename": "^1.2.2",
     "gulp-sass": "^2.3.1",
     "gulp-watch": "^4.3.6"

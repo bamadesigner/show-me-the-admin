@@ -3,8 +3,8 @@
  * Plugin Name:       Show Me The Admin
  * Plugin URI:        https://wordpress.org/plugins/show-me-the-admin/
  * Description:       Hides your admin toolbar and enables you to make it appear, and disappear, using a variety of methods.
- * Version:           1.1.0
- * Author:            Rachel Carden
+ * Version:           1.1.1
+ * Author:            Rachel Cherry
  * Author URI:        https://bamadesigner.com
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
@@ -12,8 +12,11 @@
  * Domain Path:       /languages
  */
 
-// @TODO add a link to or embed a demo video to help users understand functionality
-// @TODO test ability to do sound recognition - https://github.com/daveross/speak-to-wp/blob/master/assets/js/speak-to-wp.js
+/*
+ * @TODO:
+ * Add a link to or embed a demo video to help users understand functionality.
+ * Test ability to do sound recognition - https://github.com/daveross/speak-to-wp/blob/master/assets/js/speak-to-wp.js
+ */
 
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
@@ -21,7 +24,7 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 // If you define them, will they be used?
-define( 'SHOW_ME_THE_ADMIN_VERSION', '1.1.0' );
+define( 'SHOW_ME_THE_ADMIN_VERSION', '1.1.1' );
 define( 'SHOW_ME_THE_ADMIN_PLUGIN_URL', 'https://wordpress.org/plugins/show-me-the-admin/' );
 define( 'SHOW_ME_THE_ADMIN_PLUGIN_FILE', 'show-me-the-admin/show-me-the-admin.php' );
 define( 'SHOW_ME_THE_ADMIN_SHOW_PHRASE', 'showme' );
@@ -150,21 +153,14 @@ class Show_Me_The_Admin {
 	}
 
 	/**
-	 * Method to keep our instance from being cloned.
+	 * Method to keep our instance from
+	 * being cloned or unserialized.
 	 *
 	 * @since	1.0.0
 	 * @access	private
 	 * @return	void
 	 */
 	private function __clone() {}
-
-	/**
-	 * Method to keep our instance from being unserialized.
-	 *
-	 * @since	1.0.0
-	 * @access	private
-	 * @return	void
-	 */
 	private function __wakeup() {}
 
 	/**
@@ -192,6 +188,8 @@ class Show_Me_The_Admin {
 	 * Internationalization FTW.
 	 * Load our textdomain.
 	 *
+	 * @TODO Add language files
+	 *
 	 * @access  public
 	 * @since   1.0.0
 	 */
@@ -208,16 +206,21 @@ class Show_Me_The_Admin {
 	 */
 	public function get_default_settings() {
 		return array(
-			'features'              => array( 'keyphrase', 'button' ),
-			'feature_keyphrase'     => array( 'enable_login_button' => true ),
-			'feature_button'        => array(
-				'mouseleave_delay'  => 2,
+			'features'                  => array(
+				'keyphrase',
+				'button',
 			),
-			'feature_hover'         => array(
-				'mouseleave_delay'  => 2,
+			'feature_keyphrase'         => array(
+				'enable_login_button'   => true,
 			),
-			'user_roles'            => array( 'administrator' ),
-			'enable_user_notice'    => true,
+			'feature_button'            => array(
+				'mouseleave_delay'      => 2,
+			),
+			'feature_hover'             => array(
+				'mouseleave_delay'      => 2,
+			),
+			'user_roles'                => array( 'administrator' ),
+			'enable_user_notice'        => true,
 		);
 	}
 
@@ -226,7 +229,7 @@ class Show_Me_The_Admin {
 	 *
 	 * @access  public
 	 * @since   1.0.0
-	 * @param	boolean - $network - whether or not to retrieve network settings.
+	 * @param   boolean - $network - whether or not to retrieve network settings.
 	 * @return  array - the settings
 	 */
 	public function get_unmodified_settings( $network = false ) {
@@ -276,8 +279,8 @@ class Show_Me_The_Admin {
 	 *
 	 * @access  public
 	 * @since   1.0.0
-	 * @param	int - $user_id - the user ID.
-	 * @return  array - the settings.
+	 * @param   $user_id - int - the user ID.
+	 * @return  array - the settings
 	 */
 	public function get_user_settings( $user_id = 0 ) {
 
@@ -376,8 +379,8 @@ class Show_Me_The_Admin {
 	 *
 	 * @access  public
 	 * @since   1.0.0
-	 * @param	string - the phrase
-	 * @return  string|null - the keycode or null if it doesn't exist
+	 * @param	$phrase - string - the phrase.
+	 * @return  string|null - the keycode or null if it doesn't exist.
 	 */
 	public function get_phrase_keycode( $phrase ) {
 
@@ -404,7 +407,6 @@ class Show_Me_The_Admin {
 
 		// Return keycode.
 		return ! empty( $keycode ) ? $keycode : null;
-
 	}
 
 	/**
@@ -412,8 +414,8 @@ class Show_Me_The_Admin {
 	 *
 	 * @access  public
 	 * @since   1.0.0
-	 * @param	string - the key
-	 * @return  string|null - the code or null if it doesn't exist
+	 * @param	$key - string - the key.
+	 * @return  string|null - the code or null if it doesn't exist.
 	 */
 	public function get_keycode( $key ) {
 
@@ -477,8 +479,8 @@ class Show_Me_The_Admin {
 	 *
 	 * @access  public
 	 * @since   1.0.1
-	 * @param	$feature - string - the feature we're checking (keyphrase, button, hover)
-	 * @return	bool - true if we should hide the toolbar
+	 * @param	$feature - string - the feature we're checking (keyphrase, button, hover).
+	 * @return	bool - true if we should hide the toolbar.
 	 */
 	public function enable_hide_the_admin_bar( $feature = '' ) {
 
@@ -491,7 +493,6 @@ class Show_Me_The_Admin {
 			 * Otherwise, if not empty then means something is enabled.
 			 */
 			if ( '' != $feature ) {
-
 				if ( in_array( $feature, self::$enable_hide_the_admin_bar ) ) {
 					return true;
 				}
@@ -501,7 +502,6 @@ class Show_Me_The_Admin {
 
 			// Has already been tested and should not be enabled.
 			return false;
-
 		}
 
 		// Create array for testing.
@@ -525,10 +525,7 @@ class Show_Me_The_Admin {
 			return false;
 		}
 
-		/**
-		 * Check features dependent
-		 * on whether the user is logged in.
-		 */
+		// Check features dependent on whether the user is logged in.
 		if ( is_user_logged_in() ) {
 
 			// Don't add if functionality is disabled for this user.
@@ -543,10 +540,7 @@ class Show_Me_The_Admin {
 			}
 		} else {
 
-			/*
-			 * Check a specific feature
-			 * or check all features.
-			 */
+			// Check a specific feature or all features.
 			if ( '' != $feature ) {
 
 				// To see if the login button should be enabled.
@@ -580,8 +574,8 @@ class Show_Me_The_Admin {
 	 *
 	 * @access  public
 	 * @since   1.0.0
-	 * @filter	show_me_the_admin_show_phrase
-	 * @filter	show_me_the_admin_hide_phrase
+	 * @filter  show_me_the_admin_show_phrase
+	 * @filter  show_me_the_admin_hide_phrase
 	 */
 	public function enqueue_styles_scripts() {
 
@@ -655,21 +649,25 @@ class Show_Me_The_Admin {
 		wp_localize_script( 'show-me-the-admin', 'show_me_the_admin', $localize );
 
 		// Hide the bar out the gate.
-		?><style type="text/css" media="screen">
+		?>
+		<style type="text/css" media="screen">
 			#wpadminbar, #wpadminbar.hidden { display:none; }
 			html.hide-show-me-the-admin-bar, * html.hide-show-me-the-admin-bar body { margin-top: 0 !important; }
 		</style>
 		<script type="text/javascript">
 			document.documentElement.className = 'hide-show-me-the-admin-bar';
-		</script><?php
-
+		</script>
+		<?php
 	}
 
 	/**
-	 * Filters the body class for classes we don't need
+	 * Filters the body class for classes we don't need.
 	 *
 	 * @access  public
 	 * @since   1.0.1
+	 * @param   $classes - array - An array of body classes.
+	 * @param   $class - array - An array of additional classes added to the body.
+	 * @return  array - the filtered array of body classes.
 	 */
 	public function filter_body_class( $classes, $class ) {
 
@@ -694,20 +692,20 @@ class Show_Me_The_Admin {
 	public function print_login_button() {
 
 		// If the button feature is enabled, we need to add the button.
-		if ( $this->enable_hide_the_admin_bar( 'button' ) ) {
+		if ( $this->enable_hide_the_admin_bar( 'button' ) ) :
 			?><div id="show-me-the-admin-button"></div><?php
-		}
+		endif;
 
 		// If the hover feature is enabled, we need an element to tie it to.
-		if ( $this->enable_hide_the_admin_bar( 'hover' ) ) {
+		if ( $this->enable_hide_the_admin_bar( 'hover' ) ) :
 			?><div id="show-me-the-admin-hover"></div><?php
-		}
+		endif;
 
 		// If not logged in...
-		if ( ! is_user_logged_in() ) {
+		if ( ! is_user_logged_in() ) :
 
 			// Show the login button if a feature is enabled.
-			if ( ! is_admin_bar_showing() && $this->enable_hide_the_admin_bar() ) {
+			if ( ! is_admin_bar_showing() && $this->enable_hide_the_admin_bar() ) :
 
 				// Print the login button with redirect.
 				$login_redirect = ! empty( $_SERVER['REQUEST_URI'] ) ? $_SERVER['REQUEST_URI'] : null;
@@ -718,10 +716,9 @@ class Show_Me_The_Admin {
 				// Print the button.
 				?><a id="show-me-the-admin-login" href="<?php echo wp_login_url( site_url( $login_redirect ) ); ?>"><?php echo $login_label; ?></a><?php
 
-			}
-		}
+			endif;
+		endif;
 	}
-
 }
 
 /**

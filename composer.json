@@ -1,0 +1,17 @@
+{
+	"name": "bamadesigner/show-me-the-admin",
+	"description": "WordPress plugin that hides your admin toolbar and enables you to make it appear, and disappear, using a variety of methods.",
+	"type": "wordpress-plugin",
+	"license": "GPL-2.0+",
+	"version": "1.1.1",
+	"require-dev": {
+		"squizlabs/php_codesniffer": "*",
+		"wp-coding-standards/wpcs": "*"
+	},
+	"scripts": {
+		"post-install-cmd": [
+			"./vendor/bin/phpcs --config-set bin ./vendor/bin/phpcs",
+			"./vendor/bin/phpcs --config-set installed_paths ../../wp-coding-standards/wpcs"
+		]
+	}
+}
