@@ -379,7 +379,7 @@ class Show_Me_The_Admin {
 	 *
 	 * @access  public
 	 * @since   1.0.0
-	 * @param	$phrase - string - the phrase.
+	 * @param   $phrase - string - the phrase.
 	 * @return  string|null - the keycode or null if it doesn't exist.
 	 */
 	public function get_phrase_keycode( $phrase ) {
@@ -414,7 +414,7 @@ class Show_Me_The_Admin {
 	 *
 	 * @access  public
 	 * @since   1.0.0
-	 * @param	$key - string - the key.
+	 * @param   $key - string - the key.
 	 * @return  string|null - the code or null if it doesn't exist.
 	 */
 	public function get_keycode( $key ) {
@@ -479,8 +479,8 @@ class Show_Me_The_Admin {
 	 *
 	 * @access  public
 	 * @since   1.0.1
-	 * @param	$feature - string - the feature we're checking (keyphrase, button, hover).
-	 * @return	bool - true if we should hide the toolbar.
+	 * @param   $feature - string - the feature we're checking (keyphrase, button, hover).
+	 * @return  bool - true if we should hide the toolbar.
 	 */
 	public function enable_hide_the_admin_bar( $feature = '' ) {
 
