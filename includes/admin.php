@@ -508,14 +508,14 @@ class Show_Me_The_Admin_Admin {
 						<tr>
 							<td>
 								<label for="smta-show-phrase"><strong><?php _e( 'Phrase to type to show the toolbar', 'show-me-the-admin' ); ?></strong></label>
-								<input name="show_me_the_admin[show_phrase]" type="text" id="smta-show-phrase" value="<?php esc_attr( isset( $metabox['args']['site_settings']['show_phrase'] ) ? $metabox['args']['site_settings']['show_phrase'] : null ); ?>" placeholder="<?php esc_attr( $metabox['args']['default_show_phrase'] ); ?>" class="regular-text" />
+								<input name="show_me_the_admin[show_phrase]" type="text" id="smta-show-phrase" value="<?php esc_attr_e( isset( $metabox['args']['site_settings']['show_phrase'] ) ? $metabox['args']['site_settings']['show_phrase'] : null ); ?>" placeholder="<?php esc_attr_e( $metabox['args']['default_show_phrase'] ); ?>" class="regular-text" />
 								<p class="description"><?php printf( __( 'If left blank, will use the default phrase "%s".', 'show-me-the-admin' ), $metabox['args']['default_show_phrase'] ); ?></p>
 							</td>
 						</tr>
 						<tr>
 							<td>
 								<label for="smta-hide-phrase"><strong><?php _e( 'Phrase to type to hide the toolbar', 'show-me-the-admin' ); ?></strong></label>
-								<input name="show_me_the_admin[hide_phrase]" type="text" id="smta-hide-phrase" value="<?php esc_attr( isset( $metabox['args']['site_settings']['hide_phrase'] ) ? $metabox['args']['site_settings']['hide_phrase'] : null ); ?>" placeholder="<?php esc_attr( $metabox['args']['default_hide_phrase'] ); ?>"class="regular-text" />
+								<input name="show_me_the_admin[hide_phrase]" type="text" id="smta-hide-phrase" value="<?php esc_attr_e( isset( $metabox['args']['site_settings']['hide_phrase'] ) ? $metabox['args']['site_settings']['hide_phrase'] : null ); ?>" placeholder="<?php esc_attr_e( $metabox['args']['default_hide_phrase'] ); ?>"class="regular-text" />
 								<p class="description"><?php printf( __( 'If left blank, will use the default phrase "%s".', 'show-me-the-admin' ), $metabox['args']['default_hide_phrase'] ); ?></p>
 							</td>
 						</tr>
