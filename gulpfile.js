@@ -58,6 +58,11 @@ gulp.task('watch', function() {
 });
 
 /**
+ * Compile assets.
+ */
+gulp.task('compile',['sass','js']);
+
+/**
  * Runs the default tasks.
  */
-gulp.task('default', ['sass','js','test']);
+gulp.task('default', ['compile','test']);
