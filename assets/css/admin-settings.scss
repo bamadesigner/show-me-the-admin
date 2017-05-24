@@ -1,0 +1,184 @@
+// Our about meta box
+#show-me-the-admin-about-mb {
+
+    p {
+        line-height: 19px;
+    }
+}
+
+// Our promote meta box
+#show-me-the-admin-promote-mb {
+
+    p {
+        margin: 10px 0;
+    }
+
+    a {
+        text-decoration: none;
+    }
+
+    .promote-text {
+        text-decoration: underline;
+    }
+
+    .dashicons {
+        text-decoration: none;
+    }
+
+    .donate img {
+        margin: 0 4px 2px 0;
+        vertical-align: middle;
+    }
+}
+
+// Our network message
+#smta-network-settings-message {
+    padding: 15px 15px 15px 40px;
+    margin: 8px 0 6px 0;
+    position: relative;
+
+    a {
+        color: inherit;
+    }
+
+    .button {
+        color: #000;
+        margin: 0 5px 0 0;
+    }
+
+    .dashicons {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        margin: -10px 0 0 0; // Icon is 20 pixels tall
+    }
+
+    p {
+        margin: 0 0 0.8em 0;
+    }
+
+    *:last-child {
+        margin-bottom: 0;
+    }
+}
+
+// Any of our settings tables
+.show-me-the-admin-settings {
+
+    label,
+    legend {
+        display: block;
+        font-size: inherit !important;
+        margin: 0 0 5px 0;
+
+	    &.inline {
+		    display: inline-block;
+	    }
+    }
+
+    input {
+
+	    &.regular-text {
+		    width: 100%;
+	    }
+
+	    &.inline {
+		    width: auto;
+	    }
+    }
+
+    .smta-choices {
+        padding: 0 0 0 15px;
+
+        &.vertical {
+
+            label {
+                display: block;
+            }
+        }
+    }
+}
+
+// The features settings table
+#show-me-the-admin-features {
+    margin-top: 12px;
+}
+
+#smta-features-enable-td {
+    background: rgba( #21759b, 0.2 );
+
+    .description {
+        margin-top: 10px;
+        color: #222;
+    }
+}
+
+#smta-features-disable-td {
+    padding: 10px 0 0 0;
+
+    fieldset {
+        display: block;
+        background: rgba(#800, 0.2);
+        padding: 15px 10px;
+    }
+}
+
+// The mouseleave delay setting for hover feature
+#smta-button-mouseleave-delay,
+#smta-hover-mouseleave-delay {
+	width: 60px;
+	text-align: right;
+	margin-right: 5px;
+	margin-left: 5px;
+}
+
+// Our user settings area
+#smta-user-profile-settings {
+    background: rgba( #000, 0.04 );
+    padding: 20px;
+    margin: 1em 0 2em 0;
+
+    *:first-child {
+        margin-top: 0;
+    }
+
+    *:last-child {
+        margin-bottom: 0;
+    }
+
+    h3 {
+        margin: 15px 0 0 0;
+        border-top: 1px solid #bbb;
+        padding-top: 30px;
+    }
+
+    table.smta-user-profile-settings {
+
+        td {
+            padding: 10px 0;
+        }
+    }
+}
+
+// The user roles
+#smta-user-roles {
+    width: 100%;
+}
+
+// Adust for screens larger than 600px
+@media screen and (min-width:600px) {
+
+    // Our user settings table
+    #show-me-the-admin-user-profile {
+
+        input.regular-text {
+            width: 80%;
+        }
+    }
+}
+
+// The main save button
+#show_me_the_admin_save_changes_side,
+#show_me_the_admin_save_changes {
+    width: 100%;
+}
