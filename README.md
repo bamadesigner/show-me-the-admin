@@ -96,8 +96,8 @@ Show Me The Admin has filters setup to allow you to tweak the plugin.
 If you'd like to contribute to the plugin, you will need to clone the repo and setup the following on your local environment:
 
 1. Install dependencies
-  * Run `npm install` - [Make sure Node.js and npm are installed](https://docs.npmjs.com/getting-started/installing-node)
-  * Run `composer install` - [Make sure composer is installed](https://getcomposer.org/doc/00-intro.md)
+    * Run `npm install` - [Make sure Node.js and npm are installed](https://docs.npmjs.com/getting-started/installing-node)
+    * Run `composer install` - [Make sure composer is installed](https://getcomposer.org/doc/00-intro.md)
 2. Run `gulp`
-  * Compiles assets - `gulp compile`
-  * Runs tests - `gulp test` 
+    * Compiles assets - `gulp compile`
+    * Runs tests - `gulp test` 
