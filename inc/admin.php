@@ -158,7 +158,7 @@ class Show_Me_The_Admin_Admin {
 	}
 
 	/**
-	 * Add our network Settings page.
+	 * Add our network settings page.
 	 *
 	 * @access  public
 	 * @since   1.0.0
@@ -435,7 +435,6 @@ class Show_Me_The_Admin_Admin {
 				// Get the features settings.
 				$features = isset( $site_settings['features'] ) ? $site_settings['features'] : array();
 
-				// Print the features table.
 				?>
 				<table id="show-me-the-admin-features" class="form-table show-me-the-admin-settings">
 					<tbody>
@@ -463,7 +462,6 @@ class Show_Me_The_Admin_Admin {
 				// Get the user roles.
 				$user_roles = get_editable_roles();
 
-				// Print the users settings table.
 				?>
 				<p style="margin-bottom:0;"><?php printf( __( 'Your users have the ability to customize this functionality by %1$sediting their user profile%2$s.', 'show-me-the-admin' ), '<a href="' . admin_url( 'profile.php#smta-user-profile-settings' ) . '">', '</a>' ); ?></p>
 				<table id="show-me-the-admin-user-settings" class="form-table show-me-the-admin-settings">
@@ -496,7 +494,8 @@ class Show_Me_The_Admin_Admin {
 							</td>
 						</tr>
 					</tbody>
-				</table><?php
+				</table>
+				<?php
 				break;
 
 			// Settings for keyphrase feature.
@@ -595,7 +594,6 @@ class Show_Me_The_Admin_Admin {
 				</table>
 				<?php
 				break;
-
 		}
 
 	}
@@ -778,7 +776,6 @@ class Show_Me_The_Admin_Admin {
 
 			}
 		}
-
 	}
 
 	/**
@@ -801,7 +798,6 @@ class Show_Me_The_Admin_Admin {
 			exit();
 
 		}
-
 	}
 
 	/**
@@ -822,7 +818,6 @@ class Show_Me_The_Admin_Admin {
 
 		// Return the validated settings.
 		return $settings;
-
 	}
 
 	/**
