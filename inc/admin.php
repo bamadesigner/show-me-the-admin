@@ -207,7 +207,7 @@ class Show_Me_The_Admin_Admin {
 		if ( in_array( $hook_suffix, array( $this->settings_page_id, 'profile.php' ) ) ) {
 
 			// Enqueue our main styles.
-			wp_enqueue_style( 'show-me-the-admin-settings', trailingslashit( plugin_dir_url( dirname( __FILE__ ) ) . 'assets/css' ) . 'admin-settings.min.css', array(), SHOW_ME_THE_ADMIN_VERSION );
+			wp_enqueue_style( 'show-me-the-admin-settings', trailingslashit( plugin_dir_url( dirname( __FILE__ ) ) . 'assets/css' ) . 'show-me-the-admin-settings.min.css', array(), SHOW_ME_THE_ADMIN_VERSION );
 
 			// We only need this stuff on our settings page.
 			if ( $hook_suffix == $this->settings_page_id ) {
@@ -405,7 +405,11 @@ class Show_Me_The_Admin_Admin {
 	 */
 	public function print_settings_meta_boxes( $post, $metabox ) {
 
-		switch ( $metabox['args']['id'] ) {
+		// Get settings.
+		$mb_args = isset( $metabox['args'] ) ? $metabox['args'] : array();
+		$site_settings = isset( $mb_args['site_settings'] ) ? $mb_args['site_settings'] : array();
+
+		switch ( $mb_args['id'] ) {
 
 			// About meta box.
 			case 'about-plugin':
@@ -429,7 +433,7 @@ class Show_Me_The_Admin_Admin {
 			case 'features':
 
 				// Get the features settings.
-				$features = isset( $metabox['args']['site_settings']['features'] ) ? $metabox['args']['site_settings']['features'] : array();
+				$features = isset( $site_settings['features'] ) ? $site_settings['features'] : array();
 
 				// Print the features table.
 				?>
@@ -473,7 +477,7 @@ class Show_Me_The_Admin_Admin {
 
 									foreach ( $user_roles as $user_role_key => $user_role ) :
 										?>
-										<option value="<?php echo $user_role_key; ?>"<?php selected( isset( $metabox['args']['site_settings']['user_roles'] ) && is_array( $metabox['args']['site_settings']['user_roles'] ) && in_array( $user_role_key, $metabox['args']['site_settings']['user_roles'] ) ); ?>><?php echo $user_role['name']; ?></option>
+										<option value="<?php echo $user_role_key; ?>"<?php selected( isset( $site_settings['user_roles'] ) && is_array( $site_settings['user_roles'] ) && in_array( $user_role_key, $site_settings['user_roles'] ) ); ?>><?php echo $user_role['name']; ?></option>
 										<?php
 									endforeach;
 
@@ -486,7 +490,7 @@ class Show_Me_The_Admin_Admin {
 							<td>
 								<fieldset>
 									<legend class="screen-reader-text"><span><?php _e( 'Provide A User Notice', 'show-me-the-admin' ); ?></span></legend>
-									<label for="smta-user-notice"><input name="show_me_the_admin[enable_user_notice]" type="checkbox" id="smta-user-notice" value="1"<?php checked( isset( $metabox['args']['site_settings']['enable_user_notice'] ) && true == $metabox['args']['site_settings']['enable_user_notice'] ); ?>/> <strong><?php _e( 'Provide an admin notice that will alert your users to this plugin\'s functionality', 'show-me-the-admin' ); ?></strong></label>
+									<label for="smta-user-notice"><input name="show_me_the_admin[enable_user_notice]" type="checkbox" id="smta-user-notice" value="1"<?php checked( isset( $site_settings['enable_user_notice'] ) && true == $site_settings['enable_user_notice'] ); ?>/> <strong><?php _e( 'Provide an admin notice that will alert your users to this plugin\'s functionality', 'show-me-the-admin' ); ?></strong></label>
 									<p class="description"><?php _e( 'Otherwise, I imagine the hidden toolbar might cause confusion.', 'show-me-the-admin' ); ?></p>
 								</fieldset>
 							</td>
@@ -499,23 +503,22 @@ class Show_Me_The_Admin_Admin {
 			case 'settings-feature-keyphrase':
 
 				// Get settings.
-				$feature_keyphrase = isset( $metabox['args']['site_settings']['feature_keyphrase'] ) ? $metabox['args']['site_settings']['feature_keyphrase'] : array();
+				$feature_keyphrase = isset( $site_settings['feature_keyphrase'] ) ? $site_settings['feature_keyphrase'] : array();
 
-				// Print the keyphrase settings.
 				?>
 				<table id="show-me-the-admin-settings-keyphrase" class="form-table show-me-the-admin-settings">
 					<tbody>
 						<tr>
 							<td>
 								<label for="smta-show-phrase"><strong><?php _e( 'Phrase to type to show the toolbar', 'show-me-the-admin' ); ?></strong></label>
-								<input name="show_me_the_admin[show_phrase]" type="text" id="smta-show-phrase" value="<?php esc_attr_e( isset( $metabox['args']['site_settings']['show_phrase'] ) ? $metabox['args']['site_settings']['show_phrase'] : null ); ?>" placeholder="<?php esc_attr_e( $metabox['args']['default_show_phrase'] ); ?>" class="regular-text" />
+								<input name="show_me_the_admin[show_phrase]" type="text" id="smta-show-phrase" value="<?php echo isset( $site_settings['show_phrase'] ) ? esc_attr( $site_settings['show_phrase'] ) : null; ?>" placeholder="<?php echo isset( $metabox['args']['default_show_phrase'] ) ? esc_attr( $metabox['args']['default_show_phrase'] ) : null; ?>" class="regular-text" />
 								<p class="description"><?php printf( __( 'If left blank, will use the default phrase "%s".', 'show-me-the-admin' ), $metabox['args']['default_show_phrase'] ); ?></p>
 							</td>
 						</tr>
 						<tr>
 							<td>
 								<label for="smta-hide-phrase"><strong><?php _e( 'Phrase to type to hide the toolbar', 'show-me-the-admin' ); ?></strong></label>
-								<input name="show_me_the_admin[hide_phrase]" type="text" id="smta-hide-phrase" value="<?php esc_attr_e( isset( $metabox['args']['site_settings']['hide_phrase'] ) ? $metabox['args']['site_settings']['hide_phrase'] : null ); ?>" placeholder="<?php esc_attr_e( $metabox['args']['default_hide_phrase'] ); ?>"class="regular-text" />
+								<input name="show_me_the_admin[hide_phrase]" type="text" id="smta-hide-phrase" value="<?php echo isset( $site_settings['hide_phrase'] ) ? esc_attr( $site_settings['hide_phrase'] ) : null; ?>" placeholder="<?php echo isset( $metabox['args']['default_hide_phrase'] ) ? esc_attr( $metabox['args']['default_hide_phrase'] ) : null; ?>"class="regular-text" />
 								<p class="description"><?php printf( __( 'If left blank, will use the default phrase "%s".', 'show-me-the-admin' ), $metabox['args']['default_hide_phrase'] ); ?></p>
 							</td>
 						</tr>
@@ -529,16 +532,16 @@ class Show_Me_The_Admin_Admin {
 							</td>
 						</tr>
 					</tbody>
-				</table><?php
+				</table>
+				<?php
 				break;
 
 			// Settings for button feature.
 			case 'settings-feature-button':
 
 				// Get settings.
-				$feature_button = isset( $metabox['args']['site_settings']['feature_button'] ) ? $metabox['args']['site_settings']['feature_button'] : array();
+				$feature_button = isset( $site_settings['feature_button'] ) ? $site_settings['feature_button'] : array();
 
-				// Print the button settings table.
 				?>
 				<table id="show-me-the-admin-settings-button" class="form-table show-me-the-admin-settings">
 					<tbody>
@@ -567,9 +570,8 @@ class Show_Me_The_Admin_Admin {
 			case 'settings-feature-hover':
 
 				// Get settings.
-				$feature_hover = isset( $metabox['args']['site_settings']['feature_hover'] ) ? $metabox['args']['site_settings']['feature_hover'] : array();
+				$feature_hover = isset( $site_settings['feature_hover'] ) ? $site_settings['feature_hover'] : array();
 
-				// Print the hover settings table.
 				?>
 				<table id="show-me-the-admin-settings-hover" class="form-table show-me-the-admin-settings">
 					<tbody>

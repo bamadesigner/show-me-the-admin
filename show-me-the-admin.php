@@ -3,7 +3,7 @@
  * Plugin Name:       Show Me The Admin
  * Plugin URI:        https://wordpress.org/plugins/show-me-the-admin/
  * Description:       Hides your admin toolbar and enables you to make it appear, and disappear, using a variety of methods.
- * Version:           1.1.2
+ * Version:           1.1.3
  * Author:            Rachel Cherry
  * Author URI:        https://bamadesigner.com
  * License:           GPL-2.0+
@@ -32,7 +32,7 @@ define( 'SHOW_ME_THE_ADMIN_HIDE_PHRASE', 'hideme' );
 
 // We only need you in the admin.
 if ( is_admin() ) {
-	require_once plugin_dir_path( __FILE__ ) . 'includes/admin.php';
+	require_once plugin_dir_path( __FILE__ ) . 'inc/admin.php';
 }
 
 class Show_Me_The_Admin {
