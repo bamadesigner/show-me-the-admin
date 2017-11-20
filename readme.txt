@@ -35,6 +35,7 @@ Your "Show Toolbar when viewing site" profile setting must be enabled.
 
 = 1.1.3 =
 * Make sure the login button is hidden when not in use.
+* Gives focus to admin bar when revealed.
 
 = 1.1.2 =
 * Fixing esc_attr() bug where show and hide phrases weren't being printed on the settings page. Thanks @kevinwhoffman!
@@ -63,6 +64,7 @@ Plugin launch
 
 = 1.1.3 =
 * Make sure the login button is hidden when not in use.
+* Gives focus to admin bar when revealed.
 
 = 1.1.2 =
 * Fixing esc_attr() bug where show and hide phrases weren't being printed on the settings page. Thanks @kevinwhoffman!

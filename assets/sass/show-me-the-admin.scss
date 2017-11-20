@@ -19,8 +19,10 @@
 		display: none;
 	}
 
-    &:hover {
+    &:hover,
+    &:focus {
         background: #21759b;
+	    outline-offset: -3px;
     }
 }
 
