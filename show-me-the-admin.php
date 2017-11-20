@@ -14,9 +14,11 @@
 
 /*
  * @TODO:
- * Add a link to or embed a demo video to help users understand functionality.
- * Test ability to do sound recognition - https://github.com/daveross/speak-to-wp/blob/master/assets/js/speak-to-wp.js
- * Allow custom key phrases to link directly to WP Admin pages
+ * - Add language files
+ * - Replace/remove select2 (not accessible)
+ * - Add a link to or embed a demo video to help users understand functionality
+ * - Test ability to do sound recognition - https://github.com/daveross/speak-to-wp/blob/master/assets/js/speak-to-wp.js
+ * - Allow custom key phrases to link directly to WP Admin pages
  */
 
 // If this file is called directly, abort.
@@ -24,19 +26,25 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-// If you define them, will they be used?
-define( 'SHOW_ME_THE_ADMIN_VERSION', '1.1.2' );
-define( 'SHOW_ME_THE_ADMIN_PLUGIN_URL', 'https://wordpress.org/plugins/show-me-the-admin/' );
-define( 'SHOW_ME_THE_ADMIN_PLUGIN_FILE', 'show-me-the-admin/show-me-the-admin.php' );
-define( 'SHOW_ME_THE_ADMIN_SHOW_PHRASE', 'showme' );
-define( 'SHOW_ME_THE_ADMIN_HIDE_PHRASE', 'hideme' );
-
 // We only need you in the admin.
 if ( is_admin() ) {
 	require_once plugin_dir_path( __FILE__ ) . 'inc/admin.php';
 }
 
 class Show_Me_The_Admin {
+
+	/**
+	 * Plugin information we need.
+	 *
+	 * @since   1.2.0
+	 * @access  public
+	 * @var     string
+	 */
+	public $version = '1.2.0',
+		$plugin_url = 'https://wordpress.org/plugins/show-me-the-admin/',
+		$plugin_file = 'show-me-the-admin/show-me-the-admin.php',
+		$show_phrase = 'showme',
+		$hide_phrase = 'hideme';
 
 	/**
 	 * Whether or not this plugin is network active.
@@ -128,7 +136,7 @@ class Show_Me_The_Admin {
 	protected function __construct() {
 
 		// Is this plugin network active?
-		$this->is_network_active = is_multisite() && ( $plugins = get_site_option( 'active_sitewide_plugins' ) ) && isset( $plugins[ SHOW_ME_THE_ADMIN_PLUGIN_FILE ] );
+		$this->is_network_active = is_multisite() && ( $plugins = get_site_option( 'active_sitewide_plugins' ) ) && isset( $plugins[ $this->plugin_file ] );
 
 		// Load our textdomain.
 		add_action( 'init', array( $this, 'textdomain' ) );
@@ -188,8 +196,6 @@ class Show_Me_The_Admin {
 	/**
 	 * Internationalization FTW.
 	 * Load our textdomain.
-	 *
-	 * @TODO Add language files
 	 *
 	 * @access  public
 	 * @since   1.0.0
@@ -583,11 +589,11 @@ class Show_Me_The_Admin {
 			$localize['features'][] = 'keyphrase';
 
 			// Add 'show_phrase'.
-			$show_phrase = ! empty( $settings['show_phrase'] ) ? $this->get_phrase_keycode( $settings['show_phrase'] ) : $this->get_phrase_keycode( SHOW_ME_THE_ADMIN_SHOW_PHRASE );
+			$show_phrase = ! empty( $settings['show_phrase'] ) ? $this->get_phrase_keycode( $settings['show_phrase'] ) : $this->get_phrase_keycode( $this->show_phrase );
 			$localize['show_phrase'] = apply_filters( 'show_me_the_admin_show_phrase', $show_phrase );
 
 			// Add 'hide_phrase'.
-			$hide_phrase = ! empty( $settings['hide_phrase'] ) ? $this->get_phrase_keycode( $settings['hide_phrase'] ) : $this->get_phrase_keycode( SHOW_ME_THE_ADMIN_HIDE_PHRASE );
+			$hide_phrase = ! empty( $settings['hide_phrase'] ) ? $this->get_phrase_keycode( $settings['hide_phrase'] ) : $this->get_phrase_keycode( $this->hide_phrase );
 			$localize['hide_phrase'] = apply_filters( 'show_me_the_admin_hide_phrase', $hide_phrase );
 
 		}
@@ -641,10 +647,10 @@ class Show_Me_The_Admin {
 		}
 
 		// Enqueue the style.
-		wp_enqueue_style( 'show-me-the-admin', trailingslashit( plugin_dir_url( __FILE__ ) . 'assets/css' ) . 'show-me-the-admin.min.css', $style_dep, SHOW_ME_THE_ADMIN_VERSION );
+		wp_enqueue_style( 'show-me-the-admin', trailingslashit( plugin_dir_url( __FILE__ ) . 'assets/css' ) . 'show-me-the-admin.min.css', $style_dep, $this->version );
 
 		// Enqueue the script.
-		wp_enqueue_script( 'show-me-the-admin', trailingslashit( plugin_dir_url( __FILE__ ) . 'assets/js' ) . 'show-me-the-admin.min.js', array( 'jquery' ), SHOW_ME_THE_ADMIN_VERSION, true );
+		wp_enqueue_script( 'show-me-the-admin', trailingslashit( plugin_dir_url( __FILE__ ) . 'assets/js' ) . 'show-me-the-admin.min.js', array( 'jquery' ), $this->version, true );
 
 		// Pass some data.
 		wp_localize_script( 'show-me-the-admin', 'show_me_the_admin', $localize );

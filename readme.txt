@@ -34,6 +34,7 @@ Your "Show Toolbar when viewing site" profile setting must be enabled.
 == Changelog ==
 
 = 1.2.0 =
+* NOTICE: I removed the plugin's PHP constants. Are now stored in main class if you were using the data.
 * Ensuring features are accessible, especially by keyboard.
 * Gives focus to admin bar when revealed.
 * Make sure the login button is hidden when not in use.
@@ -64,6 +65,7 @@ Plugin launch
 == Upgrade Notice ==
 
 = 1.2.0 =
+* NOTICE: I removed the plugin's PHP constants. Are now stored in main class if you were using the data.
 * Ensuring features are accessible, especially by keyboard.
 * Gives focus to admin bar when revealed.
 * Make sure the login button is hidden when not in use.

@@ -86,8 +86,9 @@ class Show_Me_The_Admin_Admin {
 		}
 
 		// Add plugin action links.
-		add_filter( 'network_admin_plugin_action_links_' . SHOW_ME_THE_ADMIN_PLUGIN_FILE, array( $this, 'add_plugin_action_links' ), 10, 4 );
-		add_filter( 'plugin_action_links_' . SHOW_ME_THE_ADMIN_PLUGIN_FILE, array( $this, 'add_plugin_action_links' ), 10, 4 );
+		$plugin_file = show_me_the_admin()->plugin_file;
+		add_filter( 'network_admin_plugin_action_links_' . $plugin_file, array( $this, 'add_plugin_action_links' ), 10, 4 );
+		add_filter( 'plugin_action_links_' . $plugin_file, array( $this, 'add_plugin_action_links' ), 10, 4 );
 
 		// Add multisite settings page.
 		add_action( 'network_admin_menu', array( $this, 'add_network_settings_page' ) );
@@ -166,7 +167,7 @@ class Show_Me_The_Admin_Admin {
 	public function add_network_settings_page() {
 
 		// Make sure plugin is network activated.
-		if ( ! ( function_exists( 'is_plugin_active_for_network' ) && is_plugin_active_for_network( SHOW_ME_THE_ADMIN_PLUGIN_FILE ) ) ) {
+		if ( ! ( function_exists( 'is_plugin_active_for_network' ) && is_plugin_active_for_network( show_me_the_admin()->plugin_file ) ) ) {
 			return;
 		}
 
@@ -197,6 +198,8 @@ class Show_Me_The_Admin_Admin {
 	public function enqueue_styles_scripts( $hook_suffix ) {
 		global $smta_users_setting_notice, $smta_user_notice;
 
+		$plugin_version = show_me_the_admin()->version;
+
 		/*
 		 * We only need our styles for our
 		 * settings pages and the user profile pages.
@@ -207,7 +210,7 @@ class Show_Me_The_Admin_Admin {
 		if ( in_array( $hook_suffix, array( $this->settings_page_id, 'profile.php' ) ) ) {
 
 			// Enqueue our main styles.
-			wp_enqueue_style( 'show-me-the-admin-settings', trailingslashit( plugin_dir_url( dirname( __FILE__ ) ) . 'assets/css' ) . 'show-me-the-admin-settings.min.css', array(), SHOW_ME_THE_ADMIN_VERSION );
+			wp_enqueue_style( 'show-me-the-admin-settings', trailingslashit( plugin_dir_url( dirname( __FILE__ ) ) . 'assets/css' ) . 'show-me-the-admin-settings.min.css', array(), $plugin_version );
 
 			// We only need this stuff on our settings page.
 			if ( $hook_suffix == $this->settings_page_id ) {
@@ -217,7 +220,7 @@ class Show_Me_The_Admin_Admin {
 				wp_enqueue_script( 'show-me-the-admin-select2', '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/js/select2.min.js', array( 'jquery' ) );
 
 				// Enqueue our settings script.
-				wp_enqueue_script( 'show-me-the-admin-settings', trailingslashit( plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js' ) . 'show-me-the-admin-settings.min.js', array( 'jquery', 'show-me-the-admin-select2' ), SHOW_ME_THE_ADMIN_VERSION );
+				wp_enqueue_script( 'show-me-the-admin-settings', trailingslashit( plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js' ) . 'show-me-the-admin-settings.min.js', array( 'jquery', 'show-me-the-admin-select2' ), $plugin_version );
 
 				// Need these scripts for the meta boxes to work correctly on our settings page.
 				wp_enqueue_script( 'post' );
@@ -301,7 +304,7 @@ class Show_Me_The_Admin_Admin {
 
 			// Enqueue our script.
 			if ( $enqueue_user_notice_script ) {
-				wp_enqueue_script( 'show-me-the-admin-user-notice', trailingslashit( plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js' ) . 'show-me-the-admin-user-notice.min.js', array( 'jquery' ), SHOW_ME_THE_ADMIN_VERSION, true );
+				wp_enqueue_script( 'show-me-the-admin-user-notice', trailingslashit( plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js' ) . 'show-me-the-admin-user-notice.min.js', array( 'jquery' ), $plugin_version, true );
 			}
 		}
 	}
@@ -338,8 +341,8 @@ class Show_Me_The_Admin_Admin {
 		}
 
 		// Set the default phrases.
-		$default_show_phrase = SHOW_ME_THE_ADMIN_SHOW_PHRASE;
-		$default_hide_phrase = SHOW_ME_THE_ADMIN_HIDE_PHRASE;
+		$default_show_phrase = show_me_the_admin()->show_phrase;
+		$default_hide_phrase = show_me_the_admin()->hide_phrase;
 
 		// If network active, get network settings for help with default phrases.
 		if ( show_me_the_admin()->is_network_active ) {
@@ -415,15 +418,15 @@ class Show_Me_The_Admin_Admin {
 			case 'about-plugin':
 				?>
 				<p><?php _e( 'Hides your admin toolbar and enables you to make it appear, and disappear, using a variety of methods.', 'show-me-the-admin' ); ?></p>
-				<p><strong><a href="<?php echo SHOW_ME_THE_ADMIN_PLUGIN_URL; ?>" target="_blank"><?php _e( 'Show Me The Admin', 'show-me-the-admin' ); ?></a></strong><br />
-				<strong><?php _e( 'Version', 'show-me-the-admin' ); ?>:</strong> <?php echo SHOW_ME_THE_ADMIN_VERSION; ?><br /><strong><?php _e( 'Author', 'show-me-the-admin' ); ?>:</strong> <a href="http://bamadesigner.com/" target="_blank">Rachel Cherry</a></p>
+				<p><strong><a href="<?php echo show_me_the_admin()->plugin_url; ?>" target="_blank"><?php _e( 'Show Me The Admin', 'show-me-the-admin' ); ?></a></strong><br />
+				<strong><?php _e( 'Version', 'show-me-the-admin' ); ?>:</strong> <?php echo show_me_the_admin()->version; ?><br /><strong><?php _e( 'Author', 'show-me-the-admin' ); ?>:</strong> <a href="http://bamadesigner.com/" target="_blank">Rachel Cherry</a></p>
 				<?php
 				break;
 
 			// Promote meta box.
 			case 'promote':
 				?>
-				<p class="star"><a href="<?php echo SHOW_ME_THE_ADMIN_PLUGIN_URL; ?>" title="<?php esc_attr_e( 'Give the plugin a good rating', 'show-me-the-admin' ); ?>" target="_blank"><span class="dashicons dashicons-star-filled"></span> <span class="promote-text"><?php _e( 'Give the plugin a good rating', 'show-me-the-admin' ); ?></span></a></p>
+				<p class="star"><a href="<?php echo show_me_the_admin()->plugin_url; ?>" title="<?php esc_attr_e( 'Give the plugin a good rating', 'show-me-the-admin' ); ?>" target="_blank"><span class="dashicons dashicons-star-filled"></span> <span class="promote-text"><?php _e( 'Give the plugin a good rating', 'show-me-the-admin' ); ?></span></a></p>
 				<p class="twitter"><a href="https://twitter.com/bamadesigner" title="<?php _e( 'Follow bamadesigner on Twitter', 'show-me-the-admin' ); ?>" target="_blank"><span class="dashicons dashicons-twitter"></span> <span class="promote-text"><?php _e( 'Follow me on Twitter', 'show-me-the-admin' ); ?></span></a></p>
 				<p class="donate"><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=ZCAN2UX7QHZPL&lc=US&item_name=Rachel%20Carden%20%28Show%20Me%20The%20Admin%29&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted" title="<?php esc_attr_e( 'Donate a few bucks to the plugin', 'show-me-the-admin' ); ?>" target="_blank"><img src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" alt="<?php esc_attr_e( 'Donate', 'show-me-the-admin' ); ?>" /> <span class="promote-text"><?php _e( 'and buy me a coffee', 'show-me-the-admin' ); ?></span></a></p>
 				<?php
@@ -905,8 +908,8 @@ class Show_Me_The_Admin_Admin {
 		$user_features = isset( $user_settings['features'] ) ? $user_settings['features'] : array();
 
 		// Set the default phrases.
-		$default_show_phrase = ! empty( $site_settings['show_phrase'] ) ? $site_settings['show_phrase'] : SHOW_ME_THE_ADMIN_SHOW_PHRASE;
-		$default_hide_phrase = ! empty( $site_settings['hide_phrase'] ) ? $site_settings['hide_phrase'] : SHOW_ME_THE_ADMIN_HIDE_PHRASE;
+		$default_show_phrase = ! empty( $site_settings['show_phrase'] ) ? $site_settings['show_phrase'] : show_me_the_admin()->show_phrase;
+		$default_hide_phrase = ! empty( $site_settings['hide_phrase'] ) ? $site_settings['hide_phrase'] : show_me_the_admin()->hide_phrase;
 
 		// Make sure we don't show the notice anymore since they've viewed their profile settings.
 		$this->add_user_notice();

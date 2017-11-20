@@ -64,12 +64,19 @@
 		// Will be true if we should initiate the mouseleave functionality.
 		var init_admin_bar_mouseleave = false;
 
-		// Will hold the mouseleave delay (in seconds) to display the toolbar.
-		// Default is 2 seconds.
+		/*
+		 * Will hold the mouseleave delay (in seconds) to display the toolbar.
+		 *
+		 * Default is 2 seconds.
+		 */
 		var admin_bar_mouseleave = 2000;
 
-		// Will be true when we want mouseleave functionality to work.
-		// Need this in case 1 feature w/mouseleave is enabled along with a feature without mouseleave.
+		/*
+		 * Will be true when we want mouseleave functionality to work.
+		 *
+		 * Need this in case 1 feature w/mouseleave is
+		 * enabled along with a feature without mouseleave.
+		 */
 		var enable_admin_bar_mouseleave = false;
 
 		// If hover feature is enabled.
