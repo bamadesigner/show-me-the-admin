@@ -3,7 +3,7 @@
 	"description": "WordPress plugin that hides your admin toolbar and enables you to make it appear, and disappear, using a variety of methods.",
 	"type": "wordpress-plugin",
 	"license": "GPL-2.0+",
-	"version": "1.2.0",
+	"version": "1.2.1",
 	"require-dev": {
 		"squizlabs/php_codesniffer": "*",
 		"wp-coding-standards/wpcs": "*"

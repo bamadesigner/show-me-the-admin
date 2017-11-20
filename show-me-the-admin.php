@@ -3,7 +3,7 @@
  * Plugin Name:       Show Me The Admin
  * Plugin URI:        https://wordpress.org/plugins/show-me-the-admin/
  * Description:       Hides your admin toolbar and enables you to make it appear, and disappear, using a variety of methods.
- * Version:           1.2.0
+ * Version:           1.2.1
  * Author:            Rachel Cherry
  * Author URI:        https://bamadesigner.com
  * License:           GPL-2.0+
@@ -40,7 +40,7 @@ class Show_Me_The_Admin {
 	 * @access  public
 	 * @var     string
 	 */
-	public $version = '1.2.0',
+	public $version = '1.2.1',
 		$plugin_url = 'https://wordpress.org/plugins/show-me-the-admin/',
 		$plugin_file = 'show-me-the-admin/show-me-the-admin.php',
 		$show_phrase = 'showme',
@@ -54,16 +54,6 @@ class Show_Me_The_Admin {
 	 * @var		boolean
 	 */
 	public $is_network_active;
-
-	/**
-	 * Will hold whether or not the
-	 * user wants the toolbar.
-	 *
-	 * @since	1.0.0
-	 * @access	public
-	 * @var		boolean
-	 */
-	public $user_wants_admin_bar;
 
 	/**
 	 * Will hold whether or not
@@ -146,9 +136,6 @@ class Show_Me_The_Admin {
 
 		// Runs when the plugin is upgraded.
 		add_action( 'upgrader_process_complete', array( $this, 'upgrader_process_complete' ), 1, 2 );
-
-		// Detects the user's toolbar preference.
-		add_action( 'plugins_loaded', array( $this, 'get_admin_bar_pref' ), 1 );
 
 		// Add needed styles and scripts.
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles_scripts' ) );
@@ -471,16 +458,6 @@ class Show_Me_The_Admin {
 	}
 
 	/**
-	 * Detects the user's toolbar preference.
-	 *
-	 * @access  public
-	 * @since   1.0.0
-	 */
-	public function get_admin_bar_pref() {
-		$this->user_wants_admin_bar = _get_admin_bar_pref();
-	}
-
-	/**
 	 * Returns true if we should hide the toolbar.
 	 * You can test against a specific feature.
 	 *
@@ -490,11 +467,6 @@ class Show_Me_The_Admin {
 	 * @return  bool - true if we should hide the toolbar.
 	 */
 	public function enable_hide_the_admin_bar( $feature = '' ) {
-
-		// Don't add if the user doesn't want the toolbar.
-		if ( ! $this->user_wants_admin_bar ) {
-			return false;
-		}
 
 		// If it's already been tested, will be false or an array.
 		if ( false === self::$enable_hide_the_admin_bar ) {
@@ -513,15 +485,19 @@ class Show_Me_The_Admin {
 			return ! empty( self::$enable_hide_the_admin_bar );
 		}
 
-		$settings = $this->get_settings();
+		// Don't add if the user doesn't want the toolbar.
 		$is_user_logged_in = is_user_logged_in();
+		if ( $is_user_logged_in && ! _get_admin_bar_pref() ) {
+			self::$enable_hide_the_admin_bar = false;
+			return false;
+		}
+
+		$settings = $this->get_settings();
 
 		// Don't add if functionality is disabled for this user.
-		if ( $is_user_logged_in ) {
-			if ( isset( $settings['disable'] ) && true == $settings['disable'] ) {
-				self::$enable_hide_the_admin_bar = false;
-				return false;
-			}
+		if ( $is_user_logged_in && isset( $settings['disable'] ) && true == $settings['disable'] ) {
+			self::$enable_hide_the_admin_bar = false;
+			return false;
 		}
 
 		// Check to make sure any features are set.
@@ -540,11 +516,11 @@ class Show_Me_The_Admin {
 
 		// If not logged in, see if we want the login button.
 		if ( ! $is_user_logged_in ) {
-			foreach ( $enable_hide_the_admin_bar as $feature ) {
+			foreach ( $enable_hide_the_admin_bar as $this_feature ) {
 
 				// Remove if the login button is not enabled for feature.
-				if ( ! ( isset( $settings[ "feature_{$feature}" ]['enable_login_button'] ) && true == $settings[ "feature_{$feature}" ]['enable_login_button'] ) ) {
-					unset( $enable_hide_the_admin_bar[ array_search( $feature, $enable_hide_the_admin_bar ) ] );
+				if ( ! ( isset( $settings[ "feature_{$this_feature}" ]['enable_login_button'] ) && true == $settings[ "feature_{$this_feature}" ]['enable_login_button'] ) ) {
+					unset( $enable_hide_the_admin_bar[ array_search( $this_feature, $enable_hide_the_admin_bar ) ] );
 				}
 			}
 		}

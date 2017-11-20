@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=ZCAN2
 Tags: admin, admin bar, adminbar, toolbar, bar, login, show, hide
 Requires at least: 3.0
 Tested up to: 4.9
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -32,6 +32,10 @@ Your "Show Toolbar when viewing site" profile setting must be enabled.
 3. Go to Settings > Show Me The Admin
 
 == Changelog ==
+
+= 1.2.1 =
+* This was released quickly after 1.2.0. Make sure you the read the changelog from 1.2.0.
+* Fixed bug from 1.2.0 that confused features if no one was logged in.
 
 = 1.2.0 =
 * NOTICE: I removed the plugin's PHP constants. Are now stored in main class if you were using the data.
@@ -63,6 +67,10 @@ Your "Show Toolbar when viewing site" profile setting must be enabled.
 Plugin launch
 
 == Upgrade Notice ==
+
+= 1.2.1 =
+* This was released quickly after 1.2.0. Make sure you the read the changelog from 1.2.0.
+* Fixed bug from 1.2.0 that confused features if no one was logged in.
 
 = 1.2.0 =
 * NOTICE: I removed the plugin's PHP constants. Are now stored in main class if you were using the data.
