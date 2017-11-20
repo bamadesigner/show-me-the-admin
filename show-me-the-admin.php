@@ -693,7 +693,7 @@ class Show_Me_The_Admin {
 
 		// If the button feature is enabled, we need to add the button.
 		if ( $this->enable_hide_the_admin_bar( 'button' ) ) :
-			?><button id="show-me-the-admin-button" title="<?php printf( esc_attr__( 'Show the %s admin bar', 'show-me-the-admin' ), 'WordPress' ); ?>"></button><?php
+			?><button id="show-me-the-admin-button" tabindex="1" title="<?php printf( esc_attr__( 'Show the %s admin bar', 'show-me-the-admin' ), 'WordPress' ); ?>"></button><?php
 		endif;
 
 		// If the hover feature is enabled, we need an element to tie it to.
