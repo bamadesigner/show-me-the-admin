@@ -118,7 +118,7 @@
 
     fieldset {
         display: block;
-        background: rgba(#800, 0.2);
+        background: rgba(#800, 0.1);
         padding: 15px 10px;
     }
 }
@@ -150,6 +150,13 @@
         margin: 15px 0 0 0;
         border-top: 1px solid #bbb;
         padding-top: 30px;
+    }
+
+    .smta-highlight {
+        background: rgba(33, 117, 155, 0.1);
+        padding: 15px;
+        font-weight: bold;
+        font-style: italic;
     }
 
     table.smta-user-profile-settings {

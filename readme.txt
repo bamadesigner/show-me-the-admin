@@ -3,8 +3,8 @@ Contributors: bamadesigner
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=ZCAN2UX7QHZPL&lc=US&item_name=Rachel%20Carden%20%28Show%20Me%20The%20Admin%29&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted
 Tags: admin, admin bar, adminbar, toolbar, bar, login, show, hide
 Requires at least: 3.0
-Tested up to: 4.7.5
-Stable tag: 1.1.2
+Tested up to: 4.9
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -33,6 +33,12 @@ Your "Show Toolbar when viewing site" profile setting must be enabled.
 
 == Changelog ==
 
+= 1.2.0 =
+* NOTICE: I removed the plugin's PHP constants. Are now stored in main class if you were using the data.
+* Ensuring features are accessible, especially by keyboard.
+* Gives focus to admin bar when revealed.
+* Make sure the login button is hidden when not in use.
+
 = 1.1.2 =
 * Fixing esc_attr() bug where show and hide phrases weren't being printed on the settings page. Thanks @kevinwhoffman!
 
@@ -57,6 +63,12 @@ Your "Show Toolbar when viewing site" profile setting must be enabled.
 Plugin launch
 
 == Upgrade Notice ==
+
+= 1.2.0 =
+* NOTICE: I removed the plugin's PHP constants. Are now stored in main class if you were using the data.
+* Ensuring features are accessible, especially by keyboard.
+* Gives focus to admin bar when revealed.
+* Make sure the login button is hidden when not in use.
 
 = 1.1.2 =
 * Fixing esc_attr() bug where show and hide phrases weren't being printed on the settings page. Thanks @kevinwhoffman!

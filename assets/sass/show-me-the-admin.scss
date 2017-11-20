@@ -1,4 +1,5 @@
 #show-me-the-admin-login {
+	display: block;
     background: #23282d;
     width: 100%;
     height: 32px;
@@ -13,13 +14,21 @@
     text-align: center;
     text-transform: uppercase;
     text-decoration: none;
+	
+	&.hidden {
+		display: none;
+	}
 
-    &:hover {
+    &:hover,
+    &:focus {
         background: #21759b;
+	    outline-offset: -3px;
     }
 }
 
 #show-me-the-admin-button {
+	display: block;
+	background: transparent;
     position: fixed;
     top: 10px;
     left: 10px;
@@ -32,6 +41,9 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     opacity: 0.4;
+    margin: 0;
+    padding: 0;
+    border: 0;
 
     &:before {
         content: "\f120";

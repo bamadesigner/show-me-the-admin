@@ -3,7 +3,7 @@
  * Plugin Name:       Show Me The Admin
  * Plugin URI:        https://wordpress.org/plugins/show-me-the-admin/
  * Description:       Hides your admin toolbar and enables you to make it appear, and disappear, using a variety of methods.
- * Version:           1.1.2
+ * Version:           1.2.0
  * Author:            Rachel Cherry
  * Author URI:        https://bamadesigner.com
  * License:           GPL-2.0+
@@ -14,8 +14,11 @@
 
 /*
  * @TODO:
- * Add a link to or embed a demo video to help users understand functionality.
- * Test ability to do sound recognition - https://github.com/daveross/speak-to-wp/blob/master/assets/js/speak-to-wp.js
+ * - Add language files
+ * - Replace/remove select2 (not accessible)
+ * - Add a link to or embed a demo video to help users understand functionality
+ * - Test ability to do sound recognition - https://github.com/daveross/speak-to-wp/blob/master/assets/js/speak-to-wp.js
+ * - Allow custom key phrases to link directly to WP Admin pages
  */
 
 // If this file is called directly, abort.
@@ -23,19 +26,25 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-// If you define them, will they be used?
-define( 'SHOW_ME_THE_ADMIN_VERSION', '1.1.2' );
-define( 'SHOW_ME_THE_ADMIN_PLUGIN_URL', 'https://wordpress.org/plugins/show-me-the-admin/' );
-define( 'SHOW_ME_THE_ADMIN_PLUGIN_FILE', 'show-me-the-admin/show-me-the-admin.php' );
-define( 'SHOW_ME_THE_ADMIN_SHOW_PHRASE', 'showme' );
-define( 'SHOW_ME_THE_ADMIN_HIDE_PHRASE', 'hideme' );
-
 // We only need you in the admin.
 if ( is_admin() ) {
-	require_once plugin_dir_path( __FILE__ ) . 'includes/admin.php';
+	require_once plugin_dir_path( __FILE__ ) . 'inc/admin.php';
 }
 
 class Show_Me_The_Admin {
+
+	/**
+	 * Plugin information we need.
+	 *
+	 * @since   1.2.0
+	 * @access  public
+	 * @var     string
+	 */
+	public $version = '1.2.0',
+		$plugin_url = 'https://wordpress.org/plugins/show-me-the-admin/',
+		$plugin_file = 'show-me-the-admin/show-me-the-admin.php',
+		$show_phrase = 'showme',
+		$hide_phrase = 'hideme';
 
 	/**
 	 * Whether or not this plugin is network active.
@@ -127,7 +136,7 @@ class Show_Me_The_Admin {
 	protected function __construct() {
 
 		// Is this plugin network active?
-		$this->is_network_active = is_multisite() && ( $plugins = get_site_option( 'active_sitewide_plugins' ) ) && isset( $plugins[ SHOW_ME_THE_ADMIN_PLUGIN_FILE ] );
+		$this->is_network_active = is_multisite() && ( $plugins = get_site_option( 'active_sitewide_plugins' ) ) && isset( $plugins[ $this->plugin_file ] );
 
 		// Load our textdomain.
 		add_action( 'init', array( $this, 'textdomain' ) );
@@ -187,8 +196,6 @@ class Show_Me_The_Admin {
 	/**
 	 * Internationalization FTW.
 	 * Load our textdomain.
-	 *
-	 * @TODO Add language files
 	 *
 	 * @access  public
 	 * @since   1.0.0
@@ -484,89 +491,72 @@ class Show_Me_The_Admin {
 	 */
 	public function enable_hide_the_admin_bar( $feature = '' ) {
 
-		// If it's already been tested, will be an array.
-		if ( is_array( self::$enable_hide_the_admin_bar ) ) {
+		// Don't add if the user doesn't want the toolbar.
+		if ( ! $this->user_wants_admin_bar ) {
+			return false;
+		}
+
+		// If it's already been tested, will be false or an array.
+		if ( false === self::$enable_hide_the_admin_bar ) {
+			return false;
+		} elseif ( is_array( self::$enable_hide_the_admin_bar ) ) {
 
 			/*
 			 * If specific feature, see if it has already been decided.
 			 *
 			 * Otherwise, if not empty then means something is enabled.
 			 */
-			if ( '' != $feature ) {
-				if ( in_array( $feature, self::$enable_hide_the_admin_bar ) ) {
-					return true;
-				}
-			} elseif ( ! empty( self::$enable_hide_the_admin_bar ) ) {
-				return true;
+			if ( ! empty( $feature ) ) {
+				return in_array( $feature, self::$enable_hide_the_admin_bar );
 			}
 
-			// Has already been tested and should not be enabled.
-			return false;
+			return ! empty( self::$enable_hide_the_admin_bar );
 		}
 
-		// Create array for testing.
-		self::$enable_hide_the_admin_bar = array();
-
-		// Don't add if the user doesn't want the toolbar.
-		if ( ! $this->user_wants_admin_bar ) {
-			return false;
-		}
-
-		// Get the settings.
 		$settings = $this->get_settings();
+		$is_user_logged_in = is_user_logged_in();
+
+		// Don't add if functionality is disabled for this user.
+		if ( $is_user_logged_in ) {
+			if ( isset( $settings['disable'] ) && true == $settings['disable'] ) {
+				self::$enable_hide_the_admin_bar = false;
+				return false;
+			}
+		}
 
 		// Check to make sure any features are set.
 		if ( empty( $settings['features'] ) ) {
+			self::$enable_hide_the_admin_bar = false;
 			return false;
 		}
 
-		// Check to make sure the specific feature is set.
-		if ( '' != $feature && ! isset( $settings['features'][ $feature ] ) ) {
-			return false;
+		// Make sure it's an array.
+		if ( ! is_array( $settings['features'] ) ) {
+			$settings['features'] = explode( ',', str_replace( ' ', '', $settings['features'] ) );
 		}
 
-		// Check features dependent on whether the user is logged in.
-		if ( is_user_logged_in() ) {
+		// Create array for storage.
+		$enable_hide_the_admin_bar = $settings['features'];
 
-			// Don't add if functionality is disabled for this user.
-			if ( isset( $settings['disable'] ) && true == $settings['disable'] ) {
-				return false;
-			}
+		// If not logged in, see if we want the login button.
+		if ( ! $is_user_logged_in ) {
+			foreach ( $enable_hide_the_admin_bar as $feature ) {
 
-			// Assign features.
-			if ( ! empty( $settings['features'] ) ) {
-				self::$enable_hide_the_admin_bar = $settings['features'];
-				return true;
-			}
-		} else {
-
-			// Check a specific feature or all features.
-			if ( '' != $feature ) {
-
-				// To see if the login button should be enabled.
-				if ( isset( $settings[ "feature_{$feature}" ]['enable_login_button'] ) && true == $settings[ "feature_{$feature}" ]['enable_login_button'] ) {
-					self::$enable_hide_the_admin_bar[] = $feature;
-					return true;
-				}
-			} else {
-
-				// Check each feature for the login button.
-				foreach ( $settings['features'] as $feature ) {
-
-					// Add if the login button is not enabled for any feature.
-					if ( isset( $settings[ "feature_{$feature}" ]['enable_login_button'] ) && true == $settings[ "feature_{$feature}" ]['enable_login_button'] ) {
-						self::$enable_hide_the_admin_bar[] = $feature;
-					}
-				}
-
-				// As long as one is enabled, return true.
-				if ( ! empty( self::$enable_hide_the_admin_bar ) ) {
-					return true;
+				// Remove if the login button is not enabled for feature.
+				if ( ! ( isset( $settings[ "feature_{$feature}" ]['enable_login_button'] ) && true == $settings[ "feature_{$feature}" ]['enable_login_button'] ) ) {
+					unset( $enable_hide_the_admin_bar[ array_search( $feature, $enable_hide_the_admin_bar ) ] );
 				}
 			}
 		}
 
-		return false;
+		// Store the settings.
+		self::$enable_hide_the_admin_bar = $enable_hide_the_admin_bar;
+
+		// First round test.
+		if ( ! empty( $feature ) ) {
+			return in_array( $feature, $enable_hide_the_admin_bar );
+		}
+		return ! empty( $enable_hide_the_admin_bar );
 	}
 
 	/**
@@ -588,23 +578,33 @@ class Show_Me_The_Admin {
 		$settings = $this->get_settings();
 
 		// Build our data array.
-		$localize = array( 'features' => self::$enable_hide_the_admin_bar );
+		$localize = array( 'features' => array() );
+
+		// Set style dependencies.
+		$style_dep = array();
 
 		// If keyphrase is enabled, add settings.
 		if ( $this->enable_hide_the_admin_bar( 'keyphrase' ) ) {
 
+			$localize['features'][] = 'keyphrase';
+
 			// Add 'show_phrase'.
-			$show_phrase = ! empty( $settings['show_phrase'] ) ? $this->get_phrase_keycode( $settings['show_phrase'] ) : $this->get_phrase_keycode( SHOW_ME_THE_ADMIN_SHOW_PHRASE );
+			$show_phrase = ! empty( $settings['show_phrase'] ) ? $this->get_phrase_keycode( $settings['show_phrase'] ) : $this->get_phrase_keycode( $this->show_phrase );
 			$localize['show_phrase'] = apply_filters( 'show_me_the_admin_show_phrase', $show_phrase );
 
 			// Add 'hide_phrase'.
-			$hide_phrase = ! empty( $settings['hide_phrase'] ) ? $this->get_phrase_keycode( $settings['hide_phrase'] ) : $this->get_phrase_keycode( SHOW_ME_THE_ADMIN_HIDE_PHRASE );
+			$hide_phrase = ! empty( $settings['hide_phrase'] ) ? $this->get_phrase_keycode( $settings['hide_phrase'] ) : $this->get_phrase_keycode( $this->hide_phrase );
 			$localize['hide_phrase'] = apply_filters( 'show_me_the_admin_hide_phrase', $hide_phrase );
 
 		}
 
 		// If button is enabled, add settings.
 		if ( $this->enable_hide_the_admin_bar( 'button' ) ) {
+
+			$localize['features'][] = 'button';
+
+			// We need the font for the WordPress logo.
+			$style_dep[] = 'dashicons';
 
 			// Define the mouseleave delay, default is 2 seconds.
 			$mouseleave_delay = 2;
@@ -625,6 +625,8 @@ class Show_Me_The_Admin {
 		// If hover is enabled, add settings.
 		if ( $this->enable_hide_the_admin_bar( 'hover' ) ) {
 
+			$localize['features'][] = 'hover';
+
 			// Define the mouseleave delay, default is 2 seconds.
 			$mouseleave_delay = 2;
 			if ( ! empty( $settings['feature_hover']['mouseleave_delay'] ) && $settings['feature_hover']['mouseleave_delay'] > 0 ) {
@@ -639,11 +641,16 @@ class Show_Me_The_Admin {
 
 		}
 
+		// No point if localize is empty.
+		if ( empty( $localize ) || empty( $localize['features'] ) ) {
+			return;
+		}
+
 		// Enqueue the style.
-		wp_enqueue_style( 'show-me-the-admin', trailingslashit( plugin_dir_url( __FILE__ ) . 'assets/css' ) . 'show-me-the-admin.min.css', array(), SHOW_ME_THE_ADMIN_VERSION );
+		wp_enqueue_style( 'show-me-the-admin', trailingslashit( plugin_dir_url( __FILE__ ) . 'assets/css' ) . 'show-me-the-admin.min.css', $style_dep, $this->version );
 
 		// Enqueue the script.
-		wp_enqueue_script( 'show-me-the-admin', trailingslashit( plugin_dir_url( __FILE__ ) . 'assets/js' ) . 'show-me-the-admin.min.js', array( 'jquery' ), SHOW_ME_THE_ADMIN_VERSION, true );
+		wp_enqueue_script( 'show-me-the-admin', trailingslashit( plugin_dir_url( __FILE__ ) . 'assets/js' ) . 'show-me-the-admin.min.js', array( 'jquery' ), $this->version, true );
 
 		// Pass some data.
 		wp_localize_script( 'show-me-the-admin', 'show_me_the_admin', $localize );
@@ -693,7 +700,7 @@ class Show_Me_The_Admin {
 
 		// If the button feature is enabled, we need to add the button.
 		if ( $this->enable_hide_the_admin_bar( 'button' ) ) :
-			?><div id="show-me-the-admin-button"></div><?php
+			?><button id="show-me-the-admin-button" tabindex="1" title="<?php printf( esc_attr__( 'Show the %s admin bar', 'show-me-the-admin' ), 'WordPress' ); ?>"></button><?php
 		endif;
 
 		// If the hover feature is enabled, we need an element to tie it to.
@@ -711,9 +718,8 @@ class Show_Me_The_Admin {
 				$login_redirect = ! empty( $_SERVER['REQUEST_URI'] ) ? $_SERVER['REQUEST_URI'] : null;
 
 				// Set the button label.
-				$login_label = apply_filters( 'show_me_the_admin_login_text', __( 'Login to WordPress', 'show-me-the-admin' ) );
+				$login_label = apply_filters( 'show_me_the_admin_login_text', sprintf( __( 'Login to %s', 'show-me-the-admin' ), 'WordPress' ) );
 
-				// Print the button.
 				?><a id="show-me-the-admin-login" href="<?php echo wp_login_url( site_url( $login_redirect ) ); ?>"><?php echo $login_label; ?></a><?php
 
 			endif;
