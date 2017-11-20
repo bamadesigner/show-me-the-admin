@@ -443,9 +443,9 @@ class Show_Me_The_Admin_Admin {
 								<fieldset>
 									<legend><strong><?php _e( 'What features would you like to enable?', 'show-me-the-admin' ); ?></strong></legend>
 									<div class="smta-choices vertical">
-										<label><?php _e( '#1', 'show-me-the-admin' ); ?> - <input type="checkbox" name="show_me_the_admin[features][]" value="keyphrase"<?php checked( isset( $features ) && is_array( $features ) && in_array( 'keyphrase', $features ) ); ?> /> <?php _e( 'Hide toolbar and make it appear by typing a phrase', 'show-me-the-admin' ); ?></label>
-										<label><?php _e( '#2', 'show-me-the-admin' ); ?> - <input type="checkbox" name="show_me_the_admin[features][]" value="button"<?php checked( isset( $features ) && is_array( $features ) && in_array( 'button', $features ) ); ?> /> <?php _e( 'Hide toolbar and show WordPress button in top left corner to click to appear', 'show-me-the-admin' ); ?></label>
-										<label><?php _e( '#3', 'show-me-the-admin' ); ?> - <input type="checkbox" name="show_me_the_admin[features][]" value="hover"<?php checked( isset( $features ) && is_array( $features ) && in_array( 'hover', $features ) ); ?> /> <?php _e( 'Hide toolbar and make it appear when mouse hovers near top of window', 'show-me-the-admin' ); ?></label>
+										<label for="smta-feature-keyphrase"><?php _e( '#1', 'show-me-the-admin' ); ?> - <input id="smta-feature-keyphrase" type="checkbox" name="show_me_the_admin[features][]" value="keyphrase"<?php checked( isset( $features ) && is_array( $features ) && in_array( 'keyphrase', $features ) ); ?> /> <?php _e( 'Hide toolbar and make it appear by typing a phrase', 'show-me-the-admin' ); ?></label>
+										<label for="smta-feature-button"><?php _e( '#2', 'show-me-the-admin' ); ?> - <input id="smta-feature-button" type="checkbox" name="show_me_the_admin[features][]" value="button"<?php checked( isset( $features ) && is_array( $features ) && in_array( 'button', $features ) ); ?> /> <?php _e( 'Hide toolbar and show WordPress button in top left corner to click to appear', 'show-me-the-admin' ); ?></label>
+										<label for="smta-feature-hover"><?php _e( '#3', 'show-me-the-admin' ); ?> - <input id="smta-feature-hover" type="checkbox" name="show_me_the_admin[features][]" value="hover"<?php checked( isset( $features ) && is_array( $features ) && in_array( 'hover', $features ) ); ?> /> <?php _e( 'Hide toolbar and make it appear when mouse hovers near top of window', 'show-me-the-admin' ); ?></label>
 										<p class="description"><?php _e( 'You can customize settings for each feature in their respective section.', 'show-me-the-admin' ); ?></p>
 									</div>
 								</fieldset>
@@ -555,7 +555,7 @@ class Show_Me_The_Admin_Admin {
 						</tr>
 						<tr>
 							<td>
-								<label class="inline" for="smta-button-mouseleave-delay"><strong><?php _e( 'Display toolbar for', 'show-me-the-admin' ); ?></strong></label>
+								<label for="smta-button-mouseleave-delay" class="inline"><strong><?php _e( 'Display toolbar for', 'show-me-the-admin' ); ?></strong></label>
 								<input name="show_me_the_admin[feature_button][mouseleave_delay]" type="number" min="0" id="smta-button-mouseleave-delay" value="<?php echo ! empty( $feature_button['mouseleave_delay'] ) ? esc_attr( $feature_button['mouseleave_delay'] ) : '2'; ?>" placeholder="2" class="regular-text inline" /> <span><?php _e( 'second(s)', 'show-me-the-admin' ); ?></span>
 								<p class="description"><?php _e( 'If enabled, define how long you want the toolbar to appear (in seconds) after you click the button.<br /><strong>The default is 2 seconds.</strong>', 'show-me-the-admin' ); ?></p>
 							</td>
@@ -585,7 +585,7 @@ class Show_Me_The_Admin_Admin {
 						</tr>
 						<tr>
 							<td>
-								<label class="inline" for="smta-hover-mouseleave-delay"><strong><?php _e( 'Display toolbar for', 'show-me-the-admin' ); ?></strong></label>
+								<label for="smta-hover-mouseleave-delay" class="inline"><strong><?php _e( 'Display toolbar for', 'show-me-the-admin' ); ?></strong></label>
 								<input name="show_me_the_admin[feature_hover][mouseleave_delay]" type="number" min="0" id="smta-hover-mouseleave-delay" value="<?php echo ! empty( $feature_hover['mouseleave_delay'] ) ? esc_attr( $feature_hover['mouseleave_delay'] ) : '2'; ?>" placeholder="2" class="regular-text inline" /> <span><?php _e( 'second(s)', 'show-me-the-admin' ); ?></span>
 								<p class="description"><?php _e( 'If enabled, define how long you want the toolbar to appear (in seconds) after hover.<br /><strong>The default is 2 seconds.</strong>', 'show-me-the-admin' ); ?></p>
 							</td>
@@ -915,6 +915,7 @@ class Show_Me_The_Admin_Admin {
 		<div id="smta-user-profile-settings">
 			<h2><?php _e( 'Show Me The Admin Toolbar', 'show-me-the-admin' ); ?></h2>
 			<p><?php _e( 'The toolbar makes it really easy to move back and forth between viewing your site and editing your site but sometimes the toolbar itself can be intrusive. This functionality hides your toolbar and enables you to make it appear, and disappear, using a variety of methods. <strong><em>Your "Show Toolbar when viewing site" setting must be enabled.</em></strong>', 'show-me-the-admin' ); ?></p>
+			<p class="smta-highlight"><?php _e( 'If you leave all features unchecked, it will implement the features selected in your site\'s global settings.', 'show-me-the-admin' ); ?></p>
 			<table id="show-me-the-admin-user-profile" class="form-table show-me-the-admin-settings smta-user-profile-settings">
 				<tbody>
 					<tr>
@@ -922,9 +923,9 @@ class Show_Me_The_Admin_Admin {
 							<fieldset>
 								<legend><strong><?php _e( 'What features would you like to enable?', 'show-me-the-admin' ); ?></strong></legend>
 								<div class="smta-choices vertical">
-									<label><?php _e( '#1', 'show-me-the-admin' ); ?> - <input type="checkbox" name="show_me_the_admin[features][]" value="keyphrase"<?php checked( isset( $user_features ) && is_array( $user_features ) && in_array( 'keyphrase', $user_features ) ); ?> /> <?php _e( 'Hide toolbar and make it appear by typing a phrase (<em>customize the phrases below</em>)', 'show-me-the-admin' ); ?></label>
-									<label><?php _e( '#2', 'show-me-the-admin' ); ?> - <input type="checkbox" name="show_me_the_admin[features][]" value="button"<?php checked( isset( $user_features ) && is_array( $user_features ) && in_array( 'button', $user_features ) ); ?> /> <?php _e( 'Hide toolbar and show WordPress button in top left corner to click to appear', 'show-me-the-admin' ); ?></label>
-									<label><?php _e( '#3', 'show-me-the-admin' ); ?> - <input type="checkbox" name="show_me_the_admin[features][]" value="hover"<?php checked( isset( $user_features ) && is_array( $user_features ) && in_array( 'hover', $user_features ) ); ?> /> <?php _e( 'Hide toolbar and make it appear when mouse hovers near top of window', 'show-me-the-admin' ); ?></label>
+									<label for="smta-feature-keyphrase"><?php _e( '#1', 'show-me-the-admin' ); ?> - <input id="smta-feature-keyphrase" type="checkbox" name="show_me_the_admin[features][]" value="keyphrase"<?php checked( isset( $user_features ) && is_array( $user_features ) && in_array( 'keyphrase', $user_features ) ); ?> /> <?php _e( 'Hide toolbar and make it appear by typing a phrase (<em>customize the phrases below</em>)', 'show-me-the-admin' ); ?></label>
+									<label for="smta-feature-button"><?php _e( '#2', 'show-me-the-admin' ); ?> - <input id="smta-feature-button" type="checkbox" name="show_me_the_admin[features][]" value="button"<?php checked( isset( $user_features ) && is_array( $user_features ) && in_array( 'button', $user_features ) ); ?> /> <?php _e( 'Hide toolbar and show WordPress button in top left corner to click to appear', 'show-me-the-admin' ); ?></label>
+									<label for="smta-feature-hover"><?php _e( '#3', 'show-me-the-admin' ); ?> - <input id="smta-feature-hover" type="checkbox" name="show_me_the_admin[features][]" value="hover"<?php checked( isset( $user_features ) && is_array( $user_features ) && in_array( 'hover', $user_features ) ); ?> /> <?php _e( 'Hide toolbar and make it appear when mouse hovers near top of window', 'show-me-the-admin' ); ?></label>
 								</div>
 							</fieldset>
 						</td>
@@ -937,7 +938,7 @@ class Show_Me_The_Admin_Admin {
 								</legend>
 								<div class="smta-choices vertical">
 									<label for="smta-features-disable">*&nbsp;&nbsp;&nbsp;<input name="show_me_the_admin[disable]" type="checkbox" id="smta-features-disable" value="1"<?php checked( isset( $user_settings['disable'] ) && true == $user_settings['disable'] ); ?>/> <strong><?php _e( 'Disable all features', 'show-me-the-admin' ); ?></strong></label>
-									<p class="description"><?php _e( 'If you leave all features unchecked, it will implement the site\'s selected features. Use this setting if you would like to disable this toolbar functionality for when you are logged in.', 'show-me-the-admin' ); ?></p>
+									<p class="description"><?php _e( 'If you leave all features unchecked, it will implement the features selected in your site\'s global settings. Use this setting if you would like to disable this toolbar functionality for when you are logged in.', 'show-me-the-admin' ); ?></p>
 								</div>
 							</fieldset>
 						</td>
