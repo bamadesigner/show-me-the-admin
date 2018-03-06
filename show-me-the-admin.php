@@ -1,15 +1,17 @@
 <?php
 /**
- * Plugin Name:       Show Me The Admin
- * Plugin URI:        https://wordpress.org/plugins/show-me-the-admin/
- * Description:       Hides your admin toolbar and enables you to make it appear, and disappear, using a variety of methods.
- * Version:           1.2.1
- * Author:            Rachel Cherry
- * Author URI:        https://bamadesigner.com
- * License:           GPL-2.0+
- * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
- * Text Domain:       show-me-the-admin
- * Domain Path:       /languages
+ * Plugin Name:     Show Me The Admin
+ * Plugin URI:      https://wordpress.org/plugins/show-me-the-admin/
+ * Description:     Hides your admin toolbar and enables you to make it appear, and disappear, using a variety of methods.
+ * Version:         1.2.1
+ * Author:          Rachel Cherry
+ * Author URI:      https://bamadesigner.com
+ * License:         GPL-2.0+
+ * License URI:     http://www.gnu.org/licenses/gpl-2.0.txt
+ * Text Domain:     show-me-the-admin
+ * Domain Path:     /languages
+ *
+ * @package         Show Me The Admin
  */
 
 /*

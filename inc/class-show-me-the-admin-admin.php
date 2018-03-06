@@ -1,6 +1,14 @@
 <?php
-
-class Show_Me_The_Admin_Admin {
+/**
+ * Takes care of all admin functionality.
+ *
+ * This class is loaded on every admin
+ * page and does not have to be instantiated.
+ *
+ * @class       Show_Me_The_Admin_Admin
+ * @package     Show Me The Admin
+ */
+final class Show_Me_The_Admin_Admin {
 
 	/**
 	 * Is true when multisite
@@ -32,36 +40,19 @@ class Show_Me_The_Admin_Admin {
 	public $settings_page_id;
 
 	/**
-	 * Holds the class instance.
-	 *
-	 * @since   1.0.0
-	 * @access  private
-	 * @var     Show_Me_The_Admin_Admin
+	 * We don't need to instantiate this class.
 	 */
-	private static $instance;
+	protected function __construct() {}
 
 	/**
-	 * Returns the instance of this class.
-	 *
-	 * @access  public
-	 * @since   1.0.0
-	 * @return  Show_Me_The_Admin_Admin
-	 */
-	public static function instance() {
-		if ( ! isset( self::$instance ) ) {
-			$class_name     = __CLASS__;
-			self::$instance = new $class_name;
-		}
-		return self::$instance;
-	}
-
-	/**
-	 * Takes care of admin shenanigans.
+	 * Registers all of our hooks and
+	 * what not for admin shenanigans.
 	 *
 	 * @access  protected
 	 * @since   1.0.0
 	 */
-	protected function __construct() {
+	public static function register() {
+		$plugin = new self();
 
 		/*
 		 * These settings let us know if we're dealing
@@ -70,73 +61,62 @@ class Show_Me_The_Admin_Admin {
 		if ( is_multisite() && is_network_admin() ) {
 
 			// We're in the network admin.
-			$this->is_network_admin = true;
+			$plugin->is_network_admin = true;
 
 			// Define the settings page URL.
-			$this->settings_page_url = add_query_arg( array( 'page' => 'show-me-the-admin' ), network_admin_url( 'settings.php' ) );
+			$plugin->settings_page_url = add_query_arg( array( 'page' => 'show-me-the-admin' ), network_admin_url( 'settings.php' ) );
 
 		} else {
 
 			// We're not in the network admin.
-			$this->is_network_admin = false;
+			$plugin->is_network_admin = false;
 
 			// Define the settings page URL.
-			$this->settings_page_url = add_query_arg( array( 'page' => 'show-me-the-admin' ), admin_url( 'options-general.php' ) );
+			$plugin->settings_page_url = add_query_arg( array( 'page' => 'show-me-the-admin' ), admin_url( 'options-general.php' ) );
 
 		}
 
 		// Add plugin action links.
 		$plugin_file = show_me_the_admin()->plugin_file;
-		add_filter( 'network_admin_plugin_action_links_' . $plugin_file, array( $this, 'add_plugin_action_links' ), 10, 4 );
-		add_filter( 'plugin_action_links_' . $plugin_file, array( $this, 'add_plugin_action_links' ), 10, 4 );
+		add_filter( 'network_admin_plugin_action_links_' . $plugin_file, array( $plugin, 'add_plugin_action_links' ), 10, 4 );
+		add_filter( 'plugin_action_links_' . $plugin_file, array( $plugin, 'add_plugin_action_links' ), 10, 4 );
 
 		// Add multisite settings page.
-		add_action( 'network_admin_menu', array( $this, 'add_network_settings_page' ) );
+		add_action( 'network_admin_menu', array( $plugin, 'add_network_settings_page' ) );
 
 		// Add regular settings page.
-		add_action( 'admin_menu', array( $this, 'add_settings_page' ) );
+		add_action( 'admin_menu', array( $plugin, 'add_settings_page' ) );
 
 		// Add our settings meta boxes.
-		add_action( 'admin_head-settings_page_show-me-the-admin', array( $this, 'add_settings_meta_boxes' ) );
+		add_action( 'admin_head-settings_page_show-me-the-admin', array( $plugin, 'add_settings_meta_boxes' ) );
 
 		// Add styles and scripts for the settings page.
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_styles_scripts' ) );
+		add_action( 'admin_enqueue_scripts', array( $plugin, 'enqueue_styles_scripts' ) );
 
 		// Update multisite settings.
-		add_action( 'update_wpmu_options', array( $this, 'update_network_settings' ) );
+		add_action( 'update_wpmu_options', array( $plugin, 'update_network_settings' ) );
 
 		// Register our settings.
-		add_action( 'admin_init', array( $this, 'register_settings' ), 1 );
+		add_action( 'admin_init', array( $plugin, 'register_settings' ), 1 );
 
 		// Add user profile settings.
-		add_action( 'profile_personal_options', array( $this, 'add_user_profile_settings' ), 0 );
+		add_action( 'profile_personal_options', array( $plugin, 'add_user_profile_settings' ), 0 );
 
 		// Save user profile settings.
-		add_action( 'personal_options_update', array( $this, 'save_user_profile_settings' ), 0 );
-		add_action( 'edit_user_profile_update', array( $this, 'save_user_profile_settings' ), 0 );
+		add_action( 'personal_options_update', array( $plugin, 'save_user_profile_settings' ), 0 );
+		add_action( 'edit_user_profile_update', array( $plugin, 'save_user_profile_settings' ), 0 );
 
 		// Add any admin notices.
-		add_action( 'admin_notices', array( $this, 'print_user_admin_notice' ) );
+		add_action( 'admin_notices', array( $plugin, 'print_user_admin_notice' ) );
 
 		// Runs an ajax call to add the users setting and user notice.
-		add_action( 'wp_ajax_smta_add_users_setting_notice', array( $this, 'add_users_setting_notice' ) );
-		add_action( 'wp_ajax_smta_add_user_notice', array( $this, 'smta_add_user_notice' ) );
+		add_action( 'wp_ajax_smta_add_users_setting_notice', array( $plugin, 'add_users_setting_notice' ) );
+		add_action( 'wp_ajax_smta_add_user_notice', array( $plugin, 'smta_add_user_notice' ) );
 
 		// Checks to see if user wants to reset network settings.
-		add_action( 'admin_init', array( $this, 'user_reset_network_settings' ), 2 );
+		add_action( 'admin_init', array( $plugin, 'user_reset_network_settings' ), 2 );
 
 	}
-
-	/**
-	 * Method to keep our instance from
-	 * being cloned or unserialized.
-	 *
-	 * @since   1.0.0
-	 * @access  private
-	 * @return  void
-	 */
-	private function __clone() {}
-	private function __wakeup() {}
 
 	/**
 	 * Add our own plugin action links.
@@ -668,7 +648,6 @@ class Show_Me_The_Admin_Admin {
 				<?php
 				break;
 		}
-
 	}
 
 	/**
@@ -1133,20 +1112,4 @@ class Show_Me_The_Admin_Admin {
 		add_user_meta( $user_id > 0 ? $user_id : get_current_user_id(), 'show_me_the_admin_user_notice', time(), true );
 	}
 }
-
-/**
- * Returns the instance of our main Show_Me_The_Admin_Admin class.
- *
- * Will come in handy when we need to access the
- * class to retrieve data throughout the plugin.
- *
- * @since   1.0.0
- * @access  public
- * @return  Show_Me_The_Admin_Admin
- */
-function show_me_the_admin_admin() {
-	return Show_Me_The_Admin_Admin::instance();
-}
-
-// Let's get this show on the road.
-show_me_the_admin_admin();
+Show_Me_The_Admin_Admin::register();
