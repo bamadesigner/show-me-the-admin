@@ -4,11 +4,14 @@
 	"type": "wordpress-plugin",
 	"license": "GPL-2.0+",
 	"version": "1.2.1",
-	"require-dev": {
-		"squizlabs/php_codesniffer": "*",
-		"wp-coding-standards/wpcs": "*"
-	},
+	"authors": [
+		{
+			"name": "Rachel Cherry",
+			"email": "bamadesigner@gmail.com"
+		}
+	],
 	"scripts": {
-		"sniff": "vendor/bin/phpcs --runtime-set installed_paths vendor/wp-coding-standards/wpcs -p ./ --standard=WordPress-Core --report=full --extensions=php --ignore=*/vendor/*,*/node_modules/*"
+		"post-install-cmd": "gulp",
+		"sniff": "phpcs **/*.php --standard=WordPress-Core --report=full --extensions=php --ignore=*/vendor/*,*/node_modules/*"
 	}
 }

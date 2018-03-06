@@ -2,11 +2,19 @@
   "name": "show-me-the-admin",
   "version": "1.2.1",
   "description": "Hides your admin toolbar and enables you to make it appear, and disappear, using a variety of methods.",
-  "author": "Rachel Cherry",
+  "author": "Rachel Cherry <bamadesigner@gmail.com>",
   "license": "GPL-2.0+",
   "repository": {
     "type": "git",
     "url": "https://github.com/bamadesigner/show-me-the-admin.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bamadesigner/show-me-the-admin/issues"
+  },
+  "homepage": "https://github.com/bamadesigner/show-me-the-admin",
+  "scripts": {
+    "postinstall": "composer install",
+    "test": "composer sniff"
   },
   "devDependencies": {
     "gulp": "^3.9.1",
