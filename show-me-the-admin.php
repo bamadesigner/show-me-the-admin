@@ -40,8 +40,8 @@ class Show_Me_The_Admin {
 	 * @access  public
 	 * @var     string
 	 */
-	public $version = '1.2.1',
-		$plugin_url = 'https://wordpress.org/plugins/show-me-the-admin/',
+	public $version  = '1.2.1',
+		$plugin_url  = 'https://wordpress.org/plugins/show-me-the-admin/',
 		$plugin_file = 'show-me-the-admin/show-me-the-admin.php',
 		$show_phrase = 'showme',
 		$hide_phrase = 'hideme';
@@ -49,9 +49,9 @@ class Show_Me_The_Admin {
 	/**
 	 * Whether or not this plugin is network active.
 	 *
-	 * @since	1.0.0
-	 * @access	public
-	 * @var		boolean
+	 * @since   1.0.0
+	 * @access  public
+	 * @var     boolean
 	 */
 	public $is_network_active;
 
@@ -60,45 +60,45 @@ class Show_Me_The_Admin {
 	 * hiding the admin should be enabled
 	 * for particular features.
 	 *
-	 * @since	1.0.1
-	 * @access	private
-	 * @var		array
+	 * @since   1.0.1
+	 * @access  private
+	 * @var     array
 	 */
 	private static $enable_hide_the_admin_bar;
 
 	/**
 	 * Will hold the plugin's unmodified settings.
 	 *
-	 * @since	1.0.0
-	 * @access	private
-	 * @var		array
+	 * @since   1.0.0
+	 * @access  private
+	 * @var     array
 	 */
 	private static $unmodified_settings;
 
 	/**
 	 * Will hold the user's settings.
 	 *
-	 * @since	1.0.0
-	 * @access	private
-	 * @var		array
+	 * @since   1.0.0
+	 * @access  private
+	 * @var     array
 	 */
 	private static $user_settings;
 
 	/**
 	 * Will hold the plugin's settings.
 	 *
-	 * @since	1.0.0
-	 * @access	private
-	 * @var		array
+	 * @since   1.0.0
+	 * @access  private
+	 * @var     array
 	 */
 	private static $settings;
 
 	/**
 	 * Holds the class instance.
 	 *
-	 * @since	1.0.0
-	 * @access	private
-	 * @var		Show_Me_The_Admin
+	 * @since   1.0.0
+	 * @access  private
+	 * @var     Show_Me_The_Admin
 	 */
 	private static $instance;
 
@@ -107,11 +107,11 @@ class Show_Me_The_Admin {
 	 *
 	 * @access  public
 	 * @since   1.0.0
-	 * @return	Show_Me_The_Admin
+	 * @return  Show_Me_The_Admin
 	 */
 	public static function instance() {
 		if ( ! isset( self::$instance ) ) {
-			$class_name = __CLASS__;
+			$class_name     = __CLASS__;
 			self::$instance = new $class_name;
 		}
 		return self::$instance;
@@ -126,7 +126,12 @@ class Show_Me_The_Admin {
 	protected function __construct() {
 
 		// Is this plugin network active?
-		$this->is_network_active = is_multisite() && ( $plugins = get_site_option( 'active_sitewide_plugins' ) ) && isset( $plugins[ $this->plugin_file ] );
+		$this->is_network_active = false;
+
+		if ( is_multisite() ) {
+			$plugins                 = get_site_option( 'active_sitewide_plugins' );
+			$this->is_network_active = ! empty( $plugins ) && isset( $plugins[ $this->plugin_file ] );
+		}
 
 		// Load our textdomain.
 		add_action( 'init', array( $this, 'textdomain' ) );
@@ -152,9 +157,9 @@ class Show_Me_The_Admin {
 	 * Method to keep our instance from
 	 * being cloned or unserialized.
 	 *
-	 * @since	1.0.0
-	 * @access	private
-	 * @return	void
+	 * @since   1.0.0
+	 * @access  private
+	 * @return  void
 	 */
 	private function __clone() {}
 	private function __wakeup() {}
@@ -200,21 +205,21 @@ class Show_Me_The_Admin {
 	 */
 	public function get_default_settings() {
 		return array(
-			'features'                  => array(
+			'features'           => array(
 				'keyphrase',
 				'button',
 			),
-			'feature_keyphrase'         => array(
-				'enable_login_button'   => true,
+			'feature_keyphrase'  => array(
+				'enable_login_button' => true,
 			),
-			'feature_button'            => array(
-				'mouseleave_delay'      => 2,
+			'feature_button'     => array(
+				'mouseleave_delay' => 2,
 			),
-			'feature_hover'             => array(
-				'mouseleave_delay'      => 2,
+			'feature_hover'      => array(
+				'mouseleave_delay' => 2,
 			),
-			'user_roles'                => array( 'administrator' ),
-			'enable_user_notice'        => true,
+			'user_roles'         => array( 'administrator' ),
+			'enable_user_notice' => true,
 		);
 	}
 
@@ -263,7 +268,13 @@ class Show_Me_The_Admin {
 		}
 
 		// Store the settings.
-		return self::$unmodified_settings[ ( $network ? 'network' : 'site' ) ] = $unmodified_settings;
+		if ( $network ) {
+			self::$unmodified_settings['network'] = $unmodified_settings;
+			return self::$unmodified_settings['network'];
+		}
+
+		self::$unmodified_settings['site'] = $unmodified_settings;
+		return self::$unmodified_settings['site'];
 	}
 
 	/**
@@ -289,7 +300,8 @@ class Show_Me_The_Admin {
 		}
 
 		// Get the user meta.
-		return self::$user_settings = $user_id > 0 ? get_user_meta( $user_id, 'show_me_the_admin', true ) : false;
+		self::$user_settings = $user_id > 0 ? get_user_meta( $user_id, 'show_me_the_admin', true ) : false;
+		return self::$user_settings;
 	}
 
 	/**
@@ -298,7 +310,7 @@ class Show_Me_The_Admin {
 	 *
 	 * @access  public
 	 * @since   1.0.0
-	 * @filter	show_me_the_admin_settings
+	 * @filter  show_me_the_admin_settings
 	 * @return  array - the settings
 	 */
 	public function get_settings() {
@@ -326,7 +338,7 @@ class Show_Me_The_Admin {
 			}
 
 			// Remove empty values for merging.
-			$site_settings = array_filter( $site_settings );
+			$site_settings    = array_filter( $site_settings );
 			$network_settings = array_filter( $network_settings );
 
 			// Merge site with network settings.
@@ -339,7 +351,7 @@ class Show_Me_The_Admin {
 
 			// Get user settings.
 			$current_user_id = get_current_user_id();
-			$user_settings = $this->get_user_settings( $current_user_id );
+			$user_settings   = $this->get_user_settings( $current_user_id );
 
 			// If an array, it means the user has set them so pay attention.
 			if ( is_array( $user_settings ) ) {
@@ -365,7 +377,8 @@ class Show_Me_The_Admin {
 		}
 
 		// Store the settings.
-		return self::$settings = apply_filters( 'show_me_the_admin_settings', $site_settings );
+		self::$settings = apply_filters( 'show_me_the_admin_settings', $site_settings );
+		return self::$settings;
 	}
 
 	/**
@@ -394,7 +407,8 @@ class Show_Me_The_Admin {
 
 		// Build the phrase.
 		foreach ( $phrase as $key ) {
-			if ( $code = $this->get_keycode( $key ) ) {
+			$code = $this->get_keycode( $key );
+			if ( ! empty( $code ) ) {
 				$keycode .= $code;
 			}
 		}
@@ -565,11 +579,11 @@ class Show_Me_The_Admin {
 			$localize['features'][] = 'keyphrase';
 
 			// Add 'show_phrase'.
-			$show_phrase = ! empty( $settings['show_phrase'] ) ? $this->get_phrase_keycode( $settings['show_phrase'] ) : $this->get_phrase_keycode( $this->show_phrase );
+			$show_phrase             = ! empty( $settings['show_phrase'] ) ? $this->get_phrase_keycode( $settings['show_phrase'] ) : $this->get_phrase_keycode( $this->show_phrase );
 			$localize['show_phrase'] = apply_filters( 'show_me_the_admin_show_phrase', $show_phrase );
 
 			// Add 'hide_phrase'.
-			$hide_phrase = ! empty( $settings['hide_phrase'] ) ? $this->get_phrase_keycode( $settings['hide_phrase'] ) : $this->get_phrase_keycode( $this->hide_phrase );
+			$hide_phrase             = ! empty( $settings['hide_phrase'] ) ? $this->get_phrase_keycode( $settings['hide_phrase'] ) : $this->get_phrase_keycode( $this->hide_phrase );
 			$localize['hide_phrase'] = apply_filters( 'show_me_the_admin_hide_phrase', $hide_phrase );
 
 		}
@@ -670,18 +684,22 @@ class Show_Me_The_Admin {
 	 *
 	 * @access  public
 	 * @since   1.0.0
-	 * @filter	show_me_the_admin_login_text
+	 * @filter  show_me_the_admin_login_text
 	 */
 	public function print_login_button() {
 
 		// If the button feature is enabled, we need to add the button.
 		if ( $this->enable_hide_the_admin_bar( 'button' ) ) :
-			?><button id="show-me-the-admin-button" tabindex="1" title="<?php printf( esc_attr__( 'Show the %s admin bar', 'show-me-the-admin' ), 'WordPress' ); ?>"></button><?php
+			?>
+			<button id="show-me-the-admin-button" tabindex="1" title="<?php printf( esc_attr__( 'Show the %s admin bar', 'show-me-the-admin' ), 'WordPress' ); ?>"></button>
+			<?php
 		endif;
 
 		// If the hover feature is enabled, we need an element to tie it to.
 		if ( $this->enable_hide_the_admin_bar( 'hover' ) ) :
-			?><div id="show-me-the-admin-hover"></div><?php
+			?>
+			<div id="show-me-the-admin-hover"></div>
+			<?php
 		endif;
 
 		// If not logged in...
@@ -696,7 +714,9 @@ class Show_Me_The_Admin {
 				// Set the button label.
 				$login_label = apply_filters( 'show_me_the_admin_login_text', sprintf( __( 'Login to %s', 'show-me-the-admin' ), 'WordPress' ) );
 
-				?><a id="show-me-the-admin-login" href="<?php echo wp_login_url( site_url( $login_redirect ) ); ?>"><?php echo $login_label; ?></a><?php
+				?>
+				<a id="show-me-the-admin-login" href="<?php echo wp_login_url( site_url( $login_redirect ) ); ?>"><?php echo $login_label; ?></a>
+				<?php
 
 			endif;
 		endif;
@@ -709,9 +729,9 @@ class Show_Me_The_Admin {
  * Will come in handy when we need to access the
  * class to retrieve data throughout the plugin.
  *
- * @since	1.0.0
- * @access	public
- * @return	Show_Me_The_Admin
+ * @since   1.0.0
+ * @access  public
+ * @return  Show_Me_The_Admin
  */
 function show_me_the_admin() {
 	return Show_Me_The_Admin::instance();
