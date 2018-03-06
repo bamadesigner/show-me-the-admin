@@ -34,9 +34,9 @@ class Show_Me_The_Admin_Admin {
 	/**
 	 * Holds the class instance.
 	 *
-	 * @since	1.0.0
-	 * @access	private
-	 * @var		Show_Me_The_Admin_Admin
+	 * @since   1.0.0
+	 * @access  private
+	 * @var     Show_Me_The_Admin_Admin
 	 */
 	private static $instance;
 
@@ -45,11 +45,11 @@ class Show_Me_The_Admin_Admin {
 	 *
 	 * @access  public
 	 * @since   1.0.0
-	 * @return	Show_Me_The_Admin_Admin
+	 * @return  Show_Me_The_Admin_Admin
 	 */
 	public static function instance() {
 		if ( ! isset( self::$instance ) ) {
-			$class_name = __CLASS__;
+			$class_name     = __CLASS__;
 			self::$instance = new $class_name;
 		}
 		return self::$instance;
@@ -131,9 +131,9 @@ class Show_Me_The_Admin_Admin {
 	 * Method to keep our instance from
 	 * being cloned or unserialized.
 	 *
-	 * @since	1.0.0
-	 * @access	private
-	 * @return	void
+	 * @since   1.0.0
+	 * @access  private
+	 * @return  void
 	 */
 	private function __clone() {}
 	private function __wakeup() {}
@@ -233,8 +233,8 @@ class Show_Me_The_Admin_Admin {
 			$current_user_id = get_current_user_id();
 
 			// Don't show notices by default.
+			$smta_user_notice          = false;
 			$smta_users_setting_notice = false;
-			$smta_user_notice = false;
 
 			// Will be true if we should enqueue our user notice script.
 			$enqueue_user_notice_script = false;
@@ -249,7 +249,7 @@ class Show_Me_The_Admin_Admin {
 			if ( false !== $activated_user && $activated_user > 0 ) {
 
 				// Do we need to show the user settings notice?
-				$users_setting_notice = get_user_meta( get_current_user_id(), 'show_me_the_admin_users_setting_notice', true );
+				$users_setting_notice      = get_user_meta( get_current_user_id(), 'show_me_the_admin_users_setting_notice', true );
 				$show_users_setting_notice = ! ( false !== $users_setting_notice && $users_setting_notice > 0 && $users_setting_notice <= time() );
 
 				// Include script for the users settings notice.
@@ -375,25 +375,95 @@ class Show_Me_The_Admin_Admin {
 		}
 
 		// About this Plugin.
-		add_meta_box( 'show-me-the-admin-about-mb', __( 'About this Plugin', 'show-me-the-admin' ), array( $this, 'print_settings_meta_boxes' ), $this->settings_page_id, 'side', 'core', array( 'id' => 'about-plugin' ) );
+		add_meta_box( 'show-me-the-admin-about-mb',
+			__( 'About this Plugin', 'show-me-the-admin' ),
+			array( $this, 'print_settings_meta_boxes' ),
+			$this->settings_page_id,
+			'side',
+			'core',
+			array(
+				'id' => 'about-plugin',
+			)
+		);
 
 		// Spread the Love.
-		add_meta_box( 'show-me-the-admin-promote-mb', __( 'Spread the Love', 'show-me-the-admin' ), array( $this, 'print_settings_meta_boxes' ), $this->settings_page_id, 'side', 'core', array( 'id' => 'promote' ) );
+		add_meta_box( 'show-me-the-admin-promote-mb',
+			__( 'Spread the Love', 'show-me-the-admin' ),
+			array( $this, 'print_settings_meta_boxes' ),
+			$this->settings_page_id,
+			'side',
+			'core',
+			array(
+				'id' => 'promote',
+			)
+		);
 
 		// The Features.
-		add_meta_box( 'show-me-the-admin-features-mb', __( 'The Features', 'show-me-the-admin' ), array( $this, 'print_settings_meta_boxes' ), $this->settings_page_id, 'normal', 'core', array( 'id' => 'features', 'site_settings' => $site_settings ) );
+		add_meta_box( 'show-me-the-admin-features-mb',
+			__( 'The Features', 'show-me-the-admin' ),
+			array( $this, 'print_settings_meta_boxes' ),
+			$this->settings_page_id,
+			'normal',
+			'core',
+			array(
+				'id'            => 'features',
+				'site_settings' => $site_settings,
+			)
+		);
 
 		// The Users.
-		add_meta_box( 'show-me-the-admin-users-mb', __( 'The Users', 'show-me-the-admin' ), array( $this, 'print_settings_meta_boxes' ), $this->settings_page_id, 'normal', 'core', array( 'id' => 'users', 'site_settings' => $site_settings ) );
+		add_meta_box( 'show-me-the-admin-users-mb',
+			__( 'The Users', 'show-me-the-admin' ),
+			array( $this, 'print_settings_meta_boxes' ),
+			$this->settings_page_id,
+			'normal',
+			'core',
+			array(
+				'id'            => 'users',
+				'site_settings' => $site_settings,
+			)
+		);
 
 		// The Settings For Feature #1.
-		add_meta_box( 'show-me-the-admin-settings-keyphrase-mb', __( 'Hide toolbar and make it appear by typing a phrase', 'show-me-the-admin' ), array( $this, 'print_settings_meta_boxes' ), $this->settings_page_id, 'normal', 'core', array( 'id' => 'settings-feature-keyphrase', 'site_settings' => $site_settings, 'default_show_phrase' => $default_show_phrase, 'default_hide_phrase' => $default_hide_phrase ) );
+		add_meta_box( 'show-me-the-admin-settings-keyphrase-mb',
+			__( 'Hide toolbar and make it appear by typing a phrase', 'show-me-the-admin' ),
+			array( $this, 'print_settings_meta_boxes' ),
+			$this->settings_page_id,
+			'normal',
+			'core',
+			array(
+				'id'                  => 'settings-feature-keyphrase',
+				'site_settings'       => $site_settings,
+				'default_show_phrase' => $default_show_phrase,
+				'default_hide_phrase' => $default_hide_phrase,
+			)
+		);
 
 		// The Settings For Feature #2: button.
-		add_meta_box( 'show-me-the-admin-settings-button-mb', __( 'Hide toolbar and show WordPress button', 'show-me-the-admin' ), array( $this, 'print_settings_meta_boxes' ), $this->settings_page_id, 'normal', 'core', array( 'id' => 'settings-feature-button', 'site_settings' => $site_settings ) );
+		add_meta_box( 'show-me-the-admin-settings-button-mb',
+			__( 'Hide toolbar and show WordPress button', 'show-me-the-admin' ),
+			array( $this, 'print_settings_meta_boxes' ),
+			$this->settings_page_id,
+			'normal',
+			'core',
+			array(
+				'id'            => 'settings-feature-button',
+				'site_settings' => $site_settings,
+			)
+		);
 
 		// The Settings For Feature #3: Hover.
-		add_meta_box( 'show-me-the-admin-settings-hover-mb', __( 'Hide toolbar and make it appear when mouse hovers near top of window', 'show-me-the-admin' ), array( $this, 'print_settings_meta_boxes' ), $this->settings_page_id, 'normal', 'core', array( 'id' => 'settings-feature-hover', 'site_settings' => $site_settings ) );
+		add_meta_box( 'show-me-the-admin-settings-hover-mb',
+			__( 'Hide toolbar and make it appear when mouse hovers near top of window', 'show-me-the-admin' ),
+			array( $this, 'print_settings_meta_boxes' ),
+			$this->settings_page_id,
+			'normal',
+			'core',
+			array(
+				'id'            => 'settings-feature-hover',
+				'site_settings' => $site_settings,
+			)
+		);
 
 	}
 
@@ -409,7 +479,7 @@ class Show_Me_The_Admin_Admin {
 	public function print_settings_meta_boxes( $post, $metabox ) {
 
 		// Get settings.
-		$mb_args = isset( $metabox['args'] ) ? $metabox['args'] : array();
+		$mb_args       = isset( $metabox['args'] ) ? $metabox['args'] : array();
 		$site_settings = isset( $mb_args['site_settings'] ) ? $mb_args['site_settings'] : array();
 
 		switch ( $mb_args['id'] ) {
@@ -629,7 +699,8 @@ class Show_Me_The_Admin_Admin {
 				if ( show_me_the_admin()->is_network_active ) :
 
 					// Get the site settings.
-					if ( ! ( $site_settings = show_me_the_admin()->get_unmodified_settings() ) ) :
+					$site_settings = show_me_the_admin()->get_unmodified_settings();
+					if ( empty( $site_settings ) ) :
 
 						// Were the network settings reset?
 						if ( isset( $_GET['network-reset'] ) ) :
@@ -665,14 +736,19 @@ class Show_Me_The_Admin_Admin {
 						<div id="smta-network-settings-message" class="wp-ui-highlight">
 							<span class="dashicons dashicons-info"></span>
 							<p><?php _e( 'This plugin is activated network-wide but the settings below have been selected for this site only.', 'show-me-the-admin' ); ?></p>
-							<p><a class="button" href="<?php echo wp_nonce_url( $this->settings_page_url, 'reset_network_settings', 'smta_nonce' ); ?>"><?php _e( 'Reset to network settings', 'show-me-the-admin' ); ?></a><?php
+							<p>
+								<a class="button" href="<?php echo wp_nonce_url( $this->settings_page_url, 'reset_network_settings', 'smta_nonce' ); ?>"><?php _e( 'Reset to network settings', 'show-me-the-admin' ); ?></a>
+								<?php
 
-							// If the user can manage the network, give them a link.
-							if ( current_user_can( 'manage_network' ) ) :
-								?> <a class="button" href="<?php echo add_query_arg( array( 'page' => 'show-me-the-admin' ), network_admin_url( 'settings.php' ) ); ?>"><?php _e( 'Manage network settings', 'show-me-the-admin' ); ?></a><?php
-							endif;
+								// If the user can manage the network, give them a link.
+								if ( current_user_can( 'manage_network' ) ) :
+									?>
+									<a class="button" href="<?php echo add_query_arg( array( 'page' => 'show-me-the-admin' ), network_admin_url( 'settings.php' ) ); ?>"><?php _e( 'Manage network settings', 'show-me-the-admin' ); ?></a>
+									<?php
+								endif;
 
-							?></p>
+								?>
+							</p>
 						</div>
 						<?php
 
@@ -755,11 +831,10 @@ class Show_Me_The_Admin_Admin {
 			&& isset( $_POST['show_me_the_admin_save_changes'] ) ) {
 
 			// Get/update/validate the settings.
-			if ( isset( $_POST['show_me_the_admin'] )
-				&& ( $settings = $_POST['show_me_the_admin'] ) ) {
+			if ( ! empty( $_POST['show_me_the_admin'] ) ) {
 
 				// Validate the settings.
-				$settings = $this->validate_settings( $settings );
+				$settings = $this->validate_settings( $_POST['show_me_the_admin'] );
 
 				// Make sure we don't show these notices anymore since they've saved their settings.
 				$this->add_users_setting_notice();
@@ -791,7 +866,7 @@ class Show_Me_The_Admin_Admin {
 	public function user_reset_network_settings() {
 
 		// Detect/verify our nonce.
-		if (  isset( $_GET['smta_nonce'] ) && wp_verify_nonce( $_GET['smta_nonce'], 'reset_network_settings' ) ) {
+		if ( isset( $_GET['smta_nonce'] ) && wp_verify_nonce( $_GET['smta_nonce'], 'reset_network_settings' ) ) {
 
 			// Clear out the settings.
 			update_option( 'show_me_the_admin', null );
@@ -882,7 +957,7 @@ class Show_Me_The_Admin_Admin {
 			}
 
 			// Remove empty values for merging.
-			$site_settings = array_filter( $site_settings );
+			$site_settings    = array_filter( $site_settings );
 			$network_settings = array_filter( $network_settings );
 
 			// Merge site with network settings.
@@ -984,7 +1059,8 @@ class Show_Me_The_Admin_Admin {
 	public function save_user_profile_settings( $user_id ) {
 
 		// Make sure our array is set.
-		if ( ! ( $show_me_the_admin = ! empty( $_POST['show_me_the_admin'] ) ? $_POST['show_me_the_admin'] : null ) ) {
+		$show_me_the_admin = ! empty( $_POST['show_me_the_admin'] ) ? $_POST['show_me_the_admin'] : null;
+		if ( empty( $show_me_the_admin ) ) {
 			return;
 		}
 
@@ -1064,9 +1140,9 @@ class Show_Me_The_Admin_Admin {
  * Will come in handy when we need to access the
  * class to retrieve data throughout the plugin.
  *
- * @since	1.0.0
- * @access	public
- * @return	Show_Me_The_Admin_Admin
+ * @since   1.0.0
+ * @access  public
+ * @return  Show_Me_The_Admin_Admin
  */
 function show_me_the_admin_admin() {
 	return Show_Me_The_Admin_Admin::instance();
